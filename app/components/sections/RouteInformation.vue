@@ -1,129 +1,349 @@
 <template>
-  <section class="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-6 mb-6">
-    <h2 class="text-base font-semibold m-0 mb-4 text-[var(--text)]">Informasi Rute Pelayaran</h2>
+  <section
+    class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 shadow-[var(--shadow-card)]"
+  >
+    <div class="mb-5 rounded-lg border border-[color-mix(in_srgb,var(--accent)_30%,var(--border)_70%)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface)_92%)] px-4 py-3">
+      <h2 class="inline-flex items-center rounded-md bg-[color-mix(in_srgb,var(--accent)_18%,white_82%)] px-2.5 py-1 text-base font-semibold m-0 mb-1 text-[var(--text)]">
+        Informasi Rute Pelayaran
+      </h2>
+      <p class="text-xs text-[var(--text-muted)] m-0">Data kapal, jadwal, dan peta rute</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+      <div class="flex flex-col gap-1.5">
+        <label for="station-select" class="text-sm font-medium text-[var(--text)]">Stasiun</label>
+        <select
+          id="station-select"
+          v-model="selectedStation"
+          class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+        >
+          <option
+            v-for="s in stationOptions"
+            :key="s"
+            :value="s"
+          >
+            {{ s }}
+          </option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="top-route-select" class="text-sm font-medium text-[var(--text)]">Rute</label>
+        <select
+          id="top-route-select"
+          :value="selectedRouteId"
+          class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+          @change="selectRouteById(($event.target as HTMLSelectElement).value)"
+        >
+          <option value="">
+            Pilih rute...
+          </option>
+          <option
+            v-for="r in availableRoutes"
+            :key="r.id"
+            :value="r.id"
+          >
+            {{ r.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
       <div class="flex flex-col gap-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Kapal -->
+        <div class="rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--primary)_6%)] p-4">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] m-0 mb-3">Kapal</h3>
           <div class="flex flex-col gap-1.5">
             <label for="ship-name" class="text-sm font-medium text-[var(--text)]">Nama Kapal</label>
             <input
               id="ship-name"
               v-model="routeInfo.shipName"
               type="text"
-              class="px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:border-[var(--primary)]"
+              class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
               placeholder="Contoh: KM. Dharma Lintas Utama"
             />
           </div>
-          <div class="flex flex-col gap-1.5">
-            <label for="route-select" class="text-sm font-medium text-[var(--text)]">Route</label>
-            <select
-              id="route-select"
-              :value="selectedRouteId"
-              class="px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:border-[var(--primary)] bg-white"
-              @change="selectRouteById(($event.target as HTMLSelectElement).value)"
-            >
-              <option value="">
-                Pilih rute...
-              </option>
-              <option
-                v-for="r in availableRoutes"
-                :key="r.id"
-                :value="r.id"
-              >
-                {{ r.label }}
-              </option>
-            </select>
-          </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Zona Waktu -->
+        <div class="rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--accent)_6%)] p-4">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] m-0 mb-3">Zona Waktu</h3>
           <div class="flex flex-col gap-1.5">
-            <label class="text-sm font-medium text-[var(--text)]">Waktu Keberangkatan</label>
-            <div class="flex items-center gap-2 flex-wrap">
-              <input
-                id="departure-date"
-                v-model="routeInfo.departureDate"
-                type="date"
-                class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:border-[var(--primary)]"
-                placeholder="Tanggal"
-              />
-              <input
-                id="departure-time"
-                v-model="routeInfo.departureTime"
-                type="time"
-                class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:border-[var(--primary)]"
-                placeholder="Waktu"
-              />
-              <span class="text-xs text-[var(--text-muted)] whitespace-nowrap">LT</span>
+            <span class="text-sm font-medium text-[var(--text)]">
+              Pilih: <span class="text-[var(--primary)]">{{ timeZone }}</span>
+            </span>
+            <div class="flex flex-nowrap gap-2">
+              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
+                <input
+                  type="checkbox"
+                  class="accent-[var(--primary)]"
+                  :checked="timeZone === 'UTC'"
+                  @change="(e) => { if ((e.target as HTMLInputElement).checked) timeZone = 'UTC' }"
+                >
+                <span class="text-sm font-medium text-[var(--text)]">UTC</span>
+              </label>
+
+              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
+                <input
+                  type="checkbox"
+                  class="accent-[var(--primary)]"
+                  :checked="timeZone === 'WIB'"
+                  @change="(e) => { if ((e.target as HTMLInputElement).checked) timeZone = 'WIB' }"
+                >
+                <span class="text-sm font-medium text-[var(--text)]">WIB</span>
+              </label>
+
+              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
+                <input
+                  type="checkbox"
+                  class="accent-[var(--primary)]"
+                  :checked="timeZone === 'WITA'"
+                  @change="(e) => { if ((e.target as HTMLInputElement).checked) timeZone = 'WITA' }"
+                >
+                <span class="text-sm font-medium text-[var(--text)]">WITA</span>
+              </label>
+
+              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
+                <input
+                  type="checkbox"
+                  class="accent-[var(--primary)]"
+                  :checked="timeZone === 'WIT'"
+                  @change="(e) => { if ((e.target as HTMLInputElement).checked) timeZone = 'WIT' }"
+                >
+                <span class="text-sm font-medium text-[var(--text)]">WIT</span>
+              </label>
             </div>
           </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="flex flex-col gap-1.5">
-            <label class="text-sm font-medium text-[var(--text)]">Waktu Tiba</label>
-            <div class="flex items-center gap-2 flex-wrap">
-              <input
-                id="arrival-date"
-                v-model="routeInfo.arrivalDate"
-                type="date"
-                class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:border-[var(--primary)]"
-              />
-              <input
-                id="arrival-time"
-                v-model="routeInfo.arrivalTime"
-                type="time"
-                class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:border-[var(--primary)]"
-              />
-              <span class="text-xs text-[var(--text-muted)] whitespace-nowrap">LT</span>
+
+        <!-- Jadwal -->
+        <div class="rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--primary)_6%)] p-4">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] m-0 mb-3">Jadwal</h3>
+          <div class="flex flex-col gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-[var(--text)]">Waktu Keberangkatan</label>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <input
+                    id="departure-date"
+                    v-model="routeInfo.departureDate"
+                    type="date"
+                    class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                    placeholder="Tanggal"
+                  />
+                  <input
+                    id="departure-time"
+                    v-model="routeInfo.departureTime"
+                    type="time"
+                    class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                    placeholder="Waktu"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="flex flex-col gap-1.5">
-            <label class="text-sm font-medium text-[var(--text)]">Issued</label>
-            <div class="flex items-center gap-2 flex-wrap">
-              <input
-                id="issued-date"
-                v-model="routeInfo.issuedDate"
-                type="date"
-                class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:border-[var(--primary)]"
-              />
-              <input
-                id="issued-time"
-                v-model="routeInfo.issuedTime"
-                type="time"
-                class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:border-[var(--primary)]"
-              />
-              <span class="text-xs text-[var(--text-muted)] whitespace-nowrap">LT</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-[var(--text)]">Waktu Tiba</label>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <input
+                    id="arrival-date"
+                    v-model="routeInfo.arrivalDate"
+                    type="date"
+                    class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                  />
+                  <input
+                    id="arrival-time"
+                    v-model="routeInfo.arrivalTime"
+                    type="time"
+                    class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                  />
+                </div>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-[var(--text)]">Issued</label>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <input
+                    id="issued-date"
+                    v-model="routeInfo.issuedDate"
+                    type="date"
+                    class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                  />
+                  <input
+                    id="issued-time"
+                    v-model="routeInfo.issuedTime"
+                    type="time"
+                    class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Forecast Time Step -->
+        <div class="rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--accent)_6%)] p-4">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] m-0 mb-3">Forecast Time Step</h3>
           <div class="flex flex-col gap-1.5">
-            <label for="forecaster" class="text-sm font-medium text-[var(--text)]">Forecaster</label>
-            <input
-              id="forecaster"
-              v-model="routeInfo.forecaster"
-              type="text"
-              class="px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:border-[var(--primary)]"
-              placeholder="Nama forecaster"
-            />
+            <span class="text-sm font-medium text-[var(--text)]">
+              Pilih: <span class="text-[var(--primary)]">{{ forecastTimeStep }} jam</span>
+            </span>
+            <div class="flex flex-nowrap gap-2">
+              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
+                <input
+                  type="checkbox"
+                  class="accent-[var(--primary)]"
+                  :checked="forecastTimeStep === 1"
+                  @change="(e) => { if ((e.target as HTMLInputElement).checked) forecastTimeStep = 1 }"
+                >
+                <span class="text-sm font-medium text-[var(--text)]">1 Jam</span>
+              </label>
+
+              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
+                <input
+                  type="checkbox"
+                  class="accent-[var(--primary)]"
+                  :checked="forecastTimeStep === 3"
+                  @change="(e) => { if ((e.target as HTMLInputElement).checked) forecastTimeStep = 3 }"
+                >
+                <span class="text-sm font-medium text-[var(--text)]">3 Jam</span>
+              </label>
+
+              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
+                <input
+                  type="checkbox"
+                  class="accent-[var(--primary)]"
+                  :checked="forecastTimeStep === 6"
+                  @change="(e) => { if ((e.target as HTMLInputElement).checked) forecastTimeStep = 6 }"
+                >
+                <span class="text-sm font-medium text-[var(--text)]">6 Jam</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Forecaster -->
+        <div class="rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--accent)_6%)] p-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label for="forecaster" class="text-sm font-medium text-[var(--text)]">Forecaster</label>
+              <input
+                id="forecaster"
+                v-model="routeInfo.forecaster"
+                type="text"
+                class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                placeholder="Nama forecaster"
+              />
+            </div>
           </div>
         </div>
       </div>
       <div class="min-h-[300px] min-w-0 w-full">
-        <SectionsRouteMap :route-coordinates="manualRouteData?.coordinates ?? undefined" />
+        <SectionsRouteMap :route-coordinates="manualRouteData?.coordinates ?? undefined" :split-markers="splitPointCoordinates" />
       </div>
     </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+      <div class="rounded-xl p-4 border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
+        <h3 class="text-sm font-semibold m-0 mb-3 text-[var(--text)]">Summary Request</h3>
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
+          <div>
+            <dt class="text-xs text-[var(--text-muted)] mb-1">Stasiun</dt>
+            <dd class="text-sm font-medium text-[var(--text)] break-words">
+              {{ selectedStation || '-' }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-xs text-[var(--text-muted)] mb-1">Route name</dt>
+            <dd class="text-sm font-medium text-[var(--text)] break-words">
+              {{ routeNameText || '-' }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-xs text-[var(--text-muted)] mb-1">Ship name</dt>
+            <dd class="text-sm font-medium text-[var(--text)] break-words">
+              {{ routeInfo.shipName || '-' }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-xs text-[var(--text-muted)] mb-1">Forecast time step</dt>
+            <dd class="text-sm font-medium text-[var(--text)] break-words">
+              {{ forecastTimeStep }} jam
+            </dd>
+          </div>
+          <div>
+            <dt class="text-xs text-[var(--text-muted)] mb-1">Departure time</dt>
+            <dd class="text-sm font-medium text-[var(--text)] break-words">
+              {{ departureTimeText || '-' }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-xs text-[var(--text-muted)] mb-1">Arrival time</dt>
+            <dd class="text-sm font-medium text-[var(--text)] break-words">
+              {{ arrivalTimeText || '-' }}
+            </dd>
+          </div>
+          <div class="sm:col-span-2">
+            <dt class="text-xs text-[var(--text-muted)] mb-1">Issued Time</dt>
+            <dd class="text-sm font-medium text-[var(--text)] break-words">
+              {{ issuedTimeText || '-' }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-xs text-[var(--text-muted)] mb-1">Ship speed (route/duration)</dt>
+            <dd class="text-sm font-medium text-[var(--text)] break-words">
+              {{ shipSpeedKnotsText || '-' }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-xs text-[var(--text-muted)] mb-1">Route distance</dt>
+            <dd class="text-sm font-medium text-[var(--text)] break-words">
+              {{ routeDistanceNmText || '-' }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-xs text-[var(--text-muted)] mb-1">Ship estimation duration</dt>
+            <dd class="text-sm font-medium text-[var(--text)] break-words">
+              {{ shipEstDurationText || '-' }}
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="rounded-xl p-4 border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <div>
+            <h3 class="text-sm font-semibold m-0 text-[var(--text)]">GeoJSON route</h3>
+            <p class="text-xs text-[var(--text-muted)] m-0 mt-1">FeatureCollection (LineString) untuk preview rute</p>
+          </div>
+          <button
+            type="button"
+            class="px-3 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--surface)] text-[var(--primary)] border border-[var(--primary)] shadow-[var(--shadow-sm)] transition-colors duration-200 hover:bg-[var(--primary-hover)] disabled:opacity-60 disabled:cursor-not-allowed"
+            :disabled="!geoJsonText || !geoJsonHasRoute"
+            @click="copyGeoJson"
+          >
+            {{ copied ? 'Copied' : 'Copy' }}
+          </button>
+        </div>
+        <textarea
+          class="w-full min-h-[240px] resize-y px-3 py-2 text-xs font-mono border border-[var(--border)] rounded-lg bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]"
+          :value="geoJsonText"
+          readonly
+        />
+      </div>
+    </div>
+
     <div class="flex items-center justify-end pt-4 flex-wrap gap-4">
       <div class="flex gap-3 items-center">
         <button
           type="button"
-          class="px-5 py-2 rounded-md text-sm font-medium cursor-pointer bg-transparent text-[var(--primary)] border border-[var(--primary)] transition-opacity duration-200 hover:bg-[rgba(15,118,110,0.1)]"
+          class="px-5 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--surface)] text-[var(--primary)] border border-[var(--primary)] shadow-[var(--shadow-sm)] transition-colors duration-200 hover:bg-[var(--primary-hover)]"
           @click="openManualRouteModal"
         >
           Buat Rute Manual
         </button>
         <button
           type="button"
-          class="px-5 py-2 rounded-md text-sm font-medium cursor-pointer bg-[var(--primary)] text-white border-none transition-opacity duration-200 hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+          class="px-5 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--primary)] text-[var(--color-white)] border-none shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_var(--primary-glow)] disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none"
           :disabled="isLoading"
           @click="handleProcess"
         >
@@ -141,9 +361,299 @@
 <script setup lang="ts">
 import ManualRouteModal from './ManualRouteModal.vue'
 
-const { routeInfo, manualRouteData, availableRoutes, selectedRouteId, processRoute, isLoading, saveRoute, selectRouteById } = useMaritimeData()
+const { routeInfo, manualRouteData, selectedStation, availableRoutes, selectedRouteId, processRoute, isLoading, saveRoute, selectRouteById, forecastTimeStep, timeZone, splitPointCoordinates } = useMaritimeData()
+
+const stationOptions = [
+  'Stasiun Maritim Bitung',
+  'Stasiun Maritim Ambon'
+]
 
 const showModal = ref(false)
+
+const routeNameText = computed(() => {
+  return manualRouteData.value?.routeName
+    || [routeInfo.value.portOrigin, routeInfo.value.portDestination].filter(Boolean).join(' - ')
+    || ''
+})
+
+const MONTHS_ID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+
+function tzOffsetHours(tz: 'WIB' | 'WITA' | 'WIT' | 'UTC') {
+  switch (tz) {
+    case 'WIB':
+      return 7
+    case 'WITA':
+      return 8
+    case 'WIT':
+      return 9
+    case 'UTC':
+      return 0
+  }
+}
+
+function pad2(n: number) {
+  return String(n).padStart(2, '0')
+}
+
+// "nearest hour" where minutes >= 30 rounds up.
+// Example: 16:28 -> 16:00; 16:31 -> 17:00
+function getNowNearestHourParts(baseTz: 'WIB' | 'WITA' | 'WIT' | 'UTC') {
+  const nowMs = Date.now()
+  const tzMs = nowMs + tzOffsetHours(baseTz) * 3600000
+  const dt = new Date(tzMs)
+
+  const minutes = dt.getUTCMinutes()
+  const seconds = dt.getUTCSeconds()
+  const millis = dt.getUTCMilliseconds()
+  const msIntoHour = (minutes * 60 + seconds) * 1000 + millis
+
+  const roundedTzMs = tzMs - msIntoHour + (minutes >= 30 ? 3600000 : 0)
+  const rounded = new Date(roundedTzMs)
+
+  const year = rounded.getUTCFullYear()
+  const month = rounded.getUTCMonth() + 1
+  const day = rounded.getUTCDate()
+  const hour = rounded.getUTCHours()
+
+  return {
+    dateStr: `${year}-${pad2(month)}-${pad2(day)}`,
+    timeStr: `${pad2(hour)}:00`
+  }
+}
+
+function addHoursToWibParts(dateStr: string, timeStr: string, hours: number) {
+  const dateParts = dateStr.split('-')
+  if (dateParts.length !== 3) return { dateStr, timeStr }
+  const y = Number(dateParts[0])
+  const m = Number(dateParts[1]) - 1
+  const d = Number(dateParts[2])
+
+  const timeParts = timeStr.split(':')
+  if (timeParts.length < 2) return { dateStr, timeStr }
+  const hh = Number(timeParts[0])
+  const mm = Number(timeParts[1])
+  if (![y, m, d, hh, mm].every(n => Number.isFinite(n))) return { dateStr, timeStr }
+
+  const base = Date.UTC(y, m, d, hh, mm, 0, 0)
+  const next = base + hours * 3600000
+  const dt = new Date(next)
+
+  return {
+    dateStr: `${dt.getUTCFullYear()}-${pad2(dt.getUTCMonth() + 1)}-${pad2(dt.getUTCDate())}`,
+    timeStr: `${pad2(dt.getUTCHours())}:${pad2(dt.getUTCMinutes())}`
+  }
+}
+
+onMounted(() => {
+  const dep = getNowNearestHourParts(timeZone.value)
+  const arr = addHoursToWibParts(dep.dateStr, dep.timeStr, 2)
+
+  routeInfo.value.departureDate = dep.dateStr
+  routeInfo.value.departureTime = dep.timeStr
+
+  routeInfo.value.arrivalDate = arr.dateStr
+  routeInfo.value.arrivalTime = arr.timeStr
+
+  // Issued follows the same "today nearest hour" rule.
+  routeInfo.value.issuedDate = dep.dateStr
+  routeInfo.value.issuedTime = dep.timeStr
+})
+
+// Interpreting input `departureDate/departureTime` etc as selected timezone local time,
+// then converting display values to the selected timezone.
+function formatDateTimeWithZone(dateStr: string, timeStr: string, targetTz: 'WIB' | 'WITA' | 'WIT' | 'UTC') {
+  if (!dateStr || !timeStr) return ''
+  const dateParts = dateStr.split('-')
+  if (dateParts.length !== 3) return ''
+  const y = Number(dateParts[0])
+  const m = Number(dateParts[1]) - 1
+  const d = Number(dateParts[2])
+  const timeParts = timeStr.split(':')
+  if (timeParts.length < 2) return ''
+  const hh = Number(timeParts[0])
+  const mm = Number(timeParts[1])
+  if ([y, m, d, hh, mm].some(n => !Number.isFinite(n))) return ''
+
+  const fromTzHours = tzOffsetHours(timeZone.value)
+  const utcMs = Date.UTC(y, m, d, hh, mm, 0) - fromTzHours * 3600000
+  const targetMs = utcMs + tzOffsetHours(targetTz) * 3600000
+  const dt = new Date(targetMs)
+
+  const day = dt.getUTCDate()
+  const monthName = MONTHS_ID[dt.getUTCMonth()]
+  const year = dt.getUTCFullYear()
+  const hour = String(dt.getUTCHours()).padStart(2, '0')
+  const minute = String(dt.getUTCMinutes()).padStart(2, '0')
+
+  return `${day} ${monthName} ${year} pukul ${hour}:${minute} ${targetTz}`
+}
+
+const departureTimeText = computed(() => formatDateTimeWithZone(routeInfo.value.departureDate, routeInfo.value.departureTime, timeZone.value))
+const arrivalTimeText = computed(() => formatDateTimeWithZone(routeInfo.value.arrivalDate, routeInfo.value.arrivalTime, timeZone.value))
+const issuedTimeText = computed(() => formatDateTimeWithZone(routeInfo.value.issuedDate, routeInfo.value.issuedTime, timeZone.value))
+
+const geoJsonHasRoute = computed(() => !!manualRouteData.value?.coordinates && manualRouteData.value.coordinates.length >= 2)
+
+function parseDateTime(dateStr: string, timeStr: string): Date | null {
+  if (!dateStr || !timeStr) return null
+  const dateParts = dateStr.split('-')
+  if (dateParts.length !== 3) return null
+  const y = Number(dateParts[0])
+  const m = Number(dateParts[1]) - 1
+  const d = Number(dateParts[2])
+  const timeParts = timeStr.split(':')
+  if (timeParts.length < 2) return null
+  const hh = Number(timeParts[0])
+  const mm = Number(timeParts[1])
+  if ([y, m, d, hh, mm].some(n => !Number.isFinite(n))) return null
+
+  // Interpreting input as currently selected timezone local time, then converting to an absolute moment.
+  const utcMs = Date.UTC(y, m, d, hh, mm, 0) - tzOffsetHours(timeZone.value) * 3600000
+  return new Date(utcMs)
+}
+
+function toRad(deg: number) {
+  return deg * Math.PI / 180
+}
+
+// Haversine distance along the WGS84 sphere; output is nautical miles (NM)
+function distanceNmBetween(a: [number, number], b: [number, number]) {
+  const [lng1, lat1] = a
+  const [lng2, lat2] = b
+  const R = 6371e3 // meters
+  const phi1 = toRad(lat1)
+  const phi2 = toRad(lat2)
+  const dPhi = toRad(lat2 - lat1)
+  const dLambda = toRad(lng2 - lng1)
+  const sinDphi = Math.sin(dPhi / 2)
+  const sinDlambda = Math.sin(dLambda / 2)
+  const h = sinDphi * sinDphi + Math.cos(phi1) * Math.cos(phi2) * sinDlambda * sinDlambda
+  const c = 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h))
+  const meters = R * c
+  return meters / 1852
+}
+
+function formatDurationFromHours(hours: number) {
+  if (!Number.isFinite(hours) || hours <= 0) return ''
+  const totalMinutes = Math.round(hours * 60)
+  const h = Math.floor(totalMinutes / 60)
+  const m = totalMinutes % 60
+  return `${h} jam ${m} menit`
+}
+
+const routeDistanceNm = computed(() => {
+  if (!geoJsonHasRoute.value) return 0
+  const coords = manualRouteData.value!.coordinates
+  let sum = 0
+  for (let i = 1; i < coords.length; i++) {
+    sum += distanceNmBetween(coords[i - 1]!, coords[i]!)
+  }
+  return sum
+})
+
+const routeDurationHours = computed(() => {
+  const dep = parseDateTime(routeInfo.value.departureDate, routeInfo.value.departureTime)
+  const arr = parseDateTime(routeInfo.value.arrivalDate, routeInfo.value.arrivalTime)
+  if (!dep || !arr) return null
+  const diffMs = arr.getTime() - dep.getTime()
+  if (!Number.isFinite(diffMs) || diffMs <= 0) return null
+  return diffMs / (1000 * 60 * 60)
+})
+
+const shipSpeedKnots = computed(() => {
+  const durHours = routeDurationHours.value
+  if (!durHours || durHours <= 0) return null
+  const distance = routeDistanceNm.value
+  if (!distance || distance <= 0) return null
+  return distance / durHours
+})
+
+const shipEstDurationHours = computed(() => {
+  const speed = shipSpeedKnots.value
+  if (!speed || speed <= 0) return null
+  const distance = routeDistanceNm.value
+  if (!distance || distance <= 0) return null
+  return distance / speed
+})
+
+const shipSpeedKnotsText = computed(() => {
+  const v = shipSpeedKnots.value
+  if (v == null) return ''
+  const kmh = v * 1.852
+  return `${v.toFixed(2)} knot (${kmh.toFixed(2)} km/h)`
+})
+
+const routeDistanceNmText = computed(() => {
+  const d = routeDistanceNm.value
+  if (!Number.isFinite(d) || d <= 0) return ''
+  const km = d * 1.852
+  return `${d.toFixed(2)} NM (${km.toFixed(2)} km)`
+})
+
+const shipEstDurationText = computed(() => {
+  const v = shipEstDurationHours.value
+  return v == null ? '' : formatDurationFromHours(v)
+})
+
+const geoJson = computed<GeoJSON.FeatureCollection>(() => {
+  if (!geoJsonHasRoute.value) {
+    return { type: 'FeatureCollection', features: [] }
+  }
+  const coords = manualRouteData.value!.coordinates
+  return {
+    type: 'FeatureCollection',
+    features: [{
+      type: 'Feature',
+      properties: {
+        station: selectedStation.value,
+        shipName: routeInfo.value.shipName,
+        routeName: routeNameText.value,
+        departureTime: departureTimeText.value,
+        arrivalTime: arrivalTimeText.value,
+        issuedTime: issuedTimeText.value,
+        timeZone: timeZone.value,
+        forecastTimeStepHours: forecastTimeStep.value,
+        shipSpeedKnots: shipSpeedKnots.value == null ? null : Number(shipSpeedKnots.value.toFixed(2)),
+        shipEstimationDuration: shipEstDurationText.value || null,
+        routeDistanceNm: routeDistanceNm.value > 0 ? Number(routeDistanceNm.value.toFixed(2)) : null,
+        routeDurationHours: routeDurationHours.value == null ? null : Number(routeDurationHours.value.toFixed(3)),
+        a: routeInfo.value.portOrigin,
+        b: routeInfo.value.portDestination,
+        location: 'route'
+      },
+      geometry: {
+        type: 'LineString',
+        coordinates: coords
+      }
+    }]
+  }
+})
+
+const geoJsonText = computed(() => JSON.stringify(geoJson.value, null, 2))
+
+const copied = ref(false)
+
+async function copyGeoJson() {
+  if (!geoJsonHasRoute.value) return
+  try {
+    await navigator.clipboard.writeText(geoJsonText.value)
+    copied.value = true
+    setTimeout(() => { copied.value = false }, 1200)
+  } catch {
+    // Fallback: older browsers may not allow clipboard without permissions.
+    const ta = document.createElement('textarea')
+    ta.value = geoJsonText.value
+    ta.setAttribute('readonly', 'true')
+    ta.style.position = 'absolute'
+    ta.style.left = '-9999px'
+    document.body.appendChild(ta)
+    ta.select()
+    document.execCommand('copy')
+    document.body.removeChild(ta)
+    copied.value = true
+    setTimeout(() => { copied.value = false }, 1200)
+  }
+}
 
 function openManualRouteModal() {
   showModal.value = true

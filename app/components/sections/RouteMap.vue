@@ -1,7 +1,7 @@
 <template>
   <div
     ref="mapEl"
-    class="w-full h-[300px] min-h-[300px] rounded-lg overflow-hidden relative bg-[var(--surface-hover)]"
+    class="w-full h-[300px] min-h-[300px] rounded-xl overflow-hidden relative bg-[var(--input-bg)] border border-[var(--border)] shadow-[var(--shadow-md)]"
   />
 </template>
 
@@ -11,11 +11,13 @@ import 'leaflet/dist/leaflet.css'
 
 const props = defineProps<{
   routeCoordinates?: [number, number][]
+  splitMarkers?: [number, number][]
 }>()
 
 const mapEl = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 let geoJsonLayer: L.GeoJSON | null = null
+let markerLayerGroup: L.LayerGroup | null = null
 let Leaflet: typeof L | null = null
 
 const DEFAULT_COORDINATES: [number, number][] = [
@@ -45,6 +47,51 @@ const DEFAULT_COORDINATES: [number, number][] = [
   [125.54988935033327, 3.4336870706982126]
 ]
 
+function bearingDeg(from: [number, number], to: [number, number]): number {
+  const [lng1, lat1] = from
+  const [lng2, lat2] = to
+  const toRad = (d: number) => d * Math.PI / 180
+  const dLng = toRad(lng2 - lng1)
+  const phi1 = toRad(lat1)
+  const phi2 = toRad(lat2)
+  const y = Math.sin(dLng) * Math.cos(phi2)
+  const x = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(dLng)
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360
+}
+
+function createArrowIcon(L: typeof import('leaflet').default, rotation: number) {
+  const cssRotation = rotation - 90
+  return L.divIcon({
+    className: '',
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
+    html: `<div style="width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;transform:rotate(${cssRotation}deg)"><svg width="11" height="11" viewBox="0 0 12 12"><path d="M2 1l8 5-8 5V1z" fill="#2563eb"/></svg></div>`
+  })
+}
+
+function renderSplitMarkers() {
+  if (!map || !Leaflet) return
+  if (!markerLayerGroup) {
+    markerLayerGroup = Leaflet.layerGroup().addTo(map)
+  }
+  markerLayerGroup.clearLayers()
+
+  const pts = props.splitMarkers
+  if (!pts || pts.length < 2) return
+
+  for (let i = 0; i < pts.length; i++) {
+    const [lng, lat] = pts[i]!
+    let bearing = 0
+    if (i < pts.length - 1) {
+      bearing = bearingDeg(pts[i]!, pts[i + 1]!)
+    } else if (i > 0) {
+      bearing = bearingDeg(pts[i - 1]!, pts[i]!)
+    }
+    const icon = createArrowIcon(Leaflet, bearing)
+    Leaflet.marker([lat, lng], { icon }).addTo(markerLayerGroup!)
+  }
+}
+
 function getRouteData(): GeoJSON.FeatureCollection {
   const coords = props.routeCoordinates && props.routeCoordinates.length >= 2
     ? props.routeCoordinates
@@ -73,9 +120,10 @@ onMounted(async () => {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(map)
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#01a73e'
     geoJsonLayer = L.geoJSON(getRouteData() as never, {
       style: {
-        color: '#0f766e',
+        color: primaryColor,
         weight: 4,
         opacity: 0.9
       }
@@ -83,6 +131,7 @@ onMounted(async () => {
     if (geoJsonLayer.getBounds().isValid()) {
       map.fitBounds(geoJsonLayer.getBounds(), { padding: [20, 20] })
     }
+    renderSplitMarkers()
     await nextTick()
     requestAnimationFrame(() => {
       requestAnimationFrame(() => map?.invalidateSize())
@@ -118,9 +167,16 @@ watch(
   { deep: true }
 )
 
+watch(
+  () => props.splitMarkers,
+  () => renderSplitMarkers(),
+  { deep: true }
+)
+
 onBeforeUnmount(() => {
   map?.remove()
   map = null
   geoJsonLayer = null
+  markerLayerGroup = null
 })
 </script>

@@ -2,10 +2,10 @@
   <Teleport to="body">
     <div
       v-if="modelValue"
-      class="fixed inset-0 flex items-center justify-center z-[1000] p-4 bg-black/50"
+      class="fixed inset-0 flex items-center justify-center z-[1000] p-4 bg-slate-900/45 backdrop-blur-[2px]"
       @click.self="close"
     >
-      <div class="bg-[var(--surface)] rounded-lg shadow-[0_4px_24px_rgba(0,0,0,0.2)] w-[80vw] h-[90vh] max-w-[80vw] max-h-[90vh] overflow-y-auto flex flex-col">
+      <div class="bg-[var(--surface)] rounded-xl shadow-[var(--shadow-card)] border border-[var(--border)] w-[80vw] h-[90vh] max-w-[80vw] max-h-[90vh] overflow-y-auto flex flex-col">
         <div class="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
           <h2 class="text-lg font-semibold m-0">Buat Rute Secara Manual</h2>
           <button
@@ -27,7 +27,7 @@
               id="route-name"
               v-model="routeName"
               type="text"
-              class="w-full mt-1 px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[rgba(15,118,110,0.2)]"
+              class="w-full mt-1 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
               placeholder="Contoh: Makassar - Batulicin"
             />
           </div>
@@ -49,11 +49,11 @@
                   </div>
                 </template>
               </ClientOnly>
-              <div class="absolute top-3 left-1/2 -translate-x-1/2 flex flex-row items-center gap-1.5 z-[500] shadow-md rounded-md p-1 bg-white/92">
+              <div class="absolute top-3 left-1/2 -translate-x-1/2 flex flex-row items-center gap-1.5 z-[500] shadow-[var(--shadow-md)] rounded-lg p-1 bg-[var(--surface)]/95 border border-[var(--border)]">
                 <button
                   type="button"
-                  class="flex items-center justify-center w-9 h-9 p-0 rounded-md border border-[var(--border)] bg-white/95 text-[var(--text)] cursor-pointer transition-colors duration-150 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
-                  :class="{ 'bg-[var(--primary)] text-white border-[var(--primary)]': activeTool === 'draw' }"
+                  class="flex items-center justify-center w-9 h-9 p-0 rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] cursor-pointer transition-colors duration-150 hover:bg-[var(--color-white)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  :class="{ 'bg-[var(--primary)] text-[var(--color-white)] border-[var(--primary)]': activeTool === 'draw' }"
                   title="Draw"
                   aria-label="Draw"
                   @click="activeTool = 'draw'"
@@ -66,8 +66,8 @@
                 </button>
                 <button
                   type="button"
-                  class="flex items-center justify-center w-9 h-9 p-0 rounded-md border border-[var(--border)] bg-white/95 text-[var(--text)] cursor-pointer transition-colors duration-150 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
-                  :class="{ 'bg-[var(--primary)] text-white border-[var(--primary)]': activeTool === 'pick' }"
+                  class="flex items-center justify-center w-9 h-9 p-0 rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] cursor-pointer transition-colors duration-150 hover:bg-[var(--color-white)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  :class="{ 'bg-[var(--primary)] text-[var(--color-white)] border-[var(--primary)]': activeTool === 'pick' }"
                   :disabled="coordinates.length < 2"
                   title="Pick"
                   aria-label="Pick"
@@ -116,7 +116,7 @@
             </button>
             <button
               type="submit"
-              class="px-4 py-2 rounded-md text-sm font-medium cursor-pointer bg-[var(--primary)] text-white border-none hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+              class="px-4 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--primary)] text-[var(--color-white)] border-none shadow-[var(--shadow-md)] hover:opacity-95 hover:shadow-[0_6px_20px_var(--primary-glow)] disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none"
               :disabled="coordinates.length < 2"
             >
               Simpan Rute
@@ -283,7 +283,7 @@ function updatePolyline() {
   polyline?.remove()
   const latLngs = coordinates.value.map(([lng, lat]) => [lat, lng] as [number, number])
   polyline = L.polyline(latLngs, {
-    color: '#0f766e',
+    color: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#01a73e',
     weight: 6,
     opacity: 0.9
   }).addTo(map)
