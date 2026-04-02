@@ -6,7 +6,7 @@
       <h2 class="inline-flex items-center rounded-md bg-[color-mix(in_srgb,var(--accent)_18%,white_82%)] px-2.5 py-1 text-base font-semibold m-0 mb-1 text-[var(--text)]">
         Forecast Table Data
       </h2>
-      <p class="text-xs text-[var(--text-muted)] m-0">Edit sel prakiraan per titik waktu</p>
+      <p class="text-xs text-[var(--text-muted)] m-0">Tanggal, waktu, dan koordinat hanya baca; kolom lain dapat diedit</p>
     </div>
     <div class="overflow-x-auto mb-4 rounded-lg shadow-[var(--shadow-sm)] border border-[var(--border)] bg-[var(--surface)]">
       <table class="w-full border-collapse text-[0.8125rem] [&_th]:py-2 [&_th]:px-3 [&_td]:py-2 [&_td]:px-3 [&_th]:text-left [&_td]:text-left [&_th]:border-b [&_td]:border-b [&_th]:border-[var(--border)] [&_td]:border-[var(--border)]">
@@ -14,7 +14,7 @@
           <tr class="bg-[var(--table-header-bg)] text-[var(--table-header-text)] font-bold whitespace-nowrap [&>th]:border-none [&>th]:border-b [&>th]:border-[var(--color-white)]/20">
             <th>Data dd/mm/yy</th>
             <th>Waktu</th>
-            <th>Koordinat</th>
+            <th class="min-w-[16rem] w-[min(22rem,40vw)]">Koordinat</th>
             <th>Visibility</th>
             <th>Cuaca</th>
             <th>rr</th>
@@ -30,7 +30,7 @@
           <tr class="bg-[var(--surface)] text-[var(--text-muted)] font-medium text-xs whitespace-nowrap [&>th]:border-none [&>th]:border-b [&>th]:border-[var(--border)]">
             <th>dd/mm/yy</th>
             <th>—</th>
-            <th>lat, lon</th>
+            <th class="min-w-[16rem] w-[min(22rem,40vw)]">lat, lon</th>
             <th>km</th>
             <th>—</th>
             <th>mm</th>
@@ -50,9 +50,15 @@
             :key="row.id"
             class="group"
           >
-            <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle font-bold text-[var(--text)]"><input v-model="row.date" type="text" placeholder="dd/mm/yy" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
-            <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle font-bold text-[var(--text)]"><input v-model="row.time" type="text" placeholder="00:00" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
-            <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.coordinate" type="text" placeholder="Koordinat" class="w-full min-w-[100px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
+            <td class="bg-[color-mix(in_srgb,var(--surface)_92%,var(--border)_8%)] group-hover:bg-[color-mix(in_srgb,var(--surface-hover)_92%,var(--border)_8%)] align-middle font-bold text-[var(--text)]">
+              <span class="block min-w-[70px] py-1.5 px-2 rounded-md border border-transparent text-[var(--text)] select-text">{{ row.date || '—' }}</span>
+            </td>
+            <td class="bg-[color-mix(in_srgb,var(--surface)_92%,var(--border)_8%)] group-hover:bg-[color-mix(in_srgb,var(--surface-hover)_92%,var(--border)_8%)] align-middle font-bold text-[var(--text)]">
+              <span class="block min-w-[70px] py-1.5 px-2 rounded-md border border-transparent text-[var(--text)] select-text">{{ row.time || '—' }}</span>
+            </td>
+            <td class="bg-[color-mix(in_srgb,var(--surface)_92%,var(--border)_8%)] group-hover:bg-[color-mix(in_srgb,var(--surface-hover)_92%,var(--border)_8%)] align-middle min-w-[16rem] w-[min(22rem,40vw)] max-w-[28rem]">
+              <span class="block py-1.5 px-2 rounded-md border border-transparent font-mono text-[0.75rem] leading-snug text-[var(--text)] break-all whitespace-normal select-text">{{ row.coordinate || '—' }}</span>
+            </td>
             <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.visibility" type="text" placeholder="—" class="w-full min-w-[56px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
             <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.weather" type="text" placeholder="Cuaca" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
             <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.rr" type="text" placeholder="—" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>

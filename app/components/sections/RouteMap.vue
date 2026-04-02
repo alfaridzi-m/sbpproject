@@ -12,11 +12,14 @@ import 'leaflet/dist/leaflet.css'
 const props = defineProps<{
   routeCoordinates?: [number, number][]
   splitMarkers?: [number, number][]
+  /** GeoJSON Polygon outer ring [lng, lat], closed (optional AOI from manual modal) */
+  polygonRing?: [number, number][]
 }>()
 
 const mapEl = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 let geoJsonLayer: L.GeoJSON | null = null
+let polygonLayer: L.Polygon | null = null
 let markerLayerGroup: L.LayerGroup | null = null
 let Leaflet: typeof L | null = null
 
@@ -67,6 +70,36 @@ function createArrowIcon(L: typeof import('leaflet').default, rotation: number) 
     iconAnchor: [11, 11],
     html: `<div style="width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;transform:rotate(${cssRotation}deg)"><svg width="11" height="11" viewBox="0 0 12 12"><path d="M2 1l8 5-8 5V1z" fill="#2563eb"/></svg></div>`
   })
+}
+
+function renderPolygon() {
+  if (!map || !Leaflet) return
+  polygonLayer?.remove()
+  polygonLayer = null
+  const ring = props.polygonRing
+  if (!ring || ring.length < 4) return
+  const latlngs: [number, number][] = ring.map(([lng, lat]) => [lat, lng])
+  polygonLayer = Leaflet.polygon(latlngs, {
+    color: '#2563eb',
+    weight: 2,
+    fillColor: '#3b82f6',
+    fillOpacity: 0.14
+  }).addTo(map)
+}
+
+function fitMapToLayers() {
+  if (!map || !geoJsonLayer) return
+  const lineBounds = geoJsonLayer.getBounds()
+  let bounds = lineBounds.isValid() ? lineBounds : null
+  if (polygonLayer) {
+    const pb = polygonLayer.getBounds()
+    if (pb.isValid()) {
+      bounds = bounds ? bounds.extend(pb) : pb
+    }
+  }
+  if (bounds?.isValid()) {
+    map.fitBounds(bounds, { padding: [20, 20] })
+  }
 }
 
 function renderSplitMarkers() {
@@ -128,9 +161,8 @@ onMounted(async () => {
         opacity: 0.9
       }
     }).addTo(map)
-    if (geoJsonLayer.getBounds().isValid()) {
-      map.fitBounds(geoJsonLayer.getBounds(), { padding: [20, 20] })
-    }
+    renderPolygon()
+    fitMapToLayers()
     renderSplitMarkers()
     await nextTick()
     requestAnimationFrame(() => {
@@ -159,9 +191,18 @@ watch(
       }
       geoJsonLayer.addData(feature as never)
     }
-    if (geoJsonLayer.getBounds().isValid()) {
-      map.fitBounds(geoJsonLayer.getBounds(), { padding: [20, 20] })
-    }
+    renderPolygon()
+    fitMapToLayers()
+    nextTick(() => map?.invalidateSize())
+  },
+  { deep: true }
+)
+
+watch(
+  () => props.polygonRing,
+  () => {
+    renderPolygon()
+    fitMapToLayers()
     nextTick(() => map?.invalidateSize())
   },
   { deep: true }
@@ -174,6 +215,7 @@ watch(
 )
 
 onBeforeUnmount(() => {
+  polygonLayer = null
   map?.remove()
   map = null
   geoJsonLayer = null

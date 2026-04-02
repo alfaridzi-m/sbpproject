@@ -221,10 +221,11 @@
           </div>
         </div>
 
-        <!-- Forecaster -->
+        <!-- Forecaster & PDF header (upt / kontak) -->
         <div class="rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--accent)_6%)] p-4">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] m-0 mb-3">Forecaster &amp; header PDF</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="flex flex-col gap-1.5">
+            <div class="flex flex-col gap-1.5 md:col-span-2">
               <label for="forecaster" class="text-sm font-medium text-[var(--text)]">Forecaster</label>
               <input
                 id="forecaster"
@@ -234,12 +235,57 @@
                 placeholder="Nama forecaster"
               />
             </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="nama-upt" class="text-sm font-medium text-[var(--text)]">Nama Upt</label>
+              <input
+                id="nama-upt"
+                v-model="routeInfo.namaUpt"
+                type="text"
+                class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                placeholder="Nama unit pelaksana teknis"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5 md:col-span-2">
+              <label for="pdf-alamat" class="text-sm font-medium text-[var(--text)]">Alamat</label>
+              <textarea
+                id="pdf-alamat"
+                v-model="routeInfo.alamat"
+                rows="2"
+                class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)] resize-y min-h-[2.75rem]"
+                placeholder="Alamat lengkap kantor (header PDF)"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="pdf-telp" class="text-sm font-medium text-[var(--text)]">Telp</label>
+              <input
+                id="pdf-telp"
+                v-model="routeInfo.telp"
+                type="text"
+                class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                placeholder="Nomor telepon"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5 md:col-span-2">
+              <label for="pdf-email" class="text-sm font-medium text-[var(--text)]">Email</label>
+              <input
+                id="pdf-email"
+                v-model="routeInfo.email"
+                type="email"
+                autocomplete="email"
+                class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                placeholder="email@domain.go.id"
+              />
+            </div>
           </div>
         </div>
       </div>
       <div class="flex flex-col gap-4 min-w-0 w-full">
         <div class="min-h-[300px] min-w-0 w-full">
-          <SectionsRouteMap :route-coordinates="manualRouteData?.coordinates ?? undefined" :split-markers="splitPointCoordinates" />
+          <SectionsRouteMap
+            :route-coordinates="manualRouteData?.coordinates ?? undefined"
+            :split-markers="splitPointCoordinates"
+            :polygon-ring="manualRouteData?.boundingRectangle ?? undefined"
+          />
         </div>
         <div class="rounded-xl p-4 border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
           <h3 class="text-sm font-semibold m-0 mb-3 text-[var(--text)]">Summary Request</h3>
@@ -633,33 +679,47 @@ const geoJson = computed<GeoJSON.FeatureCollection>(() => {
     return { type: 'FeatureCollection', features: [] }
   }
   const coords = manualRouteData.value!.coordinates
-  return {
-    type: 'FeatureCollection',
-    features: [{
+  const ring = manualRouteData.value?.boundingRectangle
+  const lineFeature: GeoJSON.Feature = {
+    type: 'Feature',
+    properties: {
+      station: selectedStation.value,
+      shipName: routeInfo.value.shipName,
+      routeName: routeNameText.value,
+      departureTime: departureTimeText.value,
+      arrivalTime: arrivalTimeText.value,
+      issuedTime: issuedTimeText.value,
+      timeZone: timeZone.value,
+      forecastTimeStepHours: forecastTimeStep.value,
+      shipSpeedKnots: shipSpeedKnots.value == null ? null : Number(shipSpeedKnots.value.toFixed(2)),
+      shipEstimationDuration: shipEstDurationText.value || null,
+      routeDistanceNm: routeDistanceNm.value > 0 ? Number(routeDistanceNm.value.toFixed(2)) : null,
+      routeDurationHours: routeDurationHours.value == null ? null : Number(routeDurationHours.value.toFixed(3)),
+      a: routeInfo.value.portOrigin,
+      b: routeInfo.value.portDestination,
+      location: 'route'
+    },
+    geometry: {
+      type: 'LineString',
+      coordinates: coords
+    }
+  }
+  const features: GeoJSON.Feature[] = [lineFeature]
+  if (ring && ring.length >= 4) {
+    features.push({
       type: 'Feature',
       properties: {
         station: selectedStation.value,
-        shipName: routeInfo.value.shipName,
         routeName: routeNameText.value,
-        departureTime: departureTimeText.value,
-        arrivalTime: arrivalTimeText.value,
-        issuedTime: issuedTimeText.value,
-        timeZone: timeZone.value,
-        forecastTimeStepHours: forecastTimeStep.value,
-        shipSpeedKnots: shipSpeedKnots.value == null ? null : Number(shipSpeedKnots.value.toFixed(2)),
-        shipEstimationDuration: shipEstDurationText.value || null,
-        routeDistanceNm: routeDistanceNm.value > 0 ? Number(routeDistanceNm.value.toFixed(2)) : null,
-        routeDurationHours: routeDurationHours.value == null ? null : Number(routeDurationHours.value.toFixed(3)),
-        a: routeInfo.value.portOrigin,
-        b: routeInfo.value.portDestination,
-        location: 'route'
+        location: 'bounding-rectangle'
       },
       geometry: {
-        type: 'LineString',
-        coordinates: coords
+        type: 'Polygon',
+        coordinates: [ring]
       }
-    }]
+    })
   }
+  return { type: 'FeatureCollection', features }
 })
 
 const geoJsonText = computed(() => JSON.stringify(geoJson.value, null, 2))
@@ -705,8 +765,16 @@ function openManualRouteModal() {
   showModal.value = true
 }
 
-async function onManualRouteSubmit(data: { routeName: string; coordinates: [number, number][] }) {
-  manualRouteData.value = { routeName: data.routeName, coordinates: data.coordinates }
+async function onManualRouteSubmit(data: {
+  routeName: string
+  coordinates: [number, number][]
+  boundingRectangle?: [number, number][]
+}) {
+  manualRouteData.value = {
+    routeName: data.routeName,
+    coordinates: data.coordinates,
+    ...(data.boundingRectangle?.length ? { boundingRectangle: data.boundingRectangle } : {})
+  }
   if (data.routeName) {
     const parts = data.routeName.split('-').map((s) => s.trim()).filter(Boolean)
     if (parts.length >= 1) routeInfo.value.portOrigin = parts[0] ?? ''

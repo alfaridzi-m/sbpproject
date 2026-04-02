@@ -17,9 +17,9 @@
           />
           <div class="flex-1 text-center">
             <p class="text-[0.875rem] font-bold m-0 mb-0.5 text-teal-700 tracking-wide">AGENCY FOR METEOROLOGY, CLIMATOLOGY, AND GEOPHYSICS</p>
-            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">Stasiun Meteorologi Klas II Maritim Paotere Makassar</p>
-            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">Jl. Salodong, Kel. Untia, Kec. Biringkanaya, Kota Makassar, Sulawesi Selatan (90243)</p>
-            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: 081242069700 | Email: stamar.paotere@bmkg.go.id</p>
+            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">{{ routeInfo.namaUpt || 'Stasiun Meteorologi Klas II Maritim Paotere Makassar' }}</p>
+            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">{{ routeInfo.alamat || 'Jl. Salodong, Kel. Untia, Kec. Biringkanaya, Kota Makassar, Sulawesi Selatan (90243)' }}</p>
+            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: {{ routeInfo.telp || '081242069700' }} | Email: {{ routeInfo.email || 'stamar.paotere@bmkg.go.id' }}</p>
           </div>
         </header>
 
@@ -53,10 +53,6 @@
             <div>
               <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Issued</p>
               <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ formatDateTime(routeInfo.issuedDate, routeInfo.issuedTime) || '—' }} LT</p>
-            </div>
-            <div>
-              <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Forecaster</p>
-              <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ routeInfo.forecaster || '—' }}</p>
             </div>
           </div>
           <div class="border-b-[3px] border-double border-slate-900 mt-3" />
@@ -176,9 +172,9 @@
           <img :src="bmkgLogoUrl" alt="BMKG Logo" class="bmkg-logo shrink-0 object-contain" width="70" height="88" />
           <div class="flex-1 text-center">
             <p class="text-[0.875rem] font-bold m-0 mb-0.5 text-teal-700 tracking-wide">AGENCY FOR METEOROLOGY, CLIMATOLOGY, AND GEOPHYSICS</p>
-            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">Stasiun Meteorologi Klas II Maritim Paotere Makassar</p>
-            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">Jl. Salodong, Kel. Untia, Kec. Biringkanaya, Kota Makassar, Sulawesi Selatan (90243)</p>
-            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: 081242069700 | Email: stamar.paotere@bmkg.go.id</p>
+            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">{{ routeInfo.namaUpt || 'Stasiun Meteorologi Klas II Maritim Paotere Makassar' }}</p>
+            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">{{ routeInfo.alamat || 'Jl. Salodong, Kel. Untia, Kec. Biringkanaya, Kota Makassar, Sulawesi Selatan (90243)' }}</p>
+            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: {{ routeInfo.telp || '081242069700' }} | Email: {{ routeInfo.email || 'stamar.paotere@bmkg.go.id' }}</p>
           </div>
         </header>
 
@@ -212,10 +208,6 @@
             <div>
               <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Issued</p>
               <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ formatDateTime(routeInfo.issuedDate, routeInfo.issuedTime) || '—' }} LT</p>
-            </div>
-            <div>
-              <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Forecaster</p>
-              <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ routeInfo.forecaster || '—' }}</p>
             </div>
           </div>
           <div class="border-b-[3px] border-double border-slate-900 mt-3" />
@@ -409,9 +401,9 @@
           <img :src="bmkgLogoUrl" alt="BMKG Logo" class="bmkg-logo shrink-0 object-contain" width="70" height="88" />
           <div class="flex-1 text-center">
             <p class="text-[0.875rem] font-bold m-0 mb-0.5 text-teal-700 tracking-wide">AGENCY FOR METEOROLOGY, CLIMATOLOGY, AND GEOPHYSICS</p>
-            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">Stasiun Meteorologi Klas II Maritim Paotere Makassar</p>
-            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">Jl. Salodong, Kel. Untia, Kec. Biringkanaya, Kota Makassar, Sulawesi Selatan (90243)</p>
-            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: 081242069700 | Email: stamar.paotere@bmkg.go.id</p>
+            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">{{ routeInfo.namaUpt || 'Stasiun Meteorologi Klas II Maritim Paotere Makassar' }}</p>
+            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">{{ routeInfo.alamat || 'Jl. Salodong, Kel. Untia, Kec. Biringkanaya, Kota Makassar, Sulawesi Selatan (90243)' }}</p>
+            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: {{ routeInfo.telp || '081242069700' }} | Email: {{ routeInfo.email || 'stamar.paotere@bmkg.go.id' }}</p>
           </div>
         </header>
 
@@ -445,10 +437,6 @@
             <div>
               <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Issued</p>
               <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ formatDateTime(routeInfo.issuedDate, routeInfo.issuedTime) || '—' }} LT</p>
-            </div>
-            <div>
-              <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Forecaster</p>
-              <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ routeInfo.forecaster || '—' }}</p>
             </div>
           </div>
           <div class="border-b-[3px] border-double border-slate-900 mt-3" />
@@ -579,9 +567,9 @@
           <img :src="bmkgLogoUrl" alt="BMKG Logo" class="bmkg-logo shrink-0 object-contain" width="70" height="88" />
           <div class="flex-1 text-center">
             <p class="text-[0.875rem] font-bold m-0 mb-0.5 text-teal-700 tracking-wide">AGENCY FOR METEOROLOGY, CLIMATOLOGY, AND GEOPHYSICS</p>
-            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">Stasiun Meteorologi Klas II Maritim Paotere Makassar</p>
-            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">Jl. Salodong, Kel. Untia, Kec. Biringkanaya, Kota Makassar, Sulawesi Selatan (90243)</p>
-            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: 081242069700 | Email: stamar.paotere@bmkg.go.id</p>
+            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">{{ routeInfo.namaUpt || 'Stasiun Meteorologi Klas II Maritim Paotere Makassar' }}</p>
+            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">{{ routeInfo.alamat || 'Jl. Salodong, Kel. Untia, Kec. Biringkanaya, Kota Makassar, Sulawesi Selatan (90243)' }}</p>
+            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: {{ routeInfo.telp || '081242069700' }} | Email: {{ routeInfo.email || 'stamar.paotere@bmkg.go.id' }}</p>
           </div>
         </header>
 
@@ -615,10 +603,6 @@
             <div>
               <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Issued</p>
               <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ formatDateTime(routeInfo.issuedDate, routeInfo.issuedTime) || '—' }} LT</p>
-            </div>
-            <div>
-              <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Forecaster</p>
-              <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ routeInfo.forecaster || '—' }}</p>
             </div>
           </div>
           <div class="border-b-[3px] border-double border-slate-900 mt-3" />
@@ -647,9 +631,9 @@
           <img :src="bmkgLogoUrl" alt="BMKG Logo" class="bmkg-logo shrink-0 object-contain" width="70" height="88" />
           <div class="flex-1 text-center">
             <p class="text-[0.875rem] font-bold m-0 mb-0.5 text-teal-700 tracking-wide">AGENCY FOR METEOROLOGY, CLIMATOLOGY, AND GEOPHYSICS</p>
-            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">Stasiun Meteorologi Klas II Maritim Paotere Makassar</p>
-            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">Jl. Salodong, Kel. Untia, Kec. Biringkanaya, Kota Makassar, Sulawesi Selatan (90243)</p>
-            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: 081242069700 | Email: stamar.paotere@bmkg.go.id</p>
+            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">{{ routeInfo.namaUpt || 'Stasiun Meteorologi Klas II Maritim Paotere Makassar' }}</p>
+            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">{{ routeInfo.alamat || 'Jl. Salodong, Kel. Untia, Kec. Biringkanaya, Kota Makassar, Sulawesi Selatan (90243)' }}</p>
+            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: {{ routeInfo.telp || '081242069700' }} | Email: {{ routeInfo.email || 'stamar.paotere@bmkg.go.id' }}</p>
           </div>
         </header>
 
@@ -683,10 +667,6 @@
             <div>
               <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Issued</p>
               <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ formatDateTime(routeInfo.issuedDate, routeInfo.issuedTime) || '—' }} LT</p>
-            </div>
-            <div>
-              <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Forecaster</p>
-              <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ routeInfo.forecaster || '—' }}</p>
             </div>
           </div>
           <div class="border-b-[3px] border-double border-slate-900 mt-3" />

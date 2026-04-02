@@ -17,9 +17,9 @@
           />
           <div class="flex-1 text-center">
             <p class="text-[0.875rem] font-bold m-0 mb-0.5 text-slate-900 tracking-wide">BADAN METEOROLOGI, KLIMATOLOGI, DAN GEOFISIKA</p>
-            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-700">Stasiun Meteorologi Maritim Tenau Kupang</p>
-            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">Jalan M. Praja Alak</p>
-            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: 081215122192 | Email: stamar.tenau@bmkg.go.id</p>
+            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-700">{{ routeInfo.namaUpt || 'Stasiun Meteorologi Maritim Tenau Kupang' }}</p>
+            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">{{ routeInfo.alamat || 'Jalan M. Praja Alak' }}</p>
+            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: {{ routeInfo.telp || '081215122192' }} | Email: {{ routeInfo.email || 'stamar.tenau@bmkg.go.id' }}</p>
           </div>
         </header>
 
@@ -53,10 +53,6 @@
             <div>
               <p class="m-0 font-bold text-slate-900">Issued</p>
               <p class="m-0 text-slate-700">{{ formatDateTime(routeInfo.issuedDate, routeInfo.issuedTime) || '—' }} LT</p>
-            </div>
-            <div>
-              <p class="m-0 font-bold text-slate-900">Forecaster</p>
-              <p class="m-0 text-slate-700">{{ routeInfo.forecaster || '—' }}</p>
             </div>
           </div>
         </div>
@@ -151,9 +147,9 @@
           />
           <div class="flex-1 text-center">
             <p class="text-[0.875rem] font-bold m-0 mb-0.5 text-slate-900 tracking-wide">BADAN METEOROLOGI, KLIMATOLOGI, DAN GEOFISIKA</p>
-            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-700">Stasiun Meteorologi Maritim Tenau Kupang</p>
-            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">Jalan M. Praja Alak</p>
-            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: 081215122192 | Email: stamar.tenau@bmkg.go.id</p>
+            <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-700">{{ routeInfo.namaUpt || 'Stasiun Meteorologi Maritim Tenau Kupang' }}</p>
+            <p class="text-[0.6875rem] m-0 mb-0.5 text-slate-600">{{ routeInfo.alamat || 'Jalan M. Praja Alak' }}</p>
+            <p class="text-[0.6875rem] m-0 text-slate-600">Telp: {{ routeInfo.telp || '081215122192' }} | Email: {{ routeInfo.email || 'stamar.tenau@bmkg.go.id' }}</p>
           </div>
         </header>
 
@@ -187,10 +183,6 @@
             <div>
               <p class="m-0 font-bold text-slate-900">Issued</p>
               <p class="m-0 text-slate-700">{{ formatDateTime(routeInfo.issuedDate, routeInfo.issuedTime) || '—' }} LT</p>
-            </div>
-            <div>
-              <p class="m-0 font-bold text-slate-900">Forecaster</p>
-              <p class="m-0 text-slate-700">{{ routeInfo.forecaster || '—' }}</p>
             </div>
           </div>
         </div>

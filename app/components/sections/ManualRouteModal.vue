@@ -40,8 +40,11 @@
               <ClientOnly>
                 <div
                   ref="mapEl"
-                  class="w-full h-[55vh] min-h-[400px] rounded-lg overflow-hidden border border-[var(--border)] cursor-crosshair"
-                  :class="{ 'cursor-move': activeTool === 'pick' }"
+                  class="w-full h-[55vh] min-h-[400px] rounded-lg overflow-hidden border border-[var(--border)]"
+                  :class="{
+                    'cursor-move': activeTool === 'pick',
+                    'cursor-crosshair': activeTool === 'draw' || activeTool === 'rectangle'
+                  }"
                 />
                 <template #fallback>
                   <div class="h-[55vh] min-h-[400px] flex items-center justify-center text-[var(--text-muted)] text-sm bg-[var(--surface-hover)] border-2 border-dashed border-[var(--border)] rounded-lg">
@@ -77,6 +80,18 @@
                     <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
                   </svg>
                 </button>
+                <button
+                  type="button"
+                  class="flex items-center justify-center w-9 h-9 p-0 rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] cursor-pointer transition-colors duration-150 hover:bg-[var(--color-white)]"
+                  :class="{ 'bg-[var(--primary)] text-[var(--color-white)] border-[var(--primary)]': activeTool === 'rectangle' }"
+                  title="Persegi (AOI)"
+                  aria-label="Gambar persegi"
+                  @click="activeTool = 'rectangle'"
+                >
+                  <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="4" width="16" height="16" rx="1" />
+                  </svg>
+                </button>
               </div>
             </div>
             <div class="flex items-center gap-2 mt-2 flex-wrap">
@@ -94,15 +109,30 @@
                 class="px-3 py-1.5 rounded-md text-[13px] font-medium cursor-pointer bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] hover:bg-[var(--surface-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
                 :disabled="coordinates.length === 0"
                 title="Hapus semua titik"
-                @click="clearRoute"
+                @click="clearLineOnly"
               >
                 Hapus Semua
+              </button>
+              <button
+                type="button"
+                class="px-3 py-1.5 rounded-md text-[13px] font-medium cursor-pointer bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] hover:bg-[var(--surface-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+                :disabled="!boundingRectangle"
+                title="Hapus persegi AOI"
+                @click="clearRectangle"
+              >
+                Hapus persegi
               </button>
               <span
                 v-if="coordinates.length > 0"
                 class="text-xs text-[var(--text-muted)]"
               >
                 {{ coordinates.length }} titik
+              </span>
+              <span
+                v-if="boundingRectangle"
+                class="text-xs text-[var(--text-muted)]"
+              >
+                AOI tersimpan
               </span>
             </div>
           </div>
@@ -134,6 +164,8 @@ import type L from 'leaflet'
 export interface ManualRouteData {
   routeName: string
   coordinates: [number, number][]
+  /** GeoJSON Polygon outer ring [lng, lat] (closed); included in forecast GeoJSON request */
+  boundingRectangle?: [number, number][]
 }
 
 const modelValue = defineModel<boolean>({ default: false })
@@ -142,16 +174,19 @@ const emit = defineEmits<{
   submit: [data: ManualRouteData]
 }>()
 
-type ToolMode = 'draw' | 'pick'
+type ToolMode = 'draw' | 'pick' | 'rectangle'
 
 const mapEl = ref<HTMLElement | null>(null)
 const routeName = ref('')
 const coordinates = ref<[number, number][]>([])
 const activeTool = ref<ToolMode>('draw')
+/** Closed outer ring for GeoJSON Polygon (from drag-rectangle tool) */
+const boundingRectangle = ref<[number, number][] | null>(null)
 
 const toolHints: Record<ToolMode, string> = {
   draw: 'Klik pada peta untuk menggambar garis rute',
-  pick: 'Seret titik untuk memindahkan, atau klik garis untuk menambah titik'
+  pick: 'Seret titik untuk memindahkan, atau klik garis untuk menambah titik',
+  rectangle: 'Klik dan seret pada peta untuk menggambar persegi (AOI); tersimpan ke GeoJSON permintaan prakiraan'
 }
 
 let map: L.Map | null = null
@@ -159,6 +194,10 @@ let polyline: L.Polyline | null = null
 const markers: L.Marker[] = []
 let Leaflet: typeof L | null = null
 let mapClickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
+let rectPreview: L.Rectangle | null = null
+let rectFinal: L.Rectangle | null = null
+let rectDragAnchor: L.LatLng | null = null
+let rectLastLatLng: L.LatLng | null = null
 
 async function initMap() {
   const el = mapEl.value
@@ -173,9 +212,116 @@ async function initMap() {
     }).addTo(map)
     mapClickHandler = (e: L.LeafletMouseEvent) => handleMapClick(e.latlng.lng, e.latlng.lat)
     map.on('click', (e: L.LeafletMouseEvent) => mapClickHandler?.(e))
+    map.on('mousedown', onMapMouseDown)
+    map.on('mousemove', onMapMouseMove)
+    L.DomEvent.on(document as unknown as HTMLElement, 'mouseup', onDocMouseUp)
   }
   setupToolBehavior()
+  redrawFinalRectangle()
   setTimeout(() => map?.invalidateSize(), 150)
+}
+
+function boundsToRing(Lmod: typeof L, bounds: L.LatLngBounds): [number, number][] {
+  const sw = bounds.getSouthWest()
+  const ne = bounds.getNorthEast()
+  const se = Lmod.latLng(sw.lat, ne.lng)
+  const nw = Lmod.latLng(ne.lat, sw.lng)
+  return [
+    [sw.lng, sw.lat],
+    [se.lng, se.lat],
+    [ne.lng, ne.lat],
+    [nw.lng, nw.lat],
+    [sw.lng, sw.lat]
+  ]
+}
+
+function onMapMouseDown(e: L.LeafletMouseEvent) {
+  const Lmod = Leaflet
+  if (!Lmod || !map || activeTool.value !== 'rectangle') return
+  Lmod.DomEvent.stopPropagation(e.originalEvent)
+  rectDragAnchor = e.latlng
+  rectLastLatLng = e.latlng
+  map.dragging.disable()
+}
+
+function onMapMouseMove(e: L.LeafletMouseEvent) {
+  const Lmod = Leaflet
+  if (!Lmod || !map || activeTool.value !== 'rectangle' || !rectDragAnchor) return
+  rectLastLatLng = e.latlng
+  const bounds = Lmod.latLngBounds(rectDragAnchor, e.latlng)
+  if (!rectPreview) {
+    rectPreview = Lmod.rectangle(bounds, {
+      color: '#2563eb',
+      weight: 2,
+      dashArray: '6 4',
+      fillColor: '#3b82f6',
+      fillOpacity: 0.15
+    }).addTo(map)
+  } else {
+    rectPreview.setBounds(bounds)
+  }
+}
+
+function onDocMouseUp() {
+  const Lmod = Leaflet
+  if (!Lmod || !map || !rectDragAnchor) return
+  if (activeTool.value !== 'rectangle') {
+    rectDragAnchor = null
+    rectLastLatLng = null
+    rectPreview?.remove()
+    rectPreview = null
+    map.dragging.enable()
+    return
+  }
+  map.dragging.enable()
+  const end = rectLastLatLng ?? rectDragAnchor
+  const bounds = Lmod.latLngBounds(rectDragAnchor, end)
+  rectDragAnchor = null
+  rectLastLatLng = null
+  rectPreview?.remove()
+  rectPreview = null
+  const sw = bounds.getSouthWest()
+  const ne = bounds.getNorthEast()
+  if (sw.equals(ne)) return
+  const ring = boundsToRing(Lmod, bounds)
+  boundingRectangle.value = ring
+  rectFinal?.remove()
+  rectFinal = Lmod.rectangle(bounds, {
+    color: '#1d4ed8',
+    weight: 2,
+    fillColor: '#3b82f6',
+    fillOpacity: 0.12
+  }).addTo(map)
+}
+
+function redrawFinalRectangle() {
+  const Lmod = Leaflet
+  if (!Lmod || !map || !boundingRectangle.value || boundingRectangle.value.length < 4) return
+  const ring = boundingRectangle.value
+  const lats = ring.map(([, lat]) => lat)
+  const lngs = ring.map(([lng]) => lng)
+  const b = Lmod.latLngBounds(
+    Lmod.latLng(Math.min(...lats), Math.min(...lngs)),
+    Lmod.latLng(Math.max(...lats), Math.max(...lngs))
+  )
+  rectFinal?.remove()
+  rectFinal = Lmod.rectangle(b, {
+    color: '#1d4ed8',
+    weight: 2,
+    fillColor: '#3b82f6',
+    fillOpacity: 0.12
+  }).addTo(map)
+}
+
+function clearRectangle() {
+  boundingRectangle.value = null
+  rectPreview?.remove()
+  rectPreview = null
+  rectFinal?.remove()
+  rectFinal = null
+  rectDragAnchor = null
+  rectLastLatLng = null
+  map?.dragging.enable()
 }
 
 function handleMapClick(lng: number, lat: number) {
@@ -302,12 +448,17 @@ function removeLastPoint() {
   }
 }
 
-function clearRoute() {
+function clearLineOnly() {
   markers.forEach(m => m.remove())
   markers.length = 0
   polyline?.remove()
   polyline = null
   coordinates.value = []
+}
+
+function clearAllDrawing() {
+  clearRectangle()
+  clearLineOnly()
 }
 
 function close() {
@@ -318,23 +469,41 @@ function submit() {
   if (coordinates.value.length < 2) return
   emit('submit', {
     routeName: routeName.value.trim(),
-    coordinates: [...coordinates.value]
+    coordinates: [...coordinates.value],
+    ...(boundingRectangle.value?.length ? { boundingRectangle: [...boundingRectangle.value] } : {})
   })
-  clearRoute()
+  clearAllDrawing()
   routeName.value = ''
   close()
 }
 
-watch(activeTool, () => setupToolBehavior())
+watch(activeTool, () => {
+  if (activeTool.value !== 'rectangle') {
+    rectPreview?.remove()
+    rectPreview = null
+    rectDragAnchor = null
+    rectLastLatLng = null
+    map?.dragging.enable()
+  }
+  setupToolBehavior()
+})
 
 watch(modelValue, (open) => {
   if (open) {
     routeName.value = ''
     coordinates.value = []
+    boundingRectangle.value = null
     activeTool.value = 'draw'
     nextTick(() => initMap())
   } else {
-    clearRoute()
+    if (Leaflet) {
+      Leaflet.DomEvent.off(document as unknown as HTMLElement, 'mouseup', onDocMouseUp)
+    }
+    clearAllDrawing()
+    rectPreview = null
+    rectFinal = null
+    rectDragAnchor = null
+    rectLastLatLng = null
     map?.remove()
     map = null
     polyline = null

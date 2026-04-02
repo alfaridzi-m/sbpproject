@@ -6,6 +6,8 @@ interface RoutePayload {
   coordinates: [number, number][]
   portOrigin?: string
   portDestination?: string
+  /** GeoJSON outer ring [lng, lat], closed (first = last) */
+  boundingRectangle?: [number, number][]
 }
 
 export default defineEventHandler(async (event) => {
@@ -18,18 +20,38 @@ export default defineEventHandler(async (event) => {
   const origin = body.portOrigin || parts[0] || 'Origin'
   const destination = body.portDestination || parts[1] || 'Destination'
 
-  const geojson = {
-    type: 'Feature',
+  const lineFeature = {
+    type: 'Feature' as const,
     properties: {
       a: origin,
       b: destination,
       location: 'route'
     },
     geometry: {
-      type: 'LineString',
+      type: 'LineString' as const,
       coordinates: body.coordinates
     }
   }
+
+  const ring = body.boundingRectangle
+  const hasPoly = Array.isArray(ring) && ring.length >= 4
+
+  const geojson = hasPoly
+    ? {
+        type: 'FeatureCollection' as const,
+        features: [
+          lineFeature,
+          {
+            type: 'Feature' as const,
+            properties: { location: 'bounding-rectangle' },
+            geometry: {
+              type: 'Polygon' as const,
+              coordinates: [ring]
+            }
+          }
+        ]
+      }
+    : lineFeature
 
   const baseDir = process.cwd()
   const routeDir = join(baseDir, 'dataserve', 'route')

@@ -9,6 +9,10 @@ export interface RouteInfo {
   issuedDate: string
   issuedTime: string
   forecaster: string
+  namaUpt: string
+  alamat: string
+  telp: string
+  email: string
 }
 
 export interface ForecastRow {
@@ -41,12 +45,48 @@ export interface RouteOption {
   coordinates: [number, number][]
   portOrigin: string
   portDestination: string
+  /** GeoJSON Polygon outer ring [lng, lat] × 5 (closed), from manual modal rectangle */
+  boundingRectangle?: [number, number][]
 }
 
 export interface SplitPoint {
   dateTime: string
   coordinate: [number, number]
   fraction: number
+}
+
+/** Met-ocean payload on forecast output features (dummy GeoJSON / future API). */
+export interface ForecastOutputMetOcean {
+  gust_knot?: number
+  visibility_km?: number
+  wind_speed_knot?: number
+  wind_dir_str?: string
+  weather?: string
+  current_speed_cms?: number
+  wave_height_m?: number
+  wind_dir_deg?: number
+  current_dir_deg?: number
+  current_dir_str?: string
+}
+
+export interface ForecastOutputFeatureProperties {
+  dateTime: string
+  index: number
+  fraction: number
+  metOcean?: ForecastOutputMetOcean
+}
+
+/** Extended FeatureCollection returned by forecast backend (or `public/dummyoutput.geojson` stub). */
+export interface ForecastOutputGeoJSON {
+  type: 'FeatureCollection'
+  forecastTimeStepHours?: number
+  timeZone?: string
+  dateTimeReference?: string
+  features: Array<{
+    type: 'Feature'
+    geometry: { type: 'Point'; coordinates: [number, number] }
+    properties: ForecastOutputFeatureProperties
+  }>
 }
 
 /** GeoJSON forecast request: points along route at each time step with ISO datetimes. */
@@ -62,6 +102,11 @@ export interface ForecastReqGeoJSON {
   /** All feature `properties.dateTime` strings are ISO 8601 in UTC (Zulu). */
   dateTimeReference: 'UTC'
   features: ForecastReqFeature[]
+  /** AOI from manual route modal (drag rectangle); GeoJSON Polygon outer ring. */
+  boundingPolygon?: {
+    type: 'Polygon'
+    coordinates: [number, number][][]
+  }
 }
 
 export interface ForecastReqFeature {
@@ -121,6 +166,63 @@ function splitPointsToForecastReqGeoJSON(
 }
 
 const TZ_OFFSETS: Record<string, number> = { WIB: 7, WITA: 8, WIT: 9, UTC: 0 }
+
+const KNOT_TO_MS = 0.514444
+
+function pad2(n: number) {
+  return String(n).padStart(2, '0')
+}
+
+function formatCoordinateLngLat(lng: number, lat: number): string {
+  const latStr = `${Math.abs(lat).toFixed(4)}°${lat >= 0 ? 'N' : 'S'}`
+  const lngStr = `${Math.abs(lng).toFixed(4)}°${lng >= 0 ? 'E' : 'W'}`
+  return `${latStr}, ${lngStr}`
+}
+
+function metOceanForFeatureIndex(
+  features: ForecastOutputGeoJSON['features'],
+  i: number
+): ForecastOutputMetOcean | undefined {
+  if (!features.length) return undefined
+  const f = features[i] ?? features[features.length - 1]
+  return f?.properties.metOcean
+}
+
+function forecastRowsFromSplitPointsAndGeo(
+  splitPoints: SplitPoint[],
+  geo: ForecastOutputGeoJSON,
+  tzLabel: string
+): ForecastRow[] {
+  const tzOffset = TZ_OFFSETS[tzLabel] ?? 7
+  const features = geo.features ?? []
+  const t0 = Date.now()
+  return splitPoints.map((sp, i) => {
+    const utcMs = new Date(sp.dateTime).getTime()
+    const localMs = utcMs + tzOffset * 3600000
+    const dt = new Date(localMs)
+    const [lng, lat] = sp.coordinate
+    const met = metOceanForFeatureIndex(features, i)
+
+    const fmt = (n: number, decimals: number) => Number(n.toFixed(decimals))
+
+    return {
+      id: `row-${t0}-${i}`,
+      date: `${pad2(dt.getUTCDate())}/${pad2(dt.getUTCMonth() + 1)}/${String(dt.getUTCFullYear()).slice(-2)}`,
+      time: `${pad2(dt.getUTCHours())}:${pad2(dt.getUTCMinutes())}`,
+      coordinate: formatCoordinateLngLat(lng, lat),
+      visibility: met?.visibility_km != null ? String(fmt(met.visibility_km, 1)) : '',
+      weather: met?.weather ?? '',
+      rr: '',
+      wave: met?.wave_height_m != null ? String(fmt(met.wave_height_m, 2)) : '',
+      ws: met?.wind_speed_knot != null ? String(fmt(met.wind_speed_knot * KNOT_TO_MS, 1)) : '',
+      wd: met?.wind_dir_deg != null ? String(Math.round(met.wind_dir_deg)) : (met?.wind_dir_str ?? ''),
+      aruss: met?.current_speed_cms != null ? String(fmt(met.current_speed_cms / 100, 2)) : '',
+      arusd: met?.current_dir_deg != null ? String(Math.round(met.current_dir_deg)) : '',
+      hslg: '',
+      hsig: met?.wave_height_m != null ? String(fmt(met.wave_height_m, 2)) : ''
+    }
+  })
+}
 
 function haversineDistanceNm(a: [number, number], b: [number, number]): number {
   const [lng1, lat1] = a
@@ -234,7 +336,11 @@ export function useMaritimeData() {
     arrivalTime: '',
     issuedDate: '',
     issuedTime: '',
-    forecaster: ''
+    forecaster: '',
+    namaUpt: '',
+    alamat: '',
+    telp: '',
+    email: ''
   }))
 
   const forecastData = useState<ForecastRow[]>('maritime-forecastData', () => [])
@@ -245,7 +351,11 @@ export function useMaritimeData() {
   const safetyAdvisory = useState('maritime-safetyAdvisory', () => '')
   const pdfTemplate = useState<'rute-pelayaran' | 'wisata-bahari'>('maritime-pdfTemplate', () => 'rute-pelayaran')
   const isLoading = useState('maritime-isLoading', () => false)
-  const manualRouteData = useState<{ routeName: string; coordinates: [number, number][] } | null>('maritime-manualRouteData', () => null)
+  const manualRouteData = useState<{
+    routeName: string
+    coordinates: [number, number][]
+    boundingRectangle?: [number, number][]
+  } | null>('maritime-manualRouteData', () => null)
   const forecastTimeStep = useState<1 | 3 | 6>('maritime-forecastTimeStep', () => 1)
   const timeZone = useState<'WIB' | 'WITA' | 'WIT' | 'UTC'>('maritime-timeZone', () => 'WIB')
 
@@ -256,7 +366,14 @@ export function useMaritimeData() {
   async function fetchAvailableRoutes() {
     const routes: RouteOption[] = []
     try {
-      const res = await $fetch<{ id: string; routeName: string; coordinates: [number, number][]; portOrigin: string; portDestination: string } | null>('/api/route')
+      const res = await $fetch<{
+        id: string
+        routeName: string
+        coordinates: [number, number][]
+        portOrigin: string
+        portDestination: string
+        boundingRectangle?: [number, number][]
+      } | null>('/api/route')
       if (res) {
         routes.push({
           id: res.id,
@@ -264,7 +381,8 @@ export function useMaritimeData() {
           routeName: res.routeName,
           coordinates: res.coordinates,
           portOrigin: res.portOrigin,
-          portDestination: res.portDestination
+          portDestination: res.portDestination,
+          ...(res.boundingRectangle?.length ? { boundingRectangle: res.boundingRectangle } : {})
         })
       }
     } catch {
@@ -279,7 +397,11 @@ export function useMaritimeData() {
   }
 
   function applyRoute(route: RouteOption) {
-    manualRouteData.value = { routeName: route.label, coordinates: route.coordinates }
+    manualRouteData.value = {
+      routeName: route.label,
+      coordinates: route.coordinates,
+      ...(route.boundingRectangle?.length ? { boundingRectangle: route.boundingRectangle } : {})
+    }
     routeInfo.value.portOrigin = route.portOrigin
     routeInfo.value.portDestination = route.portDestination
   }
@@ -296,7 +418,11 @@ export function useMaritimeData() {
     fetchAvailableRoutes()
   })
 
-  async function saveRoute(data: { routeName: string; coordinates: [number, number][] }) {
+  async function saveRoute(data: {
+    routeName: string
+    coordinates: [number, number][]
+    boundingRectangle?: [number, number][]
+  }) {
     try {
       await $fetch('/api/route', {
         method: 'POST',
@@ -304,7 +430,8 @@ export function useMaritimeData() {
           routeName: data.routeName,
           coordinates: data.coordinates,
           portOrigin: routeInfo.value.portOrigin,
-          portDestination: routeInfo.value.portDestination
+          portDestination: routeInfo.value.portDestination,
+          ...(data.boundingRectangle?.length ? { boundingRectangle: data.boundingRectangle } : {})
         }
       })
     } catch (err) {
@@ -333,17 +460,38 @@ export function useMaritimeData() {
         timeZone.value
       )
 
-      const response = await $fetch('/api/forecast', {
-        method: 'POST',
-        body: {
-          ...routeInfo.value,
-          forecastTimeStep: forecastTimeStep.value,
-          timeZone: timeZone.value,
-          splitPoints
+      let filled = false
+      try {
+        const stubGeo = await $fetch<ForecastOutputGeoJSON>('/dummyoutput.geojson')
+        if (
+          stubGeo?.type === 'FeatureCollection'
+          && Array.isArray(stubGeo.features)
+          && stubGeo.features.length > 0
+        ) {
+          forecastData.value = forecastRowsFromSplitPointsAndGeo(
+            splitPoints,
+            stubGeo,
+            timeZone.value
+          )
+          filled = true
         }
-      })
-      if (response && Array.isArray((response as { data?: unknown }).data)) {
-        forecastData.value = (response as { data: ForecastRow[] }).data
+      } catch {
+        // Stub file missing or invalid — fall back to API placeholder rows.
+      }
+
+      if (!filled) {
+        const response = await $fetch('/api/forecast', {
+          method: 'POST',
+          body: {
+            ...routeInfo.value,
+            forecastTimeStep: forecastTimeStep.value,
+            timeZone: timeZone.value,
+            splitPoints
+          }
+        })
+        if (response && Array.isArray((response as { data?: unknown }).data)) {
+          forecastData.value = (response as { data: ForecastRow[] }).data
+        }
       }
     } catch {
       forecastData.value = []
@@ -412,11 +560,22 @@ export function useMaritimeData() {
       timeZone.value
     )
 
-    return splitPointsToForecastReqGeoJSON(
+    const base = splitPointsToForecastReqGeoJSON(
       splitPoints,
       forecastTimeStep.value,
       timeZone.value
     )
+    const ring = manualRouteData.value?.boundingRectangle
+    if (ring && ring.length >= 4) {
+      return {
+        ...base,
+        boundingPolygon: {
+          type: 'Polygon' as const,
+          coordinates: [ring]
+        }
+      }
+    }
+    return base
   })
 
   return {
