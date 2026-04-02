@@ -237,97 +237,130 @@
           </div>
         </div>
       </div>
-      <div class="min-h-[300px] min-w-0 w-full">
-        <SectionsRouteMap :route-coordinates="manualRouteData?.coordinates ?? undefined" :split-markers="splitPointCoordinates" />
+      <div class="flex flex-col gap-4 min-w-0 w-full">
+        <div class="min-h-[300px] min-w-0 w-full">
+          <SectionsRouteMap :route-coordinates="manualRouteData?.coordinates ?? undefined" :split-markers="splitPointCoordinates" />
+        </div>
+        <div class="rounded-xl p-4 border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
+          <h3 class="text-sm font-semibold m-0 mb-3 text-[var(--text)]">Summary Request</h3>
+          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
+            <div>
+              <dt class="text-xs text-[var(--text-muted)] mb-1">Stasiun</dt>
+              <dd class="text-sm font-medium text-[var(--text)] break-words">
+                {{ selectedStation || '-' }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-xs text-[var(--text-muted)] mb-1">Route name</dt>
+              <dd class="text-sm font-medium text-[var(--text)] break-words">
+                {{ routeNameText || '-' }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-xs text-[var(--text-muted)] mb-1">Ship name</dt>
+              <dd class="text-sm font-medium text-[var(--text)] break-words">
+                {{ routeInfo.shipName || '-' }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-xs text-[var(--text-muted)] mb-1">Forecast time step</dt>
+              <dd class="text-sm font-medium text-[var(--text)] break-words">
+                {{ forecastTimeStep }} jam
+              </dd>
+            </div>
+            <div>
+              <dt class="text-xs text-[var(--text-muted)] mb-1">Departure time</dt>
+              <dd class="text-sm font-medium text-[var(--text)] break-words">
+                {{ departureTimeText || '-' }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-xs text-[var(--text-muted)] mb-1">Arrival time</dt>
+              <dd class="text-sm font-medium text-[var(--text)] break-words">
+                {{ arrivalTimeText || '-' }}
+              </dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="text-xs text-[var(--text-muted)] mb-1">Issued Time</dt>
+              <dd class="text-sm font-medium text-[var(--text)] break-words">
+                {{ issuedTimeText || '-' }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-xs text-[var(--text-muted)] mb-1">Ship speed (route/duration)</dt>
+              <dd class="text-sm font-medium text-[var(--text)] break-words">
+                {{ shipSpeedKnotsText || '-' }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-xs text-[var(--text-muted)] mb-1">Route distance</dt>
+              <dd class="text-sm font-medium text-[var(--text)] break-words">
+                {{ routeDistanceNmText || '-' }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-xs text-[var(--text-muted)] mb-1">Ship estimation duration</dt>
+              <dd class="text-sm font-medium text-[var(--text)] break-words">
+                {{ shipEstDurationText || '-' }}
+              </dd>
+            </div>
+          </dl>
+        </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+    <div class="mb-4">
       <div class="rounded-xl p-4 border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
-        <h3 class="text-sm font-semibold m-0 mb-3 text-[var(--text)]">Summary Request</h3>
-        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
-          <div>
-            <dt class="text-xs text-[var(--text-muted)] mb-1">Stasiun</dt>
-            <dd class="text-sm font-medium text-[var(--text)] break-words">
-              {{ selectedStation || '-' }}
-            </dd>
-          </div>
-          <div>
-            <dt class="text-xs text-[var(--text-muted)] mb-1">Route name</dt>
-            <dd class="text-sm font-medium text-[var(--text)] break-words">
-              {{ routeNameText || '-' }}
-            </dd>
-          </div>
-          <div>
-            <dt class="text-xs text-[var(--text-muted)] mb-1">Ship name</dt>
-            <dd class="text-sm font-medium text-[var(--text)] break-words">
-              {{ routeInfo.shipName || '-' }}
-            </dd>
-          </div>
-          <div>
-            <dt class="text-xs text-[var(--text-muted)] mb-1">Forecast time step</dt>
-            <dd class="text-sm font-medium text-[var(--text)] break-words">
-              {{ forecastTimeStep }} jam
-            </dd>
-          </div>
-          <div>
-            <dt class="text-xs text-[var(--text-muted)] mb-1">Departure time</dt>
-            <dd class="text-sm font-medium text-[var(--text)] break-words">
-              {{ departureTimeText || '-' }}
-            </dd>
-          </div>
-          <div>
-            <dt class="text-xs text-[var(--text-muted)] mb-1">Arrival time</dt>
-            <dd class="text-sm font-medium text-[var(--text)] break-words">
-              {{ arrivalTimeText || '-' }}
-            </dd>
-          </div>
-          <div class="sm:col-span-2">
-            <dt class="text-xs text-[var(--text-muted)] mb-1">Issued Time</dt>
-            <dd class="text-sm font-medium text-[var(--text)] break-words">
-              {{ issuedTimeText || '-' }}
-            </dd>
-          </div>
-          <div>
-            <dt class="text-xs text-[var(--text-muted)] mb-1">Ship speed (route/duration)</dt>
-            <dd class="text-sm font-medium text-[var(--text)] break-words">
-              {{ shipSpeedKnotsText || '-' }}
-            </dd>
-          </div>
-          <div>
-            <dt class="text-xs text-[var(--text-muted)] mb-1">Route distance</dt>
-            <dd class="text-sm font-medium text-[var(--text)] break-words">
-              {{ routeDistanceNmText || '-' }}
-            </dd>
-          </div>
-          <div>
-            <dt class="text-xs text-[var(--text-muted)] mb-1">Ship estimation duration</dt>
-            <dd class="text-sm font-medium text-[var(--text)] break-words">
-              {{ shipEstDurationText || '-' }}
-            </dd>
-          </div>
-        </dl>
-      </div>
-
-      <div class="rounded-xl p-4 border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
-        <div class="flex items-start justify-between gap-3 mb-3">
-          <div>
-            <h3 class="text-sm font-semibold m-0 text-[var(--text)]">GeoJSON route</h3>
-            <p class="text-xs text-[var(--text-muted)] m-0 mt-1">FeatureCollection (LineString) untuk preview rute</p>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-3">
+          <div class="min-w-0 flex-1">
+            <h3 class="text-sm font-semibold m-0 text-[var(--text)]">GeoJSON</h3>
+            <p class="text-xs text-[var(--text-muted)] m-0 mt-1">
+              Pembaruan langsung: rute (LineString) atau permintaan prakiraan (Point per langkah waktu + dateTime).
+            </p>
           </div>
           <button
             type="button"
-            class="px-3 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--surface)] text-[var(--primary)] border border-[var(--primary)] shadow-[var(--shadow-sm)] transition-colors duration-200 hover:bg-[var(--primary-hover)] disabled:opacity-60 disabled:cursor-not-allowed"
-            :disabled="!geoJsonText || !geoJsonHasRoute"
+            class="shrink-0 px-3 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--surface)] text-[var(--primary)] border border-[var(--primary)] shadow-[var(--shadow-sm)] transition-colors duration-200 hover:bg-[var(--primary-hover)] disabled:opacity-60 disabled:cursor-not-allowed"
+            :disabled="!activeGeoJsonText || !canCopyGeoJson"
             @click="copyGeoJson"
           >
             {{ copied ? 'Copied' : 'Copy' }}
           </button>
         </div>
+        <div
+          class="flex flex-wrap gap-1.5 mb-3 p-1 rounded-lg bg-[color-mix(in_srgb,var(--border)_35%,var(--surface)_65%)] border border-[var(--border)]"
+          role="tablist"
+        >
+          <button
+            type="button"
+            role="tab"
+            :aria-selected="geoJsonTab === 'forecast'"
+            class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors border border-transparent"
+            :class="geoJsonTab === 'forecast'
+              ? 'bg-[var(--surface)] text-[var(--text)] border-[var(--border)] shadow-[var(--shadow-sm)]'
+              : 'text-[var(--text-muted)] hover:text-[var(--text)]'"
+            @click="geoJsonTab = 'forecast'"
+          >
+            Forecast request
+          </button>
+          <button
+            type="button"
+            role="tab"
+            :aria-selected="geoJsonTab === 'route'"
+            class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors border border-transparent"
+            :class="geoJsonTab === 'route'
+              ? 'bg-[var(--surface)] text-[var(--text)] border-[var(--border)] shadow-[var(--shadow-sm)]'
+              : 'text-[var(--text-muted)] hover:text-[var(--text)]'"
+            @click="geoJsonTab = 'route'"
+          >
+            Route (LineString)
+          </button>
+        </div>
         <textarea
-          class="w-full min-h-[240px] resize-y px-3 py-2 text-xs font-mono border border-[var(--border)] rounded-lg bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]"
-          :value="geoJsonText"
+          class="w-full min-h-[280px] resize-y px-3 py-2 text-xs font-mono border border-[var(--border)] rounded-lg bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]"
+          :value="activeGeoJsonText"
           readonly
+          spellcheck="false"
         />
       </div>
     </div>
@@ -361,7 +394,7 @@
 <script setup lang="ts">
 import ManualRouteModal from './ManualRouteModal.vue'
 
-const { routeInfo, manualRouteData, selectedStation, availableRoutes, selectedRouteId, processRoute, isLoading, saveRoute, selectRouteById, forecastTimeStep, timeZone, splitPointCoordinates } = useMaritimeData()
+const { routeInfo, manualRouteData, selectedStation, availableRoutes, selectedRouteId, processRoute, isLoading, saveRoute, selectRouteById, forecastTimeStep, timeZone, splitPointCoordinates, forecastReq } = useMaritimeData()
 
 const stationOptions = [
   'Stasiun Maritim Bitung',
@@ -631,18 +664,31 @@ const geoJson = computed<GeoJSON.FeatureCollection>(() => {
 
 const geoJsonText = computed(() => JSON.stringify(geoJson.value, null, 2))
 
+const forecastReqText = computed(() => JSON.stringify(forecastReq.value, null, 2))
+
+const geoJsonTab = ref<'route' | 'forecast'>('forecast')
+
+const activeGeoJsonText = computed(() =>
+  geoJsonTab.value === 'route' ? geoJsonText.value : forecastReqText.value
+)
+
+/** Route tab needs a polyline; forecast tab always has a valid JSON object (may be empty features). */
+const canCopyGeoJson = computed(() =>
+  geoJsonTab.value === 'route' ? geoJsonHasRoute.value : true
+)
+
 const copied = ref(false)
 
 async function copyGeoJson() {
-  if (!geoJsonHasRoute.value) return
+  if (!canCopyGeoJson.value || !activeGeoJsonText.value) return
   try {
-    await navigator.clipboard.writeText(geoJsonText.value)
+    await navigator.clipboard.writeText(activeGeoJsonText.value)
     copied.value = true
     setTimeout(() => { copied.value = false }, 1200)
   } catch {
     // Fallback: older browsers may not allow clipboard without permissions.
     const ta = document.createElement('textarea')
-    ta.value = geoJsonText.value
+    ta.value = activeGeoJsonText.value
     ta.setAttribute('readonly', 'true')
     ta.style.position = 'absolute'
     ta.style.left = '-9999px'

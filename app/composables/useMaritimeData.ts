@@ -49,6 +49,77 @@ export interface SplitPoint {
   fraction: number
 }
 
+/** GeoJSON forecast request: points along route at each time step with ISO datetimes. */
+export interface ForecastReqGeoJSON {
+  type: 'FeatureCollection'
+  /** Hours between samples (1, 3, or 6); foreign member for app use. */
+  forecastTimeStepHours: number
+  /**
+   * Timezone label for departure/arrival *inputs* (WIB/WITA/WIT/UTC).
+   * Feature `dateTime` values are always UTC — see `dateTimeReference`.
+   */
+  timeZone: string
+  /** All feature `properties.dateTime` strings are ISO 8601 in UTC (Zulu). */
+  dateTimeReference: 'UTC'
+  features: ForecastReqFeature[]
+}
+
+export interface ForecastReqFeature {
+  type: 'Feature'
+  geometry: {
+    type: 'Point'
+    /** GeoJSON order: [longitude, latitude] */
+    coordinates: [number, number]
+  }
+  properties: {
+    /** ISO 8601 instant in UTC only (e.g. ends with `Z`). */
+    dateTime: string
+    /** Position along route by distance (0 = departure, 1 = arrival) */
+    fraction: number
+    /** Order along the voyage (0-based) */
+    index: number
+  }
+}
+
+/** Canonical ISO 8601 UTC string (`…Z`) for GeoJSON export. */
+function toUtcIsoString(instant: Date | number): string {
+  return new Date(instant).toISOString()
+}
+
+/** Re-parse any ISO-like string and emit canonical UTC `…Z` (defensive). */
+function normalizeFeatureDateTimeUtc(isoLike: string): string {
+  const ms = Date.parse(isoLike)
+  return Number.isFinite(ms) ? new Date(ms).toISOString() : isoLike
+}
+
+function splitPointsToForecastReqGeoJSON(
+  splitPoints: SplitPoint[],
+  forecastTimeStepHours: number,
+  timeZone: string
+): ForecastReqGeoJSON {
+  return {
+    type: 'FeatureCollection',
+    forecastTimeStepHours,
+    timeZone,
+    dateTimeReference: 'UTC',
+    features: splitPoints.map((sp, index) => {
+      const [lng, lat] = sp.coordinate
+      return {
+        type: 'Feature' as const,
+        geometry: {
+          type: 'Point' as const,
+          coordinates: [lng, lat] as [number, number]
+        },
+        properties: {
+          dateTime: normalizeFeatureDateTimeUtc(sp.dateTime),
+          fraction: sp.fraction,
+          index
+        }
+      }
+    })
+  }
+}
+
 const TZ_OFFSETS: Record<string, number> = { WIB: 7, WITA: 8, WIT: 9, UTC: 0 }
 
 function haversineDistanceNm(a: [number, number], b: [number, number]): number {
@@ -132,9 +203,9 @@ function computeSplitPoints(
 
   for (let elapsed = 0; elapsed <= totalMs; elapsed += stepMs) {
     const fraction = elapsed / totalMs
-    const dt = new Date(dep.getTime() + elapsed)
+    const t = dep.getTime() + elapsed
     points.push({
-      dateTime: dt.toISOString(),
+      dateTime: toUtcIsoString(t),
       coordinate: interpolateAlongRoute(coordinates, fraction),
       fraction
     })
@@ -143,7 +214,7 @@ function computeSplitPoints(
   const last = points[points.length - 1]
   if (last && new Date(last.dateTime).getTime() < arr.getTime()) {
     points.push({
-      dateTime: arr.toISOString(),
+      dateTime: toUtcIsoString(arr),
       coordinate: interpolateAlongRoute(coordinates, 1),
       fraction: 1
     })
@@ -318,6 +389,36 @@ export function useMaritimeData() {
     return points.map(p => p.coordinate)
   })
 
+  /** GeoJSON FeatureCollection: one Point per forecast time step with dateTime + coordinates. */
+  const forecastReq = computed<ForecastReqGeoJSON>(() => {
+    const coords = manualRouteData.value?.coordinates
+    if (!coords || coords.length < 2) {
+      return {
+        type: 'FeatureCollection',
+        forecastTimeStepHours: forecastTimeStep.value,
+        timeZone: timeZone.value,
+        dateTimeReference: 'UTC',
+        features: []
+      }
+    }
+
+    const splitPoints = computeSplitPoints(
+      coords,
+      routeInfo.value.departureDate,
+      routeInfo.value.departureTime,
+      routeInfo.value.arrivalDate,
+      routeInfo.value.arrivalTime,
+      forecastTimeStep.value,
+      timeZone.value
+    )
+
+    return splitPointsToForecastReqGeoJSON(
+      splitPoints,
+      forecastTimeStep.value,
+      timeZone.value
+    )
+  })
+
   return {
     routeInfo,
     manualRouteData,
@@ -335,6 +436,7 @@ export function useMaritimeData() {
     forecastTimeStep,
     timeZone,
     splitPointCoordinates,
+    forecastReq,
     processRoute,
     addForecastRow,
     saveRoute,
