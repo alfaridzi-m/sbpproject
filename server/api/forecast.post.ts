@@ -14,8 +14,6 @@ interface ForecastRequestBody {
   splitPoints?: SplitPointBody[]
 }
 
-const TZ_OFFSETS: Record<string, number> = { WIB: 7, WITA: 8, WIT: 9, UTC: 0 }
-
 function pad2(n: number) {
   return String(n).padStart(2, '0')
 }
@@ -29,14 +27,13 @@ function formatCoordinate(lng: number, lat: number): string {
 export default defineEventHandler(async (event) => {
   const body = await readBody<ForecastRequestBody>(event)
   const splitPoints = body.splitPoints
-  const tzLabel = body.timeZone || 'WIB'
-  const tzOffset = TZ_OFFSETS[tzLabel] ?? 7
+  // UTC-only: ignore any incoming timezone label and always use UTC instants.
+  const tzOffset = 0
 
   if (splitPoints && splitPoints.length > 0) {
     const rows: ForecastRow[] = splitPoints.map((sp, i) => {
       const utcMs = new Date(sp.dateTime).getTime()
-      const localMs = utcMs + tzOffset * 3600000
-      const dt = new Date(localMs)
+      const dt = new Date(utcMs + tzOffset * 3600000)
 
       const [lng, lat] = sp.coordinate
 

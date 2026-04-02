@@ -2,11 +2,21 @@
   <section
     class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 shadow-[var(--shadow-card)]"
   >
-    <div class="mb-4 rounded-lg border border-[color-mix(in_srgb,var(--accent)_30%,var(--border)_70%)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface)_92%)] px-4 py-3">
-      <h2 class="inline-flex items-center rounded-md bg-[color-mix(in_srgb,var(--accent)_18%,white_82%)] px-2.5 py-1 text-base font-semibold m-0 mb-1 text-[var(--text)]">
-        Forecast Table Data
-      </h2>
-      <p class="text-xs text-[var(--text-muted)] m-0">Tanggal, waktu, dan koordinat hanya baca; kolom lain dapat diedit</p>
+    <div class="mb-4 rounded-lg border border-[color-mix(in_srgb,var(--accent)_30%,var(--border)_70%)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface)_92%)] px-4 py-3 flex items-start justify-between gap-3">
+      <div>
+        <h2 class="inline-flex items-center rounded-md bg-[color-mix(in_srgb,var(--accent)_18%,white_82%)] px-2.5 py-1 text-base font-semibold m-0 mb-1 text-[var(--text)]">
+          Forecast Table Data
+        </h2>
+        <p class="text-xs text-[var(--text-muted)] m-0">Tanggal, waktu, dan koordinat hanya baca; kolom lain dapat diedit</p>
+      </div>
+      <button
+        type="button"
+        class="shrink-0 py-2 px-4 bg-[var(--primary)] text-[var(--color-white)] border-none rounded-lg text-sm font-medium cursor-pointer shadow-[var(--shadow-sm)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_4px_14px_var(--primary-glow)] disabled:opacity-50 disabled:cursor-not-allowed"
+        :disabled="forecastData.length === 0"
+        @click="showAdjustModal = true"
+      >
+        Adjust Data
+      </button>
     </div>
     <div class="overflow-x-auto mb-4 rounded-lg shadow-[var(--shadow-sm)] border border-[var(--border)] bg-[var(--surface)]">
       <table class="w-full border-collapse text-[0.8125rem] [&_th]:py-2 [&_th]:px-3 [&_td]:py-2 [&_td]:px-3 [&_th]:text-left [&_td]:text-left [&_th]:border-b [&_td]:border-b [&_th]:border-[var(--border)] [&_td]:border-[var(--border)]">
@@ -17,13 +27,11 @@
             <th class="min-w-[16rem] w-[min(22rem,40vw)]">Koordinat</th>
             <th>Visibility</th>
             <th>Cuaca</th>
-            <th>rr</th>
             <th>Wave</th>
             <th>ws</th>
             <th>wd</th>
             <th>aruss</th>
             <th>arusd</th>
-            <th>hslg</th>
             <th>hsig</th>
             <th class="w-10 text-center"> </th>
           </tr>
@@ -33,13 +41,11 @@
             <th class="min-w-[16rem] w-[min(22rem,40vw)]">lat, lon</th>
             <th>km</th>
             <th>—</th>
-            <th>mm</th>
             <th>m</th>
             <th>m/s</th>
             <th>°</th>
             <th>m/s</th>
             <th>°</th>
-            <th>m</th>
             <th>m</th>
             <th class="w-10 text-center"> </th>
           </tr>
@@ -61,13 +67,11 @@
             </td>
             <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.visibility" type="text" placeholder="—" class="w-full min-w-[56px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
             <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.weather" type="text" placeholder="Cuaca" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
-            <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.rr" type="text" placeholder="—" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
             <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.wave" type="text" placeholder="—" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
             <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.ws" type="text" placeholder="—" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
             <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.wd" type="text" placeholder="—" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
             <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.aruss" type="text" placeholder="—" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
             <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.arusd" type="text" placeholder="—" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
-            <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.hslg" type="text" placeholder="—" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
             <td class="bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle"><input v-model="row.hsig" type="text" placeholder="—" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
             <td class="w-10 text-center bg-[var(--surface)] group-hover:bg-[var(--surface-hover)] align-middle">
               <button
@@ -91,11 +95,15 @@
     >
       + Tambah Baris
     </button>
+    <ForecastAdjustModal v-model="showAdjustModal" />
   </section>
 </template>
 
 <script setup lang="ts">
+import ForecastAdjustModal from './ForecastAdjustModal.vue'
+
 const { forecastData, addForecastRow } = useMaritimeData()
+const showAdjustModal = ref(false)
 
 function removeRow(id: string) {
   const idx = forecastData.value.findIndex(r => r.id === id)

@@ -76,7 +76,7 @@ export interface ForecastOutputFeatureProperties {
   metOcean?: ForecastOutputMetOcean
 }
 
-/** Extended FeatureCollection returned by forecast backend (or `public/dummyoutput.geojson` stub). */
+/** Extended FeatureCollection returned by the forecast API. */
 export interface ForecastOutputGeoJSON {
   type: 'FeatureCollection'
   forecastTimeStepHours?: number
@@ -95,7 +95,8 @@ export interface ForecastReqGeoJSON {
   /** Hours between samples (1, 3, or 6); foreign member for app use. */
   forecastTimeStepHours: number
   /**
-   * Timezone label for departure/arrival *inputs* (WIB/WITA/WIT/UTC).
+   * GeoJSON request is UTC-only. `timeZone` is always `UTC` and feature `dateTime`
+   * values are ISO 8601 instants in UTC (Zulu) — see `dateTimeReference`.
    * Feature `dateTime` values are always UTC — see `dateTimeReference`.
    */
   timeZone: string
@@ -165,8 +166,6 @@ function splitPointsToForecastReqGeoJSON(
   }
 }
 
-const TZ_OFFSETS: Record<string, number> = { WIB: 7, WITA: 8, WIT: 9, UTC: 0 }
-
 const KNOT_TO_MS = 0.514444
 
 function pad2(n: number) {
@@ -190,16 +189,13 @@ function metOceanForFeatureIndex(
 
 function forecastRowsFromSplitPointsAndGeo(
   splitPoints: SplitPoint[],
-  geo: ForecastOutputGeoJSON,
-  tzLabel: string
+  geo: ForecastOutputGeoJSON
 ): ForecastRow[] {
-  const tzOffset = TZ_OFFSETS[tzLabel] ?? 7
   const features = geo.features ?? []
   const t0 = Date.now()
   return splitPoints.map((sp, i) => {
     const utcMs = new Date(sp.dateTime).getTime()
-    const localMs = utcMs + tzOffset * 3600000
-    const dt = new Date(localMs)
+    const dt = new Date(utcMs)
     const [lng, lat] = sp.coordinate
     const met = metOceanForFeatureIndex(features, i)
 
@@ -272,7 +268,7 @@ function interpolateAlongRoute(
   return coordinates[coordinates.length - 1]!
 }
 
-function parseDateTimeToUtc(dateStr: string, timeStr: string, tz: string): Date | null {
+function parseDateTimeToUtc(dateStr: string, timeStr: string): Date | null {
   if (!dateStr || !timeStr) return null
   const dp = dateStr.split('-').map(Number)
   const tp = timeStr.split(':').map(Number)
@@ -280,8 +276,8 @@ function parseDateTimeToUtc(dateStr: string, timeStr: string, tz: string): Date 
   const [y, m, d] = dp as [number, number, number]
   const [hh, mm] = tp as [number, number]
   if ([y, m, d, hh, mm].some(n => !Number.isFinite(n))) return null
-  const offset = TZ_OFFSETS[tz] ?? 0
-  return new Date(Date.UTC(y, m - 1, d, hh, mm, 0) - offset * 3600000)
+  // Interpret app inputs as UTC (not local time).
+  return new Date(Date.UTC(y, m - 1, d, hh, mm, 0))
 }
 
 function computeSplitPoints(
@@ -290,11 +286,10 @@ function computeSplitPoints(
   departureTimeStr: string,
   arrivalDateStr: string,
   arrivalTimeStr: string,
-  stepHours: number,
-  tz: string
+  stepHours: number
 ): SplitPoint[] {
-  const dep = parseDateTimeToUtc(departureDateStr, departureTimeStr, tz)
-  const arr = parseDateTimeToUtc(arrivalDateStr, arrivalTimeStr, tz)
+  const dep = parseDateTimeToUtc(departureDateStr, departureTimeStr)
+  const arr = parseDateTimeToUtc(arrivalDateStr, arrivalTimeStr)
   if (!dep || !arr || coordinates.length < 2) return []
 
   const totalMs = arr.getTime() - dep.getTime()
@@ -351,13 +346,15 @@ export function useMaritimeData() {
   const safetyAdvisory = useState('maritime-safetyAdvisory', () => '')
   const pdfTemplate = useState<'rute-pelayaran' | 'wisata-bahari'>('maritime-pdfTemplate', () => 'rute-pelayaran')
   const isLoading = useState('maritime-isLoading', () => false)
+  const processError = useState<string | null>('maritime-processError', () => null)
   const manualRouteData = useState<{
     routeName: string
     coordinates: [number, number][]
     boundingRectangle?: [number, number][]
   } | null>('maritime-manualRouteData', () => null)
   const forecastTimeStep = useState<1 | 3 | 6>('maritime-forecastTimeStep', () => 1)
-  const timeZone = useState<'WIB' | 'WITA' | 'WIT' | 'UTC'>('maritime-timeZone', () => 'WIB')
+  // UTC-only: inputs, computed times, and all GeoJSON timestamps are in UTC.
+  const timeZone = useState<'UTC'>('maritime-timeZone', () => 'UTC')
 
   const selectedStation = useState<string>('maritime-selectedStation', () => 'Stasiun Maritim Bitung')
   const availableRoutes = useState<RouteOption[]>('maritime-availableRoutes', () => [])
@@ -443,6 +440,7 @@ export function useMaritimeData() {
 
   async function processRoute() {
     isLoading.value = true
+    processError.value = null
     try {
       const coords = manualRouteData.value?.coordinates
       if (!coords || coords.length < 2) {
@@ -456,45 +454,34 @@ export function useMaritimeData() {
         routeInfo.value.departureTime,
         routeInfo.value.arrivalDate,
         routeInfo.value.arrivalTime,
-        forecastTimeStep.value,
-        timeZone.value
+        forecastTimeStep.value
       )
 
-      let filled = false
-      try {
-        const stubGeo = await $fetch<ForecastOutputGeoJSON>('/dummyoutput.geojson')
-        if (
-          stubGeo?.type === 'FeatureCollection'
-          && Array.isArray(stubGeo.features)
-          && stubGeo.features.length > 0
-        ) {
-          forecastData.value = forecastRowsFromSplitPointsAndGeo(
-            splitPoints,
-            stubGeo,
-            timeZone.value
-          )
-          filled = true
-        }
-      } catch {
-        // Stub file missing or invalid — fall back to API placeholder rows.
-      }
+      const geoJsonBody = forecastReq.value
 
-      if (!filled) {
-        const response = await $fetch('/api/forecast', {
-          method: 'POST',
-          body: {
-            ...routeInfo.value,
-            forecastTimeStep: forecastTimeStep.value,
-            timeZone: timeZone.value,
-            splitPoints
-          }
-        })
-        if (response && Array.isArray((response as { data?: unknown }).data)) {
-          forecastData.value = (response as { data: ForecastRow[] }).data
-        }
+      const response = await $fetch<ForecastOutputGeoJSON>('/api/forecast-proxy', {
+        method: 'POST',
+        body: geoJsonBody
+      })
+
+      if (
+        response?.type === 'FeatureCollection'
+        && Array.isArray(response.features)
+        && response.features.length > 0
+      ) {
+        forecastData.value = forecastRowsFromSplitPointsAndGeo(
+          splitPoints,
+          response
+        )
+      } else {
+        forecastData.value = []
       }
-    } catch {
+    } catch (err: unknown) {
       forecastData.value = []
+      const msg = (err as { statusMessage?: string }).statusMessage
+        ?? (err as { message?: string }).message
+        ?? 'Gagal memproses forecast'
+      processError.value = msg
     } finally {
       isLoading.value = false
     }
@@ -530,8 +517,7 @@ export function useMaritimeData() {
       routeInfo.value.departureTime,
       routeInfo.value.arrivalDate,
       routeInfo.value.arrivalTime,
-      forecastTimeStep.value,
-      timeZone.value
+      forecastTimeStep.value
     )
 
     return points.map(p => p.coordinate)
@@ -556,8 +542,7 @@ export function useMaritimeData() {
       routeInfo.value.departureTime,
       routeInfo.value.arrivalDate,
       routeInfo.value.arrivalTime,
-      forecastTimeStep.value,
-      timeZone.value
+      forecastTimeStep.value
     )
 
     const base = splitPointsToForecastReqGeoJSON(
@@ -592,6 +577,7 @@ export function useMaritimeData() {
     safetyAdvisory,
     pdfTemplate,
     isLoading,
+    processError,
     forecastTimeStep,
     timeZone,
     splitPointCoordinates,

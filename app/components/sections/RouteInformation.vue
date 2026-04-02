@@ -45,6 +45,14 @@
             {{ r.label }}
           </option>
         </select>
+        <button
+          type="button"
+          class="w-fit px-3 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--surface)] text-[var(--primary)] border border-[var(--primary)] shadow-[var(--shadow-sm)] transition-colors duration-200 hover:bg-[var(--primary-hover)] disabled:opacity-60 disabled:cursor-not-allowed"
+          :disabled="!canFlipRoute"
+          @click="flipRouteDirection"
+        >
+          Switch
+        </button>
       </div>
     </div>
 
@@ -70,49 +78,8 @@
           <h3 class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] m-0 mb-3">Zona Waktu</h3>
           <div class="flex flex-col gap-1.5">
             <span class="text-sm font-medium text-[var(--text)]">
-              Pilih: <span class="text-[var(--primary)]">{{ timeZone }}</span>
+              UTC
             </span>
-            <div class="flex flex-nowrap gap-2">
-              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
-                <input
-                  type="checkbox"
-                  class="accent-[var(--primary)]"
-                  :checked="timeZone === 'UTC'"
-                  @change="(e) => { if ((e.target as HTMLInputElement).checked) timeZone = 'UTC' }"
-                >
-                <span class="text-sm font-medium text-[var(--text)]">UTC</span>
-              </label>
-
-              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
-                <input
-                  type="checkbox"
-                  class="accent-[var(--primary)]"
-                  :checked="timeZone === 'WIB'"
-                  @change="(e) => { if ((e.target as HTMLInputElement).checked) timeZone = 'WIB' }"
-                >
-                <span class="text-sm font-medium text-[var(--text)]">WIB</span>
-              </label>
-
-              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
-                <input
-                  type="checkbox"
-                  class="accent-[var(--primary)]"
-                  :checked="timeZone === 'WITA'"
-                  @change="(e) => { if ((e.target as HTMLInputElement).checked) timeZone = 'WITA' }"
-                >
-                <span class="text-sm font-medium text-[var(--text)]">WITA</span>
-              </label>
-
-              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
-                <input
-                  type="checkbox"
-                  class="accent-[var(--primary)]"
-                  :checked="timeZone === 'WIT'"
-                  @change="(e) => { if ((e.target as HTMLInputElement).checked) timeZone = 'WIT' }"
-                >
-                <span class="text-sm font-medium text-[var(--text)]">WIT</span>
-              </label>
-            </div>
           </div>
         </div>
 
@@ -411,6 +378,13 @@
       </div>
     </div>
 
+    <div
+      v-if="processError"
+      class="mt-4 rounded-lg border border-[var(--danger,#ef4444)] bg-[color-mix(in_srgb,var(--danger,#ef4444)_8%,var(--surface)_92%)] px-4 py-3 text-sm text-[var(--danger,#ef4444)]"
+    >
+      <strong>Error:</strong> {{ processError }}
+    </div>
+
     <div class="flex items-center justify-end pt-4 flex-wrap gap-4">
       <div class="flex gap-3 items-center">
         <button
@@ -440,7 +414,7 @@
 <script setup lang="ts">
 import ManualRouteModal from './ManualRouteModal.vue'
 
-const { routeInfo, manualRouteData, selectedStation, availableRoutes, selectedRouteId, processRoute, isLoading, saveRoute, selectRouteById, forecastTimeStep, timeZone, splitPointCoordinates, forecastReq } = useMaritimeData()
+const { routeInfo, manualRouteData, selectedStation, availableRoutes, selectedRouteId, processRoute, isLoading, processError, saveRoute, selectRouteById, forecastTimeStep, splitPointCoordinates, forecastReq } = useMaritimeData()
 
 const stationOptions = [
   'Stasiun Maritim Bitung',
@@ -455,39 +429,56 @@ const routeNameText = computed(() => {
     || ''
 })
 
-const MONTHS_ID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+const canFlipRoute = computed(() => (manualRouteData.value?.coordinates?.length ?? 0) >= 2)
 
-function tzOffsetHours(tz: 'WIB' | 'WITA' | 'WIT' | 'UTC') {
-  switch (tz) {
-    case 'WIB':
-      return 7
-    case 'WITA':
-      return 8
-    case 'WIT':
-      return 9
-    case 'UTC':
-      return 0
+function flipRouteDirection() {
+  if (!canFlipRoute.value || !manualRouteData.value) return
+
+  const nextOrigin = routeInfo.value.portDestination
+  const nextDestination = routeInfo.value.portOrigin
+
+  // If the currently selected route exists in `availableRoutes` (i.e., not a custom manual "dataserve" route),
+  // prefer switching to the canonical reverse route to keep the dropdown label consistent.
+  const currentId = selectedRouteId.value
+  const isUsingPredefinedRoute = currentId !== 'dataserve' && availableRoutes.value.some(r => r.id === currentId)
+  const matchingReverseRoute = availableRoutes.value.find(
+    r => r.portOrigin === nextOrigin && r.portDestination === nextDestination
+  )
+
+  if (isUsingPredefinedRoute && matchingReverseRoute) {
+    selectRouteById(matchingReverseRoute.id)
+    return
   }
+
+  // Otherwise: swap ports + reverse the polyline so fraction 0 (departure) is at the new origin.
+  routeInfo.value.portOrigin = nextOrigin
+  routeInfo.value.portDestination = nextDestination
+  manualRouteData.value.coordinates = [...manualRouteData.value.coordinates].reverse()
+
+  // Keep the UI + GeoJSON route name consistent with the swapped direction.
+  const parts = [routeInfo.value.portOrigin, routeInfo.value.portDestination].filter(Boolean)
+  manualRouteData.value.routeName = parts.join(' - ')
 }
+
+const MONTHS_ID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
 
 function pad2(n: number) {
   return String(n).padStart(2, '0')
 }
 
-// "nearest hour" where minutes >= 30 rounds up.
+// "nearest hour" where minutes >= 30 rounds up (UTC).
 // Example: 16:28 -> 16:00; 16:31 -> 17:00
-function getNowNearestHourParts(baseTz: 'WIB' | 'WITA' | 'WIT' | 'UTC') {
+function getNowNearestHourUtcParts() {
   const nowMs = Date.now()
-  const tzMs = nowMs + tzOffsetHours(baseTz) * 3600000
-  const dt = new Date(tzMs)
+  const dt = new Date(nowMs)
 
   const minutes = dt.getUTCMinutes()
   const seconds = dt.getUTCSeconds()
   const millis = dt.getUTCMilliseconds()
   const msIntoHour = (minutes * 60 + seconds) * 1000 + millis
 
-  const roundedTzMs = tzMs - msIntoHour + (minutes >= 30 ? 3600000 : 0)
-  const rounded = new Date(roundedTzMs)
+  const roundedMs = nowMs - msIntoHour + (minutes >= 30 ? 3600000 : 0)
+  const rounded = new Date(roundedMs)
 
   const year = rounded.getUTCFullYear()
   const month = rounded.getUTCMonth() + 1
@@ -500,7 +491,7 @@ function getNowNearestHourParts(baseTz: 'WIB' | 'WITA' | 'WIT' | 'UTC') {
   }
 }
 
-function addHoursToWibParts(dateStr: string, timeStr: string, hours: number) {
+function addHoursToUtcParts(dateStr: string, timeStr: string, hours: number) {
   const dateParts = dateStr.split('-')
   if (dateParts.length !== 3) return { dateStr, timeStr }
   const y = Number(dateParts[0])
@@ -524,8 +515,8 @@ function addHoursToWibParts(dateStr: string, timeStr: string, hours: number) {
 }
 
 onMounted(() => {
-  const dep = getNowNearestHourParts(timeZone.value)
-  const arr = addHoursToWibParts(dep.dateStr, dep.timeStr, 2)
+  const dep = getNowNearestHourUtcParts()
+  const arr = addHoursToUtcParts(dep.dateStr, dep.timeStr, 2)
 
   routeInfo.value.departureDate = dep.dateStr
   routeInfo.value.departureTime = dep.timeStr
@@ -538,9 +529,8 @@ onMounted(() => {
   routeInfo.value.issuedTime = dep.timeStr
 })
 
-// Interpreting input `departureDate/departureTime` etc as selected timezone local time,
-// then converting display values to the selected timezone.
-function formatDateTimeWithZone(dateStr: string, timeStr: string, targetTz: 'WIB' | 'WITA' | 'WIT' | 'UTC') {
+// Inputs are interpreted as UTC instants; output is a human-friendly UTC label.
+function formatUtcDateTime(dateStr: string, timeStr: string) {
   if (!dateStr || !timeStr) return ''
   const dateParts = dateStr.split('-')
   if (dateParts.length !== 3) return ''
@@ -553,10 +543,7 @@ function formatDateTimeWithZone(dateStr: string, timeStr: string, targetTz: 'WIB
   const mm = Number(timeParts[1])
   if ([y, m, d, hh, mm].some(n => !Number.isFinite(n))) return ''
 
-  const fromTzHours = tzOffsetHours(timeZone.value)
-  const utcMs = Date.UTC(y, m, d, hh, mm, 0) - fromTzHours * 3600000
-  const targetMs = utcMs + tzOffsetHours(targetTz) * 3600000
-  const dt = new Date(targetMs)
+  const dt = new Date(Date.UTC(y, m, d, hh, mm, 0))
 
   const day = dt.getUTCDate()
   const monthName = MONTHS_ID[dt.getUTCMonth()]
@@ -564,12 +551,12 @@ function formatDateTimeWithZone(dateStr: string, timeStr: string, targetTz: 'WIB
   const hour = String(dt.getUTCHours()).padStart(2, '0')
   const minute = String(dt.getUTCMinutes()).padStart(2, '0')
 
-  return `${day} ${monthName} ${year} pukul ${hour}:${minute} ${targetTz}`
+  return `${day} ${monthName} ${year} pukul ${hour}:${minute}`
 }
 
-const departureTimeText = computed(() => formatDateTimeWithZone(routeInfo.value.departureDate, routeInfo.value.departureTime, timeZone.value))
-const arrivalTimeText = computed(() => formatDateTimeWithZone(routeInfo.value.arrivalDate, routeInfo.value.arrivalTime, timeZone.value))
-const issuedTimeText = computed(() => formatDateTimeWithZone(routeInfo.value.issuedDate, routeInfo.value.issuedTime, timeZone.value))
+const departureTimeText = computed(() => formatUtcDateTime(routeInfo.value.departureDate, routeInfo.value.departureTime))
+const arrivalTimeText = computed(() => formatUtcDateTime(routeInfo.value.arrivalDate, routeInfo.value.arrivalTime))
+const issuedTimeText = computed(() => formatUtcDateTime(routeInfo.value.issuedDate, routeInfo.value.issuedTime))
 
 const geoJsonHasRoute = computed(() => !!manualRouteData.value?.coordinates && manualRouteData.value.coordinates.length >= 2)
 
@@ -586,9 +573,8 @@ function parseDateTime(dateStr: string, timeStr: string): Date | null {
   const mm = Number(timeParts[1])
   if ([y, m, d, hh, mm].some(n => !Number.isFinite(n))) return null
 
-  // Interpreting input as currently selected timezone local time, then converting to an absolute moment.
-  const utcMs = Date.UTC(y, m, d, hh, mm, 0) - tzOffsetHours(timeZone.value) * 3600000
-  return new Date(utcMs)
+  // Interpret app inputs as UTC.
+  return new Date(Date.UTC(y, m, d, hh, mm, 0))
 }
 
 function toRad(deg: number) {
@@ -689,7 +675,7 @@ const geoJson = computed<GeoJSON.FeatureCollection>(() => {
       departureTime: departureTimeText.value,
       arrivalTime: arrivalTimeText.value,
       issuedTime: issuedTimeText.value,
-      timeZone: timeZone.value,
+        timeZone: 'UTC',
       forecastTimeStepHours: forecastTimeStep.value,
       shipSpeedKnots: shipSpeedKnots.value == null ? null : Number(shipSpeedKnots.value.toFixed(2)),
       shipEstimationDuration: shipEstDurationText.value || null,
@@ -769,16 +755,26 @@ async function onManualRouteSubmit(data: {
   routeName: string
   coordinates: [number, number][]
   boundingRectangle?: [number, number][]
+  from?: string
+  to?: string
 }) {
   manualRouteData.value = {
     routeName: data.routeName,
     coordinates: data.coordinates,
     ...(data.boundingRectangle?.length ? { boundingRectangle: data.boundingRectangle } : {})
   }
-  if (data.routeName) {
+
+  const from = data.from?.trim() || ''
+  const to = data.to?.trim() || ''
+
+  if (from) routeInfo.value.portOrigin = from
+  if (to) routeInfo.value.portDestination = to
+
+  // Backward compatibility: if user didn't fill From/To, infer it from "Nama Rute".
+  if ((!from || !to) && data.routeName) {
     const parts = data.routeName.split('-').map((s) => s.trim()).filter(Boolean)
-    if (parts.length >= 1) routeInfo.value.portOrigin = parts[0] ?? ''
-    if (parts.length >= 2) routeInfo.value.portDestination = parts[1] ?? ''
+    if (!from && parts.length >= 1) routeInfo.value.portOrigin = parts[0] ?? ''
+    if (!to && parts.length >= 2) routeInfo.value.portDestination = parts[1] ?? ''
   }
   await saveRoute(data)
 }

@@ -355,9 +355,9 @@ onBeforeUnmount(() => {
 function formatDateTime(date: string, time: string) {
   if (!date) return ''
   const d = new Date(date)
-  const day = d.getDate()
-  const month = d.toLocaleDateString('id-ID', { month: 'long' })
-  const year = d.getFullYear()
+  const day = d.getUTCDate()
+  const month = d.toLocaleDateString('id-ID', { month: 'long', timeZone: 'UTC' })
+  const year = d.getUTCFullYear()
   const dateStr = `${day} ${month} ${year}`
   if (!time) return dateStr
   return `${dateStr} pukul ${time}`

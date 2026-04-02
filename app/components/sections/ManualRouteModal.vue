@@ -31,6 +31,28 @@
               placeholder="Contoh: Makassar - Batulicin"
             />
           </div>
+          <div class="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="route-from" class="block text-sm font-medium text-[var(--text)]">Dari (From)</label>
+              <input
+                id="route-from"
+                v-model="fromPort"
+                type="text"
+                class="w-full mt-1 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                placeholder="Nama pelabuhan asal"
+              />
+            </div>
+            <div>
+              <label for="route-to" class="block text-sm font-medium text-[var(--text)]">Ke (To)</label>
+              <input
+                id="route-to"
+                v-model="toPort"
+                type="text"
+                class="w-full mt-1 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                placeholder="Nama pelabuhan tujuan"
+              />
+            </div>
+          </div>
           <div class="mb-4">
             <div class="flex flex-col gap-1 mb-2">
               <span class="text-sm font-medium text-[var(--text)]">Gambar rute di peta</span>
@@ -52,7 +74,7 @@
                   </div>
                 </template>
               </ClientOnly>
-              <div class="absolute top-3 left-1/2 -translate-x-1/2 flex flex-row items-center gap-1.5 z-[500] shadow-[var(--shadow-md)] rounded-lg p-1 bg-[var(--surface)]/95 border border-[var(--border)]">
+              <div class="absolute top-3 left-3 flex flex-col items-center gap-1.5 z-[500] shadow-[var(--shadow-md)] rounded-lg p-1 bg-[var(--surface)]/95 border border-[var(--border)]">
                 <button
                   type="button"
                   class="flex items-center justify-center w-9 h-9 p-0 rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] cursor-pointer transition-colors duration-150 hover:bg-[var(--color-white)] disabled:opacity-50 disabled:cursor-not-allowed"
@@ -62,9 +84,8 @@
                   @click="activeTool = 'draw'"
                 >
                   <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 19l7-7 3 3-7 7-3-3z" />
-                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
-                    <path d="M2 2l7.586 7.586" />
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
                   </svg>
                 </button>
                 <button
@@ -77,7 +98,7 @@
                   @click="activeTool = 'pick'"
                 >
                   <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
+                    <path d="M7 4l10 8-10 8V4z" />
                   </svg>
                 </button>
                 <button
@@ -89,7 +110,9 @@
                   @click="activeTool = 'rectangle'"
                 >
                   <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="4" y="4" width="16" height="16" rx="1" />
+                    <rect x="5" y="5" width="14" height="14" rx="1" />
+                    <path d="M5 9h14" />
+                    <path d="M9 5v14" />
                   </svg>
                 </button>
               </div>
@@ -164,6 +187,9 @@ import type L from 'leaflet'
 export interface ManualRouteData {
   routeName: string
   coordinates: [number, number][]
+  /** Port names used to populate geojson properties `a` (origin) and `b` (destination). */
+  from?: string
+  to?: string
   /** GeoJSON Polygon outer ring [lng, lat] (closed); included in forecast GeoJSON request */
   boundingRectangle?: [number, number][]
 }
@@ -178,6 +204,8 @@ type ToolMode = 'draw' | 'pick' | 'rectangle'
 
 const mapEl = ref<HTMLElement | null>(null)
 const routeName = ref('')
+const fromPort = ref('')
+const toPort = ref('')
 const coordinates = ref<[number, number][]>([])
 const activeTool = ref<ToolMode>('draw')
 /** Closed outer ring for GeoJSON Polygon (from drag-rectangle tool) */
@@ -193,11 +221,50 @@ let map: L.Map | null = null
 let polyline: L.Polyline | null = null
 const markers: L.Marker[] = []
 let Leaflet: typeof L | null = null
+let baseTileLayer: L.TileLayer | null = null
+let tileSourceIndex = 0
+let tileErrorCount = 0
 let mapClickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
 let rectPreview: L.Rectangle | null = null
 let rectFinal: L.Rectangle | null = null
 let rectDragAnchor: L.LatLng | null = null
 let rectLastLatLng: L.LatLng | null = null
+
+const TILE_SOURCES = [
+  {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '© OpenStreetMap contributors'
+  },
+  {
+    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    attribution: '© OpenStreetMap contributors © CARTO'
+  }
+] as const
+
+function buildTileLayer(Lmod: typeof L, sourceIndex: number) {
+  const source = TILE_SOURCES[sourceIndex] ?? TILE_SOURCES[0]
+  const layer = Lmod.tileLayer(source.url, {
+    attribution: source.attribution,
+    maxZoom: 19
+  })
+  layer.on('tileerror', () => {
+    tileErrorCount += 1
+    if (tileErrorCount < 8) return
+    if (!map || tileSourceIndex >= TILE_SOURCES.length - 1) return
+    tileSourceIndex += 1
+    tileErrorCount = 0
+    baseTileLayer?.remove()
+    baseTileLayer = buildTileLayer(Lmod, tileSourceIndex).addTo(map)
+  })
+  return layer
+}
+
+function ensureBaseTileLayer() {
+  if (!map || !baseTileLayer) return
+  if (!map.hasLayer(baseTileLayer)) {
+    baseTileLayer.addTo(map)
+  }
+}
 
 async function initMap() {
   const el = mapEl.value
@@ -206,16 +273,27 @@ async function initMap() {
   Leaflet = L
   await nextTick()
   if (!map) {
-    map = L.map(el, { preferCanvas: true }).setView([2.3, 125], 6)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map)
+    // Prefer canvas renderer to avoid pane/renderer redraw issues
+    // when switching tools (draw <-> pick).
+    map = L.map(el, {
+      preferCanvas: true,
+      zoomControl: false,
+      zoomAnimation: false,
+      fadeAnimation: false,
+      markerZoomAnimation: false
+    }).setView([2.3, 125], 6)
+    // Place zoom controls at bottom-right as requested.
+    L.control.zoom({ position: 'bottomright' }).addTo(map)
+    tileSourceIndex = 0
+    tileErrorCount = 0
+    baseTileLayer = buildTileLayer(L, tileSourceIndex).addTo(map)
     mapClickHandler = (e: L.LeafletMouseEvent) => handleMapClick(e.latlng.lng, e.latlng.lat)
     map.on('click', (e: L.LeafletMouseEvent) => mapClickHandler?.(e))
     map.on('mousedown', onMapMouseDown)
     map.on('mousemove', onMapMouseMove)
     L.DomEvent.on(document as unknown as HTMLElement, 'mouseup', onDocMouseUp)
   }
+  ensureBaseTileLayer()
   setupToolBehavior()
   redrawFinalRectangle()
   setTimeout(() => map?.invalidateSize(), 150)
@@ -334,18 +412,24 @@ function setupToolBehavior() {
   const L = Leaflet
   if (!L || !map) return
   markers.forEach((m, i) => {
-    if (activeTool.value === 'pick') {
-      m.dragging?.enable()
-      m.off('dragend')
-      m.on('dragend', () => {
-        const latlng = m.getLatLng()
-        coordinates.value[i] = [latlng.lng, latlng.lat]
-        updatePolyline()
-      })
-    } else {
-      m.dragging?.disable()
-      m.off('dragend')
-    }
+    // Keep marker dragging enabled to avoid a Leaflet rendering/pane glitch
+    // when toggling draggable state during tool switches (draw <-> pick).
+    m.dragging?.enable()
+
+    m.off('dragstart')
+    // Avoid map panning while dragging markers (can cause tile/vector redraw glitches).
+    m.on('dragstart', () => {
+      map?.dragging.disable()
+    })
+
+    m.off('dragend')
+    m.on('dragend', () => {
+      map?.dragging.enable()
+      if (activeTool.value !== 'pick') return
+      const latlng = m.getLatLng()
+      coordinates.value[i] = [latlng.lng, latlng.lat]
+      updatePolyline()
+    })
   })
   if (polyline) {
     polyline.off('click')
@@ -417,22 +501,24 @@ function addPoint(lng: number, lat: number) {
   markers.push(m)
   updatePolyline()
   setupToolBehavior()
-  if (coordinates.value.length >= 2) {
-    const bounds = L.latLngBounds(coordinates.value.map(([lng, lat]) => [lat, lng] as [number, number]))
-    map.fitBounds(bounds, { padding: [24, 24], maxZoom: 12 })
-  }
 }
 
 function updatePolyline() {
   const L = Leaflet
   if (!L || !map || coordinates.value.length < 2) return
-  polyline?.remove()
   const latLngs = coordinates.value.map(([lng, lat]) => [lat, lng] as [number, number])
-  polyline = L.polyline(latLngs, {
+  const style = {
     color: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#01a73e',
     weight: 6,
     opacity: 0.9
-  }).addTo(map)
+  }
+  // Keep the polyline instance to avoid preferCanvas redraw glitches.
+  if (!polyline) {
+    polyline = L.polyline(latLngs, style).addTo(map)
+  } else {
+    polyline.setLatLngs(latLngs)
+    polyline.setStyle(style)
+  }
   setupToolBehavior()
 }
 
@@ -470,27 +556,83 @@ function submit() {
   emit('submit', {
     routeName: routeName.value.trim(),
     coordinates: [...coordinates.value],
+    from: fromPort.value.trim() || undefined,
+    to: toPort.value.trim() || undefined,
     ...(boundingRectangle.value?.length ? { boundingRectangle: [...boundingRectangle.value] } : {})
   })
   clearAllDrawing()
   routeName.value = ''
+  fromPort.value = ''
+  toPort.value = ''
   close()
 }
 
-watch(activeTool, () => {
-  if (activeTool.value !== 'rectangle') {
+async function reinitMapPreserveDrawing() {
+  if (!mapEl.value) return
+
+  const coords = coordinates.value.map(([lng, lat]) => [lng, lat] as [number, number])
+  const rect = boundingRectangle.value?.map(([lng, lat]) => [lng, lat] as [number, number]) ?? null
+
+  // Remove current map instance and all layers/panes.
+  map?.remove()
+  map = null
+  baseTileLayer = null
+  polyline = null
+  markers.forEach(m => m.remove())
+  markers.length = 0
+
+  rectPreview?.remove()
+  rectPreview = null
+  rectFinal = null
+  rectDragAnchor = null
+  rectLastLatLng = null
+
+  tileSourceIndex = 0
+  tileErrorCount = 0
+
+  // Restore drawing state.
+  coordinates.value = coords
+  boundingRectangle.value = rect
+
+  // Recreate map + layers.
+  await nextTick()
+  await initMap()
+  rebuildMarkers()
+  updatePolyline()
+  redrawFinalRectangle()
+  setTimeout(() => map?.invalidateSize(), 150)
+}
+
+watch(activeTool, (newTool, oldTool) => {
+  if (newTool !== 'rectangle') {
     rectPreview?.remove()
     rectPreview = null
     rectDragAnchor = null
     rectLastLatLng = null
     map?.dragging.enable()
   }
+
+  // Leaflet renderer/pane state can get corrupted when toggling draw <-> pick.
+  // Re-initialize the map while preserving the current drawing.
+  if (
+    (newTool === 'pick' && oldTool === 'draw') ||
+    (newTool === 'draw' && oldTool === 'pick')
+  ) {
+    void reinitMapPreserveDrawing()
+    return
+  }
+
+  ensureBaseTileLayer()
   setupToolBehavior()
+  // Leaflet sometimes needs a size invalidation when tools change.
+  setTimeout(() => map?.invalidateSize(), 0)
 })
 
 watch(modelValue, (open) => {
   if (open) {
     routeName.value = ''
+    fromPort.value = ''
+    toPort.value = ''
     coordinates.value = []
     boundingRectangle.value = null
     activeTool.value = 'draw'
@@ -506,6 +648,9 @@ watch(modelValue, (open) => {
     rectLastLatLng = null
     map?.remove()
     map = null
+    baseTileLayer = null
+    tileSourceIndex = 0
+    tileErrorCount = 0
     polyline = null
     markers.length = 0
   }

@@ -1,7 +1,7 @@
 {
   "type": "FeatureCollection",
   "forecastTimeStepHours": 3,
-  "timeZone": "WIB",
+  "timeZone": "UTC",
   "dateTimeReference": "UTC",
   "features": [
     {

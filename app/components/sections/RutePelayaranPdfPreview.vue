@@ -102,7 +102,7 @@
               preserveAspectRatio="xMidYMid meet"
             >
               <defs>
-                <linearGradient id="tempGradRute" x1="0" x2="0" y1="1" y2="0">
+                <linearGradient id="visibilityGradRute" x1="0" x2="0" y1="1" y2="0">
                   <stop offset="0" stop-color="#fda4af" />
                   <stop offset="1" stop-color="#f43f5e" />
                 </linearGradient>
@@ -134,14 +134,14 @@
                 />
               </g>
               <!-- DATA LINES -->
-              <polyline v-if="tempPath" :points="tempPath" fill="none" stroke="url(#tempGradRute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <polyline v-if="visibilityPath" :points="visibilityPath" fill="none" stroke="url(#visibilityGradRute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               <path v-if="windPath" :d="windPath" fill="none" stroke="#2779FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               <g v-for="(pt, i) in windPoints" :key="'pt' + i">
                 <rect :x="pt.x - 2.5" :y="pt.y - 2.5" width="5" height="5" fill="#2779FD" />
               </g>
-              <!-- Y-AXIS LEFT (Temperature) -->
-              <text :x="marginLeft - 4" :y="marginTop + chartAreaH / 2" text-anchor="middle" font-size="6" fill="#64748b" :transform="`rotate(-90,${marginLeft - 4},${marginTop + chartAreaH / 2})`">Temperature (°C)</text>
-              <text v-for="(t, i) in [35, 30, 25, 20, 15, 10, 5, 0]" :key="'ty' + i" :x="marginLeft - 6" :y="marginTop + i * chartAreaH / 7 + 2.5" text-anchor="end" font-size="6" fill="#64748b">{{ t }}</text>
+              <!-- Y-AXIS LEFT (Visibility) -->
+              <text :x="marginLeft - 4" :y="marginTop + chartAreaH / 2" text-anchor="middle" font-size="6" fill="#64748b" :transform="`rotate(-90,${marginLeft - 4},${marginTop + chartAreaH / 2})`">Visibility (km)</text>
+              <text v-for="(t, i) in visibilityTicks" :key="'vy' + i" :x="marginLeft - 6" :y="marginTop + i * chartAreaH / 7 + 2.5" text-anchor="end" font-size="6" fill="#64748b">{{ t }}</text>
               <!-- Y-AXIS RIGHT (Wind Speed) -->
               <text :x="marginLeft + chartAreaW + 22" :y="marginTop + chartAreaH / 2" text-anchor="middle" font-size="6" fill="#64748b" :transform="`rotate(90,${marginLeft + chartAreaW + 22},${marginTop + chartAreaH / 2})`">Wind Speed (kts)</text>
               <text v-for="(w, i) in [14, 12, 10, 8, 6, 4, 2, 0]" :key="'wy' + i" :x="marginLeft + chartAreaW + 8" :y="marginTop + i * chartAreaH / 7 + 2.5" text-anchor="start" font-size="6" fill="#64748b">{{ w }}</text>
@@ -153,7 +153,7 @@
               </g>
             </svg>
             <div class="flex gap-6 pt-1 border-t border-slate-200 text-xs justify-center">
-              <span class="flex items-center gap-2"><span class="inline-block w-6 h-0.5 rounded bg-gradient-to-r from-[#fda4af] to-[#f43f5e]" /> Temperature</span>
+              <span class="flex items-center gap-2"><span class="inline-block w-6 h-0.5 rounded bg-gradient-to-r from-[#fda4af] to-[#f43f5e]" /> Visibility</span>
               <span class="flex items-center gap-2"><span class="inline-block w-6 h-0.5 rounded bg-[#2779FD]" /> Wind Speed</span>
             </div>
           </div>
@@ -706,7 +706,7 @@
 import type L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-const { routeInfo, forecastData, synopticInfo, warnings, cycloneWarning, disclaimer, safetyAdvisory, manualRouteData, availableRoutes, selectedRouteId } = useMaritimeData()
+const { routeInfo, forecastData, synopticInfo, warnings, cycloneWarning, disclaimer, safetyAdvisory, manualRouteData, availableRoutes, selectedRouteId, splitPointCoordinates } = useMaritimeData()
 const bmkgLogoUrl = useBmkgLogoUrl()
 
 const pdfDocumentRef = ref<HTMLElement | null>(null)
@@ -724,13 +724,22 @@ const weatherIconY = 28
 
 const meteogramRows = computed(() => forecastData.value.filter(r => r.date || r.time))
 
-const tempPath = computed(() => {
+const visibilityMaxKm = 10
+const visibilityTicks = computed(() => {
+  // 0..max mapped onto 7 equal segments (8 labels) for compact PDF readability.
+  const steps = 7
+  const max = visibilityMaxKm
+  return Array.from({ length: steps + 1 }, (_, i) => Number((max - (i * max) / steps).toFixed(1)))
+})
+
+const visibilityPath = computed(() => {
   const rows = meteogramRows.value
   if (!rows.length) return ''
   return rows.map((r, i) => {
-    const temp = parseFloat(r.temp || '0') || 25
+    const rawVisibility = parseFloat(r.visibility || '0') || 0
+    const visibilityKm = Math.max(0, Math.min(visibilityMaxKm, rawVisibility))
     const x = marginLeft + (i + 0.5) * (chartAreaW / rows.length)
-    const y = marginTop + (1 - temp / 35) * chartAreaH
+    const y = marginTop + (1 - visibilityKm / visibilityMaxKm) * chartAreaH
     return `${x},${y}`
   }).join(' ')
 })
@@ -805,9 +814,9 @@ function windDirectionAngle(wd: string): number {
 function formatDateTime(date: string, time: string) {
   if (!date) return ''
   const d = new Date(date)
-  const day = d.getDate()
-  const month = d.toLocaleDateString('id-ID', { month: 'long' })
-  const year = d.getFullYear()
+  const day = d.getUTCDate()
+  const month = d.toLocaleDateString('id-ID', { month: 'long', timeZone: 'UTC' })
+  const year = d.getUTCFullYear()
   const dateStr = `${day} ${month} ${year}`
   if (!time) return dateStr
   return `${dateStr} pukul ${time}`
@@ -816,10 +825,10 @@ function formatDateTime(date: string, time: string) {
 function formatFullDate(dateStr: string): string {
   if (!dateStr) return '—'
   const d = new Date(dateStr)
-  const dayName = d.toLocaleDateString('en-US', { weekday: 'long' })
-  const day = d.getDate()
-  const month = d.toLocaleDateString('en-US', { month: 'long' })
-  const year = d.getFullYear()
+  const dayName = d.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' })
+  const day = d.getUTCDate()
+  const month = d.toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' })
+  const year = d.getUTCFullYear()
   return `${dayName}, ${day} ${month} ${year}`
 }
 
@@ -902,7 +911,7 @@ function parseRouteDate(dateStr: string): Date | null {
     const month = parseInt(parts[1]!) - 1
     let year = parseInt(parts[2]!)
     if (year < 100) year += 2000
-    return new Date(year, month, day)
+    return new Date(Date.UTC(year, month, day))
   }
   return null
 }
@@ -910,10 +919,10 @@ function parseRouteDate(dateStr: string): Date | null {
 function formatRouteDate(dateStr: string): string {
   const d = parseRouteDate(dateStr)
   if (!d) return dateStr || '—'
-  const dayName = d.toLocaleDateString('en-US', { weekday: 'long' })
-  const day = d.getDate()
-  const month = d.toLocaleDateString('en-US', { month: 'long' })
-  const year = d.getFullYear()
+  const dayName = d.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' })
+  const day = d.getUTCDate()
+  const month = d.toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' })
+  const year = d.getUTCFullYear()
   return `${dayName}, ${day} ${month} ${year}`
 }
 
@@ -1036,17 +1045,42 @@ async function renderRouteOnMap(Leaflet: typeof import('leaflet')) {
   }
 
   const coords = getRouteCoordinates()
-  const geoJson: GeoJSON.FeatureCollection = {
-    type: 'FeatureCollection',
-    features: [{
-      type: 'Feature',
-      properties: {},
-      geometry: { type: 'LineString', coordinates: coords }
-    }]
-  }
+  const sampledCoords = splitPointCoordinates.value
+  const waveSegments = buildWaveLineSegments(sampledCoords, forecastData.value)
+  const useWaveSegments = waveSegments.length > 0
+
+  const geoJson: GeoJSON.FeatureCollection = useWaveSegments
+    ? {
+        type: 'FeatureCollection',
+        features: waveSegments.map(segment => ({
+          type: 'Feature' as const,
+          properties: {
+            waveHeight: segment.waveHeight,
+            color: segment.color
+          },
+          geometry: {
+            type: 'LineString' as const,
+            coordinates: segment.coordinates
+          }
+        }))
+      }
+    : {
+        type: 'FeatureCollection',
+        features: [{
+          type: 'Feature' as const,
+          properties: {},
+          geometry: { type: 'LineString' as const, coordinates: coords }
+        }]
+      }
 
   routeLayer = Leaflet.geoJSON(geoJson as never, {
-    style: { color: '#ef4444', weight: 3, opacity: 0.9, dashArray: '8 4' }
+    style: (feature) => {
+      const color = (feature?.properties as { color?: string } | undefined)?.color
+      if (color) {
+        return { color, weight: 4, opacity: 0.95 }
+      }
+      return { color: '#ef4444', weight: 3, opacity: 0.9, dashArray: '8 4' }
+    }
   }).addTo(map)
 
   const first = coords[0]
@@ -1062,6 +1096,47 @@ async function renderRouteOnMap(Leaflet: typeof import('leaflet')) {
   if (currentLayer && currentLayer.getBounds().isValid()) {
     map.fitBounds(currentLayer.getBounds(), { padding: [20, 20] })
   }
+}
+
+interface WaveLineSegment {
+  coordinates: [number, number][]
+  waveHeight: number
+  color: string
+}
+
+function waveColorFromHeight(height: number): string {
+  if (height <= 0.5) return '#16a34a' // green-600
+  if (height <= 1.25) return '#60a5fa' // blue-400
+  if (height <= 2.5) return '#facc15' // yellow-400
+  if (height <= 4.0) return '#f97316' // orange-500
+  if (height <= 6.0) return '#ef4444' // red-500
+  if (height <= 9.0) return '#6b21a8' // purple-700
+  return '#1f2937' // slate-800
+}
+
+function buildWaveLineSegments(
+  sampledCoords: [number, number][],
+  rows: Array<{ wave?: string }>
+): WaveLineSegment[] {
+  if (sampledCoords.length < 2 || rows.length < 2) return []
+  const maxIdx = Math.min(sampledCoords.length - 1, rows.length - 1)
+  const segments: WaveLineSegment[] = []
+
+  for (let i = 0; i < maxIdx; i++) {
+    const start = sampledCoords[i]
+    const end = sampledCoords[i + 1]
+    if (!start || !end) continue
+    const waveA = parseFloat(rows[i]?.wave || '0') || 0
+    const waveB = parseFloat(rows[i + 1]?.wave || '0') || 0
+    const waveHeight = Math.max(waveA, waveB)
+    segments.push({
+      coordinates: [start, end],
+      waveHeight,
+      color: waveColorFromHeight(waveHeight)
+    })
+  }
+
+  return segments
 }
 
 onMounted(async () => {
@@ -1094,7 +1169,7 @@ onBeforeUnmount(() => {
   map = null
 })
 
-watch([manualRouteData, availableRoutes, selectedRouteId], async () => {
+watch([manualRouteData, availableRoutes, selectedRouteId, splitPointCoordinates, forecastData], async () => {
   if (!map) return
   const Leaflet = (await import('leaflet')).default
   await renderRouteOnMap(Leaflet)
