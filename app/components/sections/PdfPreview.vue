@@ -8,27 +8,55 @@
       </h2>
       <p class="text-xs text-[var(--text-muted)] m-0">Pratinjau sebelum unduh PDF</p>
     </div>
-    <div class="flex gap-2 mb-4">
+    <div class="flex items-center justify-between gap-4 mb-4">
+      <div class="flex gap-2">
+        <button
+          type="button"
+          :class="['py-2 px-4 rounded-lg text-sm cursor-pointer transition-all duration-200 shadow-[var(--shadow-sm)]', pdfTemplate === 'rute-pelayaran' ? 'bg-[var(--primary)] text-white border border-[var(--primary)] shadow-[var(--shadow-md)]' : 'bg-[var(--input-bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]']"
+          @click="pdfTemplate = 'rute-pelayaran'"
+        >
+          Rute Pelayaran Khusus
+        </button>
+        <button
+          type="button"
+          :class="['py-2 px-4 rounded-lg text-sm cursor-pointer transition-all duration-200 shadow-[var(--shadow-sm)]', pdfTemplate === 'wisata-bahari' ? 'bg-[var(--primary)] text-white border border-[var(--primary)] shadow-[var(--shadow-md)]' : 'bg-[var(--input-bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]']"
+          @click="pdfTemplate = 'wisata-bahari'"
+        >
+          Wisata Bahari
+        </button>
+      </div>
       <button
         type="button"
-        :class="['py-2 px-4 rounded-lg text-sm cursor-pointer transition-all duration-200 shadow-[var(--shadow-sm)]', pdfTemplate === 'rute-pelayaran' ? 'bg-[var(--primary)] text-white border border-[var(--primary)] shadow-[var(--shadow-md)]' : 'bg-[var(--input-bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]']"
-        @click="pdfTemplate = 'rute-pelayaran'"
+        class="py-2 px-5 bg-[var(--primary)] text-white border-none rounded-lg text-sm font-medium cursor-pointer shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_rgba(1,167,62,0.35)] disabled:opacity-60 disabled:shadow-none"
+        @click="onDownloadClick"
       >
-        Rute Pelayaran Khusus
-      </button>
-      <button
-        type="button"
-        :class="['py-2 px-4 rounded-lg text-sm cursor-pointer transition-all duration-200 shadow-[var(--shadow-sm)]', pdfTemplate === 'wisata-bahari' ? 'bg-[var(--primary)] text-white border border-[var(--primary)] shadow-[var(--shadow-md)]' : 'bg-[var(--input-bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]']"
-        @click="pdfTemplate = 'wisata-bahari'"
-      >
-        Wisata Bahari
+        Download PDF
       </button>
     </div>
-    <SectionsRutePelayaranPdfPreview v-if="pdfTemplate === 'rute-pelayaran'" />
-    <SectionsWisataBahariPdfPreview v-else-if="pdfTemplate === 'wisata-bahari'" />
+    <div class="max-h-[calc(100vh-12rem)] overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--surface-muted)]">
+      <SectionsRutePelayaranPdfPreview
+        v-if="pdfTemplate === 'rute-pelayaran'"
+        ref="rutePreviewRef"
+      />
+      <SectionsWisataBahariPdfPreview
+        v-else-if="pdfTemplate === 'wisata-bahari'"
+        ref="wisataPreviewRef"
+      />
+    </div>
   </section>
 </template>
 
 <script setup lang="ts">
 const { pdfTemplate } = useMaritimeData()
+
+const rutePreviewRef = ref<any | null>(null)
+const wisataPreviewRef = ref<any | null>(null)
+
+const onDownloadClick = () => {
+  if (pdfTemplate.value === 'rute-pelayaran') {
+    rutePreviewRef.value?.downloadPdf?.()
+  } else if (pdfTemplate.value === 'wisata-bahari') {
+    wisataPreviewRef.value?.downloadPdf?.()
+  }
+}
 </script>

@@ -144,7 +144,7 @@
               <text v-for="(t, i) in visibilityTicks" :key="'vy' + i" :x="marginLeft - 6" :y="marginTop + i * chartAreaH / 7 + 2.5" text-anchor="end" font-size="6" fill="#64748b">{{ t }}</text>
               <!-- Y-AXIS RIGHT (Wind Speed) -->
               <text :x="marginLeft + chartAreaW + 22" :y="marginTop + chartAreaH / 2" text-anchor="middle" font-size="6" fill="#64748b" :transform="`rotate(90,${marginLeft + chartAreaW + 22},${marginTop + chartAreaH / 2})`">Wind Speed (kts)</text>
-              <text v-for="(w, i) in [14, 12, 10, 8, 6, 4, 2, 0]" :key="'wy' + i" :x="marginLeft + chartAreaW + 8" :y="marginTop + i * chartAreaH / 7 + 2.5" text-anchor="start" font-size="6" fill="#64748b">{{ w }}</text>
+              <text v-for="(w, i) in windSpeedTicksKts" :key="'wy' + i" :x="marginLeft + chartAreaW + 8" :y="marginTop + i * chartAreaH / 7 + 2.5" text-anchor="start" font-size="6" fill="#64748b">{{ w }}</text>
               <!-- WIND DIRECTION ARROWS (at 0-axis) -->
               <g class="meteogram-wind-arrows">
                 <g v-for="(row, i) in meteogramRows" :key="'wa' + row.id" :transform="`translate(${marginLeft + (i + 0.5) * (chartAreaW / meteogramRows.length)},${marginTop + chartAreaH + 9}) rotate(${windDirectionAngle(row.wd)})`">
@@ -689,16 +689,6 @@
       </div>
     </div>
 
-    <div class="flex justify-end mt-4">
-      <button
-        type="button"
-        class="py-2 px-5 bg-[var(--primary)] text-white border-none rounded-lg text-sm font-medium cursor-pointer shadow-md transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_rgba(1,167,62,0.35)] disabled:opacity-60 disabled:shadow-none"
-        :disabled="isDownloading"
-        @click="downloadPdf"
-      >
-        {{ isDownloading ? 'Mengunduh...' : 'Download pdf' }}
-      </button>
-    </div>
   </div>
 </template>
 
@@ -721,6 +711,10 @@ const marginTop = 35
 const chartAreaW = chartWidth - marginLeft - 48
 const chartAreaH = chartHeight - marginTop - 20
 const weatherIconY = 28
+
+/** Meteogram wind axis: forecast `ws` is in knots (matches API). */
+const windSpeedMaxKts = 25
+const windSpeedTicksKts = [25, 20, 15,12, 9, 6, 3, 0] as const
 
 const meteogramRows = computed(() => forecastData.value.filter(r => r.date || r.time))
 
@@ -750,7 +744,7 @@ const windPoints = computed(() => {
   return rows.map((r, i) => {
     const ws = parseFloat(r.ws || '0') || 5
     const x = marginLeft + (i + 0.5) * (chartAreaW / rows.length)
-    const y = marginTop + (1 - Math.min(14, ws) / 14) * chartAreaH
+    const y = marginTop + (1 - Math.min(windSpeedMaxKts, ws) / windSpeedMaxKts) * chartAreaH
     return { x, y }
   })
 })
@@ -806,9 +800,21 @@ function formatMeteogramDate(dateStr: string): string {
   return dateStr
 }
 
+/** SVG rotation for wind arrow: default path points up; meteorological wd is direction wind comes FROM (0°=N). Arrow points downwind. */
 function windDirectionAngle(wd: string): number {
+  const trimmed = (wd ?? '').trim()
+  if (!trimmed) return 0
+
+  const cleaned = trimmed.replace(/°/g, '').trim()
+  if (/^-?\d+(\.\d+)?$/.test(cleaned)) {
+    const deg = Number(cleaned)
+    if (!Number.isFinite(deg)) return 0
+    const from = ((deg % 360) + 360) % 360
+    return (from + 180) % 360
+  }
+
   const dirMap: Record<string, number> = { N: 180, NNE: 202.5, NE: 225, ENE: 247.5, E: 270, ESE: 292.5, SE: 315, SSE: 337.5, S: 0, SSW: 22.5, SW: 45, WSW: 67.5, W: 90, WNW: 112.5, NW: 135, NNW: 157.5 }
-  return dirMap[wd?.toUpperCase()] ?? 0
+  return dirMap[trimmed.toUpperCase()] ?? 0
 }
 
 function formatDateTime(date: string, time: string) {
@@ -1266,6 +1272,8 @@ async function downloadPdf() {
     isDownloading.value = false
   }
 }
+
+defineExpose({ downloadPdf })
 </script>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-[1200px] mx-auto px-6 pb-14 pt-2">
+  <div class="max-w-[1440px] mx-auto px-6 pb-14 pt-2">
     <header class="mb-10 text-center">
       <div
         class="h-1 w-20 mx-auto rounded-full mb-5 shadow-[var(--shadow-sm)]"

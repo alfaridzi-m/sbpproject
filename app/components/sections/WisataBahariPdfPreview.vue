@@ -238,16 +238,6 @@
       </div>
     </div>
 
-    <div class="flex justify-end mt-4">
-      <button
-        type="button"
-        class="py-2 px-5 bg-[var(--primary)] text-white border-none rounded-lg text-sm font-medium cursor-pointer shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_rgba(1,167,62,0.35)] disabled:opacity-60 disabled:shadow-none"
-        :disabled="isDownloading"
-        @click="downloadPdf"
-      >
-        {{ isDownloading ? 'Mengunduh...' : 'Download pdf' }}
-      </button>
-    </div>
   </div>
 </template>
 
@@ -478,6 +468,8 @@ async function downloadPdf() {
     isDownloading.value = false
   }
 }
+
+defineExpose({ downloadPdf })
 </script>
 
 <style scoped>

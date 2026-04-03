@@ -1,0 +1,674 @@
+id,name,area_id,latitude,longitude
+XA001,Pelabuhan Ulee Lheue Banda Aceh,Aceh,5.56697295500,95.29352141900
+XA002,Pelabuhan Calang Aceh Jaya,Aceh,4.63591545400,95.56573421000
+XA003,Pelabuhan Sinabang,Aceh,2.50000000000,96.38740972600
+XA004,Pelabuhan Balohan Sabang,Aceh,5.77444444400,95.21722222
+XA005,Pelabuhan Lamteng Pulo Aceh - Aceh Besar,Aceh,5.64444460000,95.16506800000
+XA006,Pelabuhan Pulau Banyak,Aceh,2.37361111110,97.06111111100
+XA007,Pelabuhan Krueng Geukuh,Aceh,5.66697295500,95.29352141900
+XA008,Pelabuhan Kuala Langsa,Aceh,4.55000000000,98.02000000000
+XA009,Pelabuhan Kuala Bubon,Aceh,4.21666666667,95.80000000000
+XA010,Pelabuhan Labuhan Haji,Aceh,3.54000000000,96.99000000000
+XA011,Pelabuhan Malahayati Aceh Besar,Aceh,5.59622000000,95.52574900000
+XA012,Pelabuhan Susoh Aceh Barat Daya,Aceh,3.72008000000,96.81119900000
+XA013,Pelabuhan Tapaktuan,Aceh,3.25339200000,97.18088500000
+XA014,Pelabuhan Singkil,Aceh,2.26826500000,97.81263100000
+XA015,Pelabuhan Lhokseumawe,Aceh,5.22320100000,97.09789600000
+XB001,Pelabuhan Belawan,Sumatera Utara,3.79555315500,98.71386105000
+XB002,Pelabuhan Sibolga,Sumatera Utara,1.72842000000,98.78576200000
+XB003,Pelabuhan Kuala Tanjung,Sumatera Utara,3.36300572200,99.45384021300
+XB004,Pelabuhan Gunung Sitoli,Sumatera Utara,1.30582700000,97.60968300000
+XB005,Pelabuhan Pangkalan Susu,Sumatera Utara,4.12301700000,98.21323500000
+XB006,Pelabuhan Tanjung Balai Asahan,Sumatera Utara,3.04252021000,99.86115789200
+XB007,Pelabuhan Tanjung Beringin,Sumatera Utara,3.50706125900,99.21463202900
+XB008,Pelabuhan Barus,Sumatera Utara,2.00744900000,98.39827600000
+XB009,Pelabuhan Batahan,Sumatera Utara,0.36398300000,99.12143900000
+XB010,Pelabuhan Lahewa,Sumatera Utara,1.41397068300,97.17431630100
+XB011,Pelabuhan Leidong,Sumatera Utara,2.75232500000,99.97958200000
+XB012,Pelabuhan Pulau Tello,Sumatera Utara,-0.03557708100,98.28943680300
+XB013,Pelabuhan Teluk Dalam,Sumatera Utara,0.55453000000,97.82078900000
+XB014,Pelabuhan Sirombu,Sumatera Utara,0.94232000000,97.41094400000
+XB015,Pelabuhan Tanjung Sarang Elang,Sumatera Utara,2.53904097700,100.12979695700
+XB016,Pelabuhan Tigaras,Sumatera Utara,2.79774722027,98.78912746998
+XB017,Pelabuhan Simanindo,Sumatera Utara,2.75435770953,98.74619669850
+XB018,Pelabuhan Ajibata,Sumatera Utara,2.65933410702,98.93314309469
+XB019,Pelabuhan Ambarita,Sumatera Utara,2.68282807980,98.83313973055
+XB020,Pelabuhan Balige,Sumatera Utara,2.33803838936,99.06225447209
+XC001,Pelabuhan Panipahan,Riau,2.46912173800,100.34737911500
+XC002,Pelabuhan Bagansiapiapi,Riau,2.13967705500,100.78531842700
+XC003,Pelabuhan Batu Enam,Riau,2.11132316700,100.79796729300
+XC004,Pelabuhan Sinaboi,Riau,2.47838799712,101.20869897160
+XC005,Pelabuhan Tg Medang,Riau,2.28209046384,101.64109883504
+XC006,Pelabuhan Dumai,Riau,1.70003335524,101.46851130921
+XC007,Pelabuhan Batu Panjang,Riau,1.70537211000,101.52100310500
+XC008,Pelabuhan Bengkalis,Riau,1.46644356400,102.10705275900
+XC009,Pelabuhan Sungai Pakning,Riau,1.38143358717,102.17392513330
+XC010,Pelabuhan Tg Buton,Riau,0.95307466098,102.30283949581
+XC011,Pelabuhan Pekanbaru,Riau,1.28061485993,102.18968256446
+XC012,Pelabuhan Selat Panjang,Riau,1.19607579636,102.62885534146
+XC013,Pelabuhan Dorak,Riau,1.29614343368,102.63019448566
+XC014,Pelabuhan Sungai Guntung,Riau,0.36539115663,103.61843618114
+XC015,Pelabuhan Kuala Gaung,Riau,-0.14942195174,103.56286172221
+XC016,Pelabuhan Tembilahan,Riau,-0.12966891148,103.56147540582
+XC017,Pelabuhan Rengat,Riau,-0.16681817951,103.55212918221
+XC018,Pelabuhan Kuala Enok,Riau,-0.53841521446,103.50034861254
+XD001,Pelabuhan Teluk Bungus Padang,Sumatera Barat,-1.03027800000,100.39920000000
+XD002,Pelabuhan Teluk Bayur Padang,Sumatera Barat,-0.99777800000,100.37140000000
+XD003,Pelabuhan Muaro Padang,Sumatera Barat,-0.96555600000,100.35280000000
+XD004,Pelabuhan Tuapejat Sipora,Sumatera Barat,-2.03055600000,99.59278000000
+XD005,Pelabuhan Maileppet Siberut,Sumatera Barat,-1.56361100000,99.19667000000
+XD006,Pelabuhan Sikakap Pagai Utara,Sumatera Barat,-2.77867470000,100.21536217400
+XD007,Pelabuhan Sikabaluan Siberut,Sumatera Barat,-1.08055600000,98.95694000000
+XD008,Pelabuhan Air Bangis Pasaman,Sumatera Barat,0.21000000000,99.26389000000
+XD009,Pelabuhan Panasahan Pesisir,Sumatera Barat,-1.36359291700,100.56219853000
+XF001,Pelabuhan Tanjung Api-Api,Sumatera Selatan,-2.37266700000,104.80590000000
+XF002,Pelabuhan Boombaru,Sumatera Selatan,-2.34824309500,105.05231346300
+XR001,Pelabuhan Nongsapura,Kep. Riau,1.18795164500,104.09468141300
+XR002,Pelabuhan Batam Center,Kep. Riau,1.16491934200,104.06261070900
+XR003,Pelabuhan Harbour Bay,Kep. Riau,1.15328720200,103.99680313600
+XR004,Pelabuhan Telaga Punggur,Kep. Riau,1.03508302000,104.13287509300
+XR005,Pelabuhan Sekupang,Kep. Riau,1.12485500000,103.92671300000
+XR006,Pelabuhan Sekupang 2,Kep. Riau,1.12723011100,103.92366810000
+XR007,Pelabuhan Batu Ampar,Kep. Riau,1.16477794500,104.00215958500
+XR008,Pelabuhan Dermaga Roro Asdp Punggur,Kep. Riau,1.03386538100,104.13141973700
+XR009,Pelabuhan Tambelan,Kep. Riau,0.97535388700,107.54814515100
+XR010,Pelabuhan Jagoh,Kep. Riau,-0.33392538500,104.49034759700
+XR011,Pelabuhan Sei Daik,Kep. Riau,-0.21680999800,104.62390916500
+XR012,Pelabuhan Tanjung Buton,Kep. Riau,-0.25282620100,104.59503972200
+XR013,Pelabuhan Sei Tenam,Kep. Riau,-0.00654851600,104.50702427200
+XR014,Pelabuhan Dabo,Kep. Riau,-0.50074792500,104.56547492600
+XR015,Pelabuhan Sri Bintan Pura,Kep. Riau,0.93076588900,104.43995909400
+XR016,Pelabuhan Sri Payung,Kep. Riau,0.93210785400,104.46112615100
+XR017,Pelabuhan Roro Dompak,Kep. Riau,0.86718997000,104.48318023800
+XR018,Pelabuhan Sri Bayintan (Kijang),Kep. Riau,0.80872337600,104.61509549900
+XR019,Pelabuhan Bandar Bentan Telani (Lagoi),Kep. Riau,1.16045462200,104.32030379200
+XR020,Pelabuhan Bandar Seri Udana (Lobam),Kep. Riau,1.00212480000,104.25559290000
+XR021,Pelabuhan Bulang Linggi (Tg.Uban),Kep. Riau,1.06338459600,104.21714150000
+XR022,Pelabuhan Roro Tg. Uban (Tg.Uban),Kep. Riau,1.06239488600,104.21978352400
+XR023,Pelabuhan Internasional Tanjung Balai Karimun,Kep. Riau,0.98853587400,103.43642004800
+XR024,Pelabuhan Sri Tanjung Gelam,Kep. Riau,0.98901546100,103.43385554000
+XR025,Pelabuhan Cargo dan Roro Parit,Kep. Riau,1.00461640400,103.35349250400
+XR026,Pelabuhan Bintang 99,Kep. Riau,1.160480824,103.995464
+XR027,Pelabuhan Khusus Bea Cukai,Kep. Riau,0.992177,103.394469
+XQ001,Pelabuhan Penagi,Kep. Riau,3.89356900000,108.39178771100
+XQ002,Pelabuhan Selat Lampa,Kep. Riau,3.66211920700,108.13206020900
+XQ003,Pelabuhan Subi,Kep. Riau,3.02304472300,108.89083318900
+XQ004,Pelabuhan Serasan,Kep. Riau,2.49768353300,109.00802060400
+XQ005,Pelabuhan Midai,Kep. Riau,3.00516470200,107.74799474300
+XQ006,Pelabuhan Pulau Laut,Kep. Riau,4.67552992400,107.95107471200
+XQ007,Pelabuhan Sedanau,Kep. Riau,3.79676654200,108.03803962100
+XQ008,Pelabuhan Tarempa,Kep. Riau,3.21687986700,106.21725635800
+XQ009,Pelabuhan Letung,Kep. Riau,2.98724493300,105.69482027100
+XQ010,Pelabuhan Matak,Kep. Riau,3.32623427723,106.23979374126
+XQ011,Pelabuhan Sri Lakang (Kuala Maras),Kep. Riau,2.90861543258,105.80247190252
+XQ012,Pelabuhan Seluan,Kep. Riau,4.11528032508,107.84873584113
+XQ013,Pelabuhan Teluk Buton,Kep. Riau,4.23242112267,108.21258829289
+XQ014,Pelabuhan Binjai,Kep. Riau,3.80529362152,108.23274244578
+XQ015,Pelabuhan Seminte,Kep. Riau,3.82263738409,108.07783454483
+XQ016,Pelabuhan Pulau Panjang,Kep. Riau,2.72449557029,108.88786601731
+XE001,Pelabuhan Talang Duku,Jambi,-1.02325638700,104.27232161200
+XE002,Pelabuhan Roro Kuala Tungkal,Jambi,-0.78657241700,103.50503410100
+XE003,Pelabuhan Muara Sabak,Jambi,-1.00908051600,103.81708683800
+XE004,Pelabuhan PPI Nipah Panjang,Jambi,-1.04950097900,104.18441151200
+XG001,Pelabuhan Linau,Bengkulu,-4.84277900000,103.41332600000
+XG002,Pelabuhan Pulai Baai,Bengkulu,-3.89859298200,102.28610348700
+XG003,Pelabuhan Kahyapu,Bengkulu,-5.34737902300,102.27611987600
+XH001,Pelabuhan Panjang (Utama),Lampung,-5.46886100000,105.31972200000
+XH002,Pelabuhan Kota Agung,Lampung,-5.49931330000,104.62016270000
+XH003,Pelabuhan Mesuji,Lampung,-4.14111752900,105.81698739900
+XH004,Pelabuhan Labuhan Maringgai,Lampung,-5.35809927500,105.81978919800
+XH005,Pelabuhan Lempasing,Lampung,-5.48532400000,105.26064900000
+XH006,Pelabuhan Teladas,Lampung,-4.40980234000,105.86299956700
+XH007,Pelabuhan Krui,Lampung,-5.18386017100,103.93297755200
+XH008,Pelabuhan Bakauheni,Lampung,-5.87057700000,105.75461700000
+XH009,Pelabuhan Sebesi,Lampung,-5.93578879569,105.51300371913
+XH010,Pelabuhan Canti,Lampung,-5.80005176771,105.58427351877
+XH011,Pelabuhan Limus,Lampung,-5.85648493499,104.70645275816
+XH012,Pelabuhan  Wijaya Karya Beton,Lampung,-5.84398090000,105.80297400000
+XS001,Pelabuhan Pangkalbalam,Bangka Belitung,-2.08782326542,106.23643214339
+XS002,Pelabuhan Belinyu,Bangka Belitung,-1.63008889000,105.73446390000
+XS003,Pelabuhan Tanjur Ular,Bangka Belitung,-1.96055848700,105.12601898400
+XS004,Pelabuhan Tanjung Kalian,Bangka Belitung,-2.08393333000,105.13271390000
+XS005,Pelabuhan Sadai,Bangka Belitung,-3.12339611819,106.81388055141
+XS006,Pelabuhan Tanjung Gading,Bangka Belitung,-3.01758203700,106.79084585700
+XS007,Pelabuhan Tanjung Pandan,Bangka Belitung,-2.70602240498,107.55044601288
+XS008,Pelabuhan Tanjung Batu,Bangka Belitung,-2.89665833000,107.55126670000
+XS009,Pelabuhan Tanjung Ru,Bangka Belitung,-2.93658056000,107.53036110000
+XS010,Pelabuhan Tanjung Nyato,Bangka Belitung,-2.88676553537,107.51904151130
+XS011,Pelabuhan Sungai Selan,Bangka Belitung,-2.44371999932,105.86589512000
+XS012,Pelabuhan Manggar,Bangka Belitung,-2.84826672614,108.31661353645
+XV001,Pelabuhan Utama Dwikora Pontianak,Kalimantan Barat,0.04501172400,109.21117880800
+XV002,Pelabuhan Penyebrangan Tebas Kuala,Kalimantan Barat,1.20438668000,108.98438638800
+XV003,Pelabuhan Perikanan Nusantara Pemangkat,Kalimantan Barat,1.20108031800,108.97910272100
+XV004,Pelabuhan Internasional Kijing,Kalimantan Barat,0.50664491900,108.90878788700
+XV005,Pelabuhan Perikanan Pantai Sungai Rengas,Kalimantan Barat,0.03107333400,109.18597697400
+XV006,Pelabuhan Penyebrangan Rasau Jaya,Kalimantan Barat,-0.20370097100,109.08201977000
+XV007,Pelabuhan Laut Padang Tikar,Kalimantan Barat,-0.67595247400,109.27602967700
+XV008,Pelabuhan Perikanan Pantai Teluk Batang,Kalimantan Barat,-1.04245592300,109.76626274000
+XV009,Pelabuhan Laut Sukabangun,Kalimantan Barat,-1.76851318700,109.93708297800
+XV010,Pelabuhan Laut Kendawangan,Kalimantan Barat,-2.53008790100,110.21213075100
+XV011,Pelabuhan Teluk Suak,Kalimantan Barat,0.78888800000,108.85583300000
+XV012,Pulau Lemukutan,Kalimantan Barat,0.75888800000,108.71388800000
+XV013,Sei Kunyit,Kalimantan Barat,0.49277700000,108.93972200000
+XV014,Pulau Temajo,Kalimantan Barat,0.49777700000,108.85277700000
+XZ001,Pelabuhan Malundung Tarakan,Kalimantan Utara,3.28329000000,117.59544200000
+XZ002,Pelabuhan Feri Juata Laut Tarakan,Kalimantan Utara,3.43071528500,117.53708838800
+XZ003,Pelabuhan Tanjung Selor,Kalimantan Utara,2.90164422000,117.71779520700
+XZ004,Pelabuhan Bunyu,Kalimantan Utara,3.46186956900,117.83715921000
+XZ005,Pelabuhan Feri Ancam Bulungan,Kalimantan Utara,3.16283362400,117.31682801300
+XZ006,Pelabuhan KIPI Tanah Kuning Bulungan,Kalimantan Utara,2.51067700000,117.90382400000
+XZ007,Pelabuhan Tunon Taka Nunukan,Kalimantan Utara,4.14422560900,117.66702000000
+XZ008,Pelabuhan Sei Nyamuk Sebatik,Kalimantan Utara,4.16098154200,117.90261623300
+XZ009,Pelabuhan Feri Sei Jepun Nunukan,Kalimantan Utara,4.07585912000,117.73069240000
+XZ010,Pelabuhan Feri Liang Bunyu Sebatik,Kalimantan Utara,4.10385996100,117.75305878200
+XZ011,Pelabuhan Speedboat Malinau,Kalimantan Utara,3.55208823800,117.52310873600
+XZ012,"Pelabuhan Tideng Pale, Kabupaten Tana Tidung",Kalimantan Utara,3.54457629800,117.52481158300
+XZ013,Pelabuhan Feri Sei Bawan Kabupaten Tana Tidung,Kalimantan Utara,3.54471316200,117.52735759900
+XZ014,Pelabuhan Tengkayu I,Kalimantan Utara,3.29129220000,117.56729570000
+XZ015,Pelabuhan Liem Hie Djung Nunukan,Kalimantan Utara,4.14380910000,117.64483480000
+XZ016,Pelabuhan Speedboat Tana Kuning,Kalimantan Utara,2.61074100000,117.84800100000
+XY001,Pelabuhan Peti Kemas,Kalimantan Timur,-0.60499706600,117.54317362600
+XY002,Pelabuhan Semayang,Kalimantan Timur,-1.27288232700,116.80579519500
+XY003,Pelabuhan Kampung Baru,Kalimantan Timur,-1.21900000000,116.81500000000
+XY004,"Pelabuhan Kariangau, Balikpapan",Kalimantan Timur,-1.21583534900,116.76972072100
+XY005,Pelabuhan Penajam Paser Utara,Kalimantan Timur,-1.23003571400,116.76404627100
+XY006,Pelabuhan Tanjung Laut,Kalimantan Timur,0.11203339000,117.49257468000
+XY007,Pelabuhan Tanah Grogot Pondong,Kalimantan Timur,-1.80341580600,116.25118315100
+XY008,Pelabuhan Sangkulirang,Kalimantan Timur,0.96121827600,117.99021580100
+XY009,Pelabuhan Maloy,Kalimantan Timur,0.80392475700,117.93418033600
+XY010,Pelabuhan Kuala Samboja,Kalimantan Timur,-1.01970666600,117.11554556500
+XY011,Pelabuhan Tanjung Redeb,Kalimantan Timur,2.16051793100,117.97264703000
+XY012,Pelabuhan Mantritip,Kalimantan Timur,2.01477094800,117.81642000500
+XY013,Pelabuhan Sangatta,Kalimantan Timur,0.52935765400,117.64537458200
+XY014,Pelabuhan Lhok Tuan,Kalimantan Timur,0.16546330400,117.48757439200
+XY015,Pelabuhan Tanjung Santan,Kalimantan Timur,-0.10352290400,117.46595892000
+XY016,"Pelabuhan Tanjung Batu, Balikpapan",Kalimantan Timur,-1.25404700000,116.79045100000
+XY017,Pelabuhan Pulau Derawan,Kalimantan Timur,2.28554200000,118.23888700000
+XY018,Pelabuhan Pulau Maratua,Kalimantan Timur,2.27534170000,118.55859630000
+XW001,Pelabuhan Panglima Utar,Kalimantan Tengah,-2.84277690800,111.73300020700
+XW002,Pelabuhan Bumi Harjo,Kalimantan Tengah,-2.84566719000,111.73075650400
+XW003,Pelabuhan Pangkalan Bun,Kalimantan Tengah,-2.91348600200,111.41792559800
+XW004,Pelabuhan Kuala Jelai,Kalimantan Tengah,-3.07218967957,110.74937204585
+XW005,Pelabuhan Sukamara,Kalimantan Tengah,-2.98918811400,110.73230848300
+XW006,Pelabuhan Sampit,Kalimantan Tengah,-3.26033010544,113.08164401816
+XW007,Pelabuhan Bagendang,Kalimantan Tengah,-3.00364791000,113.04332220800
+XW008,Pelabuhan Kuala Pembuang,Kalimantan Tengah,-3.44046602200,112.57594228900
+XW009,Pelabuhan Teluk Segintung,Kalimantan Tengah,-3.33498544900,112.37886358600
+XW010,Pelabuhan Bukit Pinang,Kalimantan Tengah,-3.33041694500,114.06322480300
+XW011,Pelabuhan Pulang Pisau,Kalimantan Tengah,-2.76420185200,114.25041782700
+XW012,Pelabuhan Betanjung,Kalimantan Tengah,-3.39789506800,114.22720673500
+XW013,Pelabuhan Bahaur,Kalimantan Tengah,-3.38585632559,114.06106658800
+XW014,Pelabuhan Kuala Kapuas,Kalimantan Tengah,-3.39213202600,114.22582942800
+XW015,Pelabuhan MTU Betung,Kalimantan Tengah,-3.39692451000,114.22778790000
+XW016,Pelabuhan Adaro,Kalimantan Tengah,-3.39888878000,114.22023486500
+XX001,Pelabuhan Trisakti Banjarmasin,Kalimantan Selatan,-3.49949710600,114.49864794700
+XX002,Pelabuhan PPI Banjarmasin,Kalimantan Selatan,-3.49468765100,114.49499727100
+XX003,Pelabuhan Muara Sungai Barito Banjarmasin,Kalimantan Selatan,-3.49667778000,114.49468986300
+XX004,Pelabuhan Muara Kintap Tanah Laut,Kalimantan Selatan,-3.90469478700,115.25913802700
+XX005,Pelabuhan Samudera Pelindo III Tanah Bumbu,Kalimantan Selatan,-3.80175704300,115.48362491800
+XX006,Pelabuhan Penyeberangan Tarjun Kotabaru,Kalimantan Selatan,-3.27287287100,116.12153091000
+XX007,Pelabuhan Panjang Kotabaru,Kalimantan Selatan,-3.23593694600,116.22482786000
+XX008,Pelabuhan Tanjung Serdang Kotabaru,Kalimantan Selatan,-3.47397986900,116.04305540500
+XX009,Pelabuhan Penyeberangan Stagen Kotabaru,Kalimantan Selatan,-3.29024825000,116.15254835000
+XX010,Pelabuhan Pelindo III Kotabaru,Kalimantan Selatan,-3.29355869900,116.14504547600
+XX011,Pelabuhan PPI Kotabaru,Kalimantan Selatan,-3.27224004500,116.18081692000
+XX012,Pelabuhan Penyeberangan Teluk Gosong Kotabaru,Kalimantan Selatan,-3.33380755512,116.26264905182
+XX013,Pelabuhan Penyeberangan Sebuku Kotabaru,Kalimantan Selatan,-3.37449378576,116.40423790520
+XX014,Pelabuhan Batulicin Tanah Bumbu,Kalimantan Selatan,-3.46525500000,116.03232200000
+XX015,Pelabuhan Matasiri Kotabaru,Kalimantan Selatan,-4.77207453502,115.83910524890
+XX016,Pelabuhan Marabatuan Kotabaru,Kalimantan Selatan,-4.36071743588,115.81111508090
+XX017,Pelabuhan Maradapan Kotabaru,Kalimantan Selatan,-4.62971663654,115.69653195569
+XX018,Pelabuhan Tanjung Samalantakam,Kalimantan Selatan,-2.57147581967,116.42627864937
+XI001,Pelabuhan Cituis,Banten,-5.97030127646,106.58166230172
+XI002,Pelabuhan Kronjo,Banten,-6.01191219316,106.45193521284
+XI003,Pelabuhan Tanjung Pasir,Banten,-5.98033433802,106.67112805080
+XI004,Pelabuhan Anyer,Banten,-6.02642202898,105.88200419249
+XI005,Pelabuhan Kepuh,Banten,-5.95998253277,106.13474337020
+XI006,Pelabuhan Lontar,Banten,-5.90615696443,106.31204708843
+XI007,Pelabuhan Pasauran,Banten,-6.23200812200,105.83026280000
+XI008,Pelabuhan Bojonegara,Banten,-5.88674002473,106.11033736682
+XI009,Pelabuhan Karangantu,Banten,-5.97342077205,106.17480716402
+XI010,Pelabuhan Merak,Banten,-5.93446424300,105.99909480000
+XI011,Pelabuhan Ciwandan,Banten,-5.94852292295,105.91107859983
+XI012,Pelabuhan Carita,Banten,-6.31698870600,105.83708140000
+XI013,Pelabuhan Labuan,Banten,-6.37285218300,105.82258010000
+XI014,Pelabuhan Panimbang,Banten,-6.48128758100,105.66401411800
+XI015,Pelabuhan Tamanjaya,Banten,-6.77404962700,105.50507150000
+XI016,Pelabuhan Binuangeun,Banten,-6.83744324000,105.88374800000
+XI017,Pelabuhan Suralaya,Banten,-5.883932414,106.0253208
+XI018,Pelabuhan KBS,Banten,-6.001864959,105.9567699
+XJ001,Pelabuhan Tanjung Priok,DK Jakarta,-6.10387977600,106.88229487800
+XJ002,Pelabuhan Sunda Kelapa,DK Jakarta,-6.06667274010,106.81899678667
+XJ003,Pelabuhan Muara Angke,DK Jakarta,-6.06815832443,106.78313564027
+XJ004,Pelabuhan Muara Baru,DK Jakarta,-6.07542367154,106.80124205466
+XJ005,Pelabuhan Kalibaru Cilincing,DK Jakarta,-6.06702338471,106.91608399707
+XJ006,Pelabuhan Marunda,DK Jakarta,-6.06669493030,106.94799306055
+XJ007,Pelabuhan P. Untung Jawa,DK Jakarta,-5.97948000000,106.70722000000
+XJ008,Pelabuhan P. Lancang,DK Jakarta,-5.92863000000,106.58325000000
+XJ009,Pelabuhan P. Pari,DK Jakarta,-5.85864000000,106.61898000000
+XJ010,Pelabuhan P. Tidung,DK Jakarta,-5.79950000000,106.49963000000
+XJ011,Pelabuhan P. Pramuka,DK Jakarta,-5.74527000000,106.61216000000
+XJ012,Pelabuhan P. Kelapa,DK Jakarta,-5.65669000000,106.57349000000
+XJ013,Pelabuhan P. Pabelokan,DK Jakarta,-5.48037000000,106.39298000000
+XJ014,Pelabuhan P. Sabira,DK Jakarta,-5.20575000000,106.46058000000
+XJ015,Pelabuhan Muara Gembong (Bekasi),Jawa Barat,-6.01463500000,107.00696400000
+XJ016,Pelabuhan Tarumajaya (Bekasi),Jawa Barat,-6.08476000000,106.99667000000
+XJ017,Pelabuhan Cilamaya (Karawang),Jawa Barat,-6.18726411350,107.66080718500
+XJ018,Pelabuhan Perikanan Pantai Muara Ciasem (Subang),Jawa Barat,-6.18351492064,107.69946570243
+XJ019,Pelabuhan Perikanan Pantai Blanakan (Subang),Jawa Barat,-6.18334032626,107.68172796591
+XJ020,Pelabuhan Patimban (Subang),Jawa Barat,-6.18825339103,107.95494248255
+XJ021,Pelabuhan Perikanan Pantai Eretan (Indramayu),Jawa Barat,-6.27495109011,108.08750303878
+XJ022,Pelabuhan Karangsong (Indramayu),Jawa Barat,-6.29063594559,108.40021291094
+XJ023,Pelabuhan Cirebon (Cirebon),Jawa Barat,-6.70297706775,108.59476511172
+XJ024,Pelabuhan Kejawanan (Cirebon),Jawa Barat,-6.69902547103,108.63315241026
+XJ025,Pelabuhan Ratu (Sukabumi),Jawa Barat,-6.98862422000,106.54257360900
+XJ026,Pelabuhan Sindang Barang (Cianjur),Jawa Barat,-7.46083000000,107.13030000000
+XJ027,Pelabuhan Perikanan Jayanti (Cianjur),Jawa Barat,-7.49870000000,107.38648000000
+XJ028,Pelabuhan Perikanan Pantai Cilauteureun (Garut),Jawa Barat,-7.66183533700,107.68644385600
+XJ029,Pelabuhan Pamayang Cipatujah (Tasikmalaya),Jawa Barat,-7.74823000000,108.01115000000
+XJ030,Pelabuhan Pangandaran (Pangandaran),Jawa Barat,-7.73847438973,108.65657901763
+XJ031,Pelabuhan Perikanan Cikidang (Pangandaran),Jawa Barat,-7.70573734194,108.70591445995
+XK001,PPP Tasik Agung,Jawa Tengah,-6.67767860779,111.33810934387
+XK002,Pelabuhan Sarang,Jawa Tengah,-6.70283390253,111.69193515775
+XK003,Pelabuhan Pangkalan Sluke,Jawa Tengah,-6.57909827899,111.46480305747
+XK004,PPP Bajomulyo,Jawa Tengah,-6.70141065900,111.18746112423
+XK005,Pelabuhan Banyutowo,Jawa Tengah,-6.43110470711,111.09469069708
+XK006,"Pelabuhan Penyebrangan Jepara, Kartini",Jawa Tengah,-6.59055991100,110.64828150000
+XK007,Pelabuhan Karimunjawa,Jawa Tengah,-5.88398544400,110.44001360000
+XK008,Pelabuhan Legon Bajak,Jawa Tengah,-5.78747499100,110.47616880000
+XK009,Pelabuhan Tanjung Emas,Jawa Tengah,-6.91872532144,110.41591753865
+XK010,Pelabuhan Morodemak,Jawa Tengah,-6.82058359500,110.54446960000
+XK011,Pelabuhan Wedung,Jawa Tengah,-6.77430710600,110.58684849500
+XK012,Pelabuhan Tawang,Jawa Tengah,-6.87748664679,110.04490545279
+XK013,TPI Bandengan,Jawa Tengah,-6.82601881716,110.24072760310
+XK014,PPP Klidanglor,Jawa Tengah,-6.83506740893,109.76506795821
+XK015,TPI Roban,Jawa Tengah,-6.85986103520,109.85068215183
+XK016,PPP Wonokerto,Jawa Tengah,-6.80650735498,109.63155694528
+XK017,TPI Jambean,Jawa Tengah,-6.78413145346,109.64306913077
+XK018,Pelabuhan Perikanan Nusantara,Jawa Tengah,-6.81626297699,109.71248553150
+XL001,Pelabuhan Kluwut (Brebes),Jawa Tengah,-6.70746310867,108.93383927957
+XL002,Pelabuhan Tegal Sari (Kota Tegal),Jawa Tengah,-6.80392691396,109.15266685518
+XL003,Pelabuhan Larangan (Kab.Tegal),Jawa Tengah,-6.81672072339,109.19808268899
+XL004,Pelabuhan Asem Doyong (Pemalang),Jawa Tengah,-6.81782251232,109.40743083038
+XM001,PPS Cilacap,Jawa Tengah,-7.72676000000,109.02342000000
+XM002,Sentolo Kawat,Jawa Tengah,-7.74533733300,109.01259638100
+XM003,Logending,Jawa Tengah,-7.72782483300,109.38715674300
+XM004,Jetis Purworejo,Jawa Tengah,-7.84908000000,109.89531000000
+XO001,Pelabuhan Perikanan Bulu Tuban,Jawa Timur,-6.72708698588,111.72662128847
+XO002,Pelabuhan Brondong,Jawa Timur,-6.85338033871,112.26902052975
+XO003,Pelabuhan Paciran,Jawa Timur,-6.85974594503,112.36880069623
+XO004,PPN Brondong,Jawa Timur,-6.85608419300,112.29283889331
+XO005,Pelabuhan Gresik,Jawa Timur,-7.11156591352,112.67465395193
+XO006,Pelabuhan Bawean,Jawa Timur,-5.84888403100,112.64889110000
+XO007,Pelabuhan Tanjung Perak Surabaya,Jawa Timur,-7.19689169100,112.73302520000
+XO008,Pelabuhan Kamal,Jawa Timur,-7.17482463900,112.72208100000
+XO009,Pelabuhan Telaga Biru,Jawa Timur,-6.88113948430,113.08546466672
+XO010,Pelabuhan Taddan Camplong,Jawa Timur,-7.22084007400,113.29757840000
+XO011,Pelabuhan Mandangin,Jawa Timur,-7.30701106500,113.20785200000
+XO012,Pelabuhan Branta,Jawa Timur,-7.22387700600,113.44877150000
+XO013,Pelabuhan Perikanan Pasongsongan,Jawa Timur,-6.88576870000,113.65462140000
+XO014,Pelabuhan Kalianget,Jawa Timur,-7.05689492200,113.94272290000
+XO015,Pelabuhan Kangean,Jawa Timur,-6.84105901300,115.22845670000
+XO016,Pelabuhan Raas,Jawa Timur,-7.15438204800,114.62486570000
+XO017,Pelabuhan Masalembu,Jawa Timur,-5.57825575100,114.41473630000
+XO018,Pelabuhan Perikanan Lekok,Jawa Timur,-7.61356151058,113.00118300427
+XO019,Pelabuhan Probolinggo,Jawa Timur,-7.70395508418,113.21409078732
+XO020,Pelabuhan Perikanan Mayangan,Jawa Timur,-7.64600317670,113.23434510271
+XO021,Pelabuhan Perikanan Paiton,Jawa Timur,-7.64200413523,113.52739053726
+XO022,Pelabuhan Jangkar,Jawa Timur,-7.68703764029,114.20934807781
+XO023,Pelabuhan Panarukan,Jawa Timur,-7.67951782086,113.91619476986
+XO024,Pelabuhan Kalbut,Jawa Timur,-7.61628930768,114.00916134913
+XO025,Pelabuhan Perikanan Tamperan,Jawa Timur,-8.30262536124,111.08419544187
+XO026,PPN Prigi,Jawa Timur,-8.34502855005,111.74611232742
+XO027,Pelabuhan Perikanan Popoh,Jawa Timur,-8.26448753600,111.80276730000
+XO028,Pelabuhan Perikanan Tambakrejo,Jawa Timur,-8.31573533000,112.14082980000
+XO029,Pelabuhan Perikanan Pondok Dadap,Jawa Timur,-8.43277393000,112.68134321700
+XO030,Pelabuhan Perikanan Puger,Jawa Timur,-8.38776350800,113.47499481500
+XO031,Pelabuhan Perikanan Grajagan,Jawa Timur,-8.62890306180,114.25028100390
+XO032,Pelabuhan Perikanan Muncar,Jawa Timur,-8.39839758171,114.40701197437
+XO033,Pelabuhan Boom,Jawa Timur,-8.20092187898,114.41648065898
+XO034,Pelabuhan Ketapang,Jawa Timur,-8.14442315705,114.41790698550
+XO035,Pelabuhan Tanjung Wangi,Jawa Timur,-8.04634271458,114.47925874807
+XO036,Pelabuhan Ujung,Jawa Timur,-7.19778200000,112.73481200000
+XO037,Pelabuhan Sapeken,Jawa Timur,-7.00857100000,115.70370400000
+XO038,Pelabuhan Sapudi,Jawa Timur,-7.16696800000,114.32537900000
+XO039,Gili Labak,Jawa Timur,-7.20079200000,114.04037000000
+XN001,Pelabuhan PPP Sadeng,DI Yogyakarta,-8.18946363900,110.79951015400
+XN002,Pelabuhan PPP Gesing,DI Yogyakarta,-8.09870444100,110.46259006100
+XN003,Pelabuhan PP Adikarto,DI Yogyakarta,-7.91632783400,110.08578125400
+XP001,Pelabuhan ASDP Gilimanuk,Bali,-8.16058000000,114.43705000000
+XP002,Pelabuhan PPN Pengambengan,Bali,-8.39664514600,114.58137663400
+XP003,Pelabuhan Celukan Bawang,Bali,-8.18720419700,114.83204592700
+XP004,Pelabuhan Padangbai,Bali,-8.53361100000,115.50780000000
+XP005,Pelabuhan Benoa,Bali,-8.74279888400,115.21260545700
+XP006,Pelabuhan Sanur,Bali,-8.66961000000,115.26107000000
+XP007,Pelabuhan Nusa Penida,Bali,-8.66200924200,115.55254984100
+XP008,Pelabuhan Kusamba,Bali,-8.55950000000,115.45791000000
+XP009,Pelabuhan Serangan,Bali,-8.72058200000,115.23911800000
+XT001,Pelabuhan Lembar,Nusa Tenggara Barat,-8.71134686700,116.04627013700
+XT002,Pelabuhan Kayangan,Nusa Tenggara Barat,-8.48598312900,116.67463218700
+XT003,Pelabuhan Badas,Nusa Tenggara Barat,-8.46278680000,117.37148570000
+XT004,Pelabuhan Kempo Calabai,Nusa Tenggara Barat,-8.21421150000,117.70949490000
+XT005,Pelabuhan Sape,Nusa Tenggara Barat,-8.57400500000,119.02094500000
+XT006,Pelabuhan Pototano,Nusa Tenggara Barat,-8.52162300000,116.83188800000
+XT007,Pelabuhan Pemenang,Nusa Tenggara Barat,-8.37241100000,116.06503600000
+XT008,Pelabuhan Khusus Pertamina,Nusa Tenggara Barat,-8.56885630000,116.07192930000
+XT009,Pelabuhan Bima,Nusa Tenggara Barat,-8.40899817600,118.69496604500
+XT010,Pelabuhan Perikanan Labuhan Lombok,Nusa Tenggara Barat,-8.48762847500,116.66289486100
+XT011,Pelabuhan Perikanan Tanjung Luar,Nusa Tenggara Barat,-8.77769000000,116.51647200000
+XT012,Pelabuhan Perikanan Teluk Awang,Nusa Tenggara Barat,-8.88793464600,116.40236889400
+XT013,Pelabuhan Perikanan Sape,Nusa Tenggara Barat,-8.56597670900,119.01809585800
+XT014,Pelabuhan Goa,Nusa Tenggara Barat,-8.467879,117.384386
+XT015,Pelabuhan Labuan Aji Pulau Moyo,Nusa Tenggara Barat,-8.220505,117.484021
+XT016,Pelabuhan Benete,Nusa Tenggara Barat,-8.887709677,116.7325137
+XT017,Pelabuhan Kempo,Nusa Tenggara Barat,-8.571324013,118.2193051
+XT018,Pelabuhan Calabai,Nusa Tenggara Barat,-8.214625047,117.7090011
+XT019,Pelabuhan Langgudu,Nusa Tenggara Barat,-8.712,118.817
+XT020,Pelabuhan Gili Mas,Nusa Tenggara Barat,-8.72880400000,116.05166100000
+XU001,Pelabuhan Baranusa,Nusa Tenggara Timur,-8.27965826112,124.12026494753
+XU002,Pelabuhan Kalabahi,Nusa Tenggara Timur,-8.28850508481,124.38717652925
+XU003,Pelabuhan Ippi Ende,Nusa Tenggara Timur,-8.85475400000,121.66202000000
+XU004,Pelabuhan Larantuka,Nusa Tenggara Timur,-8.34230900000,122.99005800000
+XU005,Pelabuhan Adonara,Nusa Tenggara Timur,-8.33267762565,123.33894372452
+XU006,Pelabuhan Waiwerang,Nusa Tenggara Timur,-8.39122100000,123.16287100000
+XU007,Pelabuhan Solor,Nusa Tenggara Timur,-8.43463900000,123.06046200000
+XU008,Pelabuhan Hansisi,Nusa Tenggara Timur,-10.18282522400,123.48244852000
+XU009,Pelabuhan Bolok,Nusa Tenggara Timur,-10.20667341266,123.50474678717
+XU010,Pelabuhan Lewoleba,Nusa Tenggara Timur,-8.35677320146,123.40058422752
+XU011,Pelabuhan Wowong,Nusa Tenggara Timur,-8.28828800000,123.76617200000
+XU012,Pelabuhan Balauring,Nusa Tenggara Timur,-8.21106108052,123.67758825217
+XU013,Pelabuhan Reo,Nusa Tenggara Timur,-8.21724870176,120.48782870133
+XU014,Pelabuhan Labuan Bajo,Nusa Tenggara Timur,-8.49411878600,119.87579963400
+XU015,Pelabuhan Taman Nasional Pulau Komodo,Nusa Tenggara Timur,-8.63389728017,119.52164422426
+XU016,Pelabuhan Aimere,Nusa Tenggara Timur,-8.84234600000,120.85443000000
+XU017,Pelabuhan Rote,Nusa Tenggara Timur,-10.70573959389,123.01464059267
+XU018,Pelabuhan Seba,Nusa Tenggara Timur,-10.46906050627,121.80793001310
+XU019,Pelabuhan Raijua,Nusa Tenggara Timur,-10.60249200000,121.61773000000
+XU020,Pelabuhan Maumere,Nusa Tenggara Timur,-8.57178747784,122.24799669525
+XU021,Pelabuhan Pulau Palue,Nusa Tenggara Timur,-8.29389113891,121.75601384464
+XU022,Pelabuhan Waingapu,Nusa Tenggara Timur,-9.60527704104,120.27383488124
+XU023,Pelabuhan Atapupu,Nusa Tenggara Timur,-8.92806475328,124.83712492176
+XU024,Pelabuhan Tenau,Nusa Tenggara Timur,-10.19545133000,123.52778440000
+XU025,Pelabuhan Naikliu,Nusa Tenggara Timur,-9.49127276357,123.81206887690
+XU026,Pelabuhan Wini,Nusa Tenggara Timur,-9.1773981241,124.4921508732
+AA001,Pelabuhan Manado,Sulawesi Utara,1.49502978400,124.83909792700
+AA002,Pelabuhan Bukide,Sulawesi Utara,3.75235658200,125.58098691100
+AA003,Pelabuhan Kawaluso,Sulawesi Utara,4.22990277800,125.32131390000
+AA004,Pelabuhan Kahakitang,Sulawesi Utara,3.17476388900,125.51780560000
+AA005,Pelabuhan Kalama,Sulawesi Utara,3.23318333300,125.45357220000
+AA006,Pelabuhan Kawio,Sulawesi Utara,4.66665774500,125.43261819000
+AA007,Pelabuhan Lipang,Sulawesi Utara,3.23318333300,125.45357220000
+AA008,Pelabuhan Marore,Sulawesi Utara,4.72989722200,125.47758890000
+AA009,Pelabuhan Matutuang,Sulawesi Utara,4.43197172300,125.68983002000
+AA010,Pelabuhan Ngalipaeng,Sulawesi Utara,3.36704707574,125.62789674060
+AA011,Pelabuhan Para,Sulawesi Utara,3.06816111100,125.50015560000
+AA012,Pelabuhan Petta,Sulawesi Utara,3.67594133905,125.59612827063
+AA013,Pelabuhan Tahuna,Sulawesi Utara,3.60112154668,125.48455827184
+AA014,Pelabuhan Beo,Sulawesi Utara,4.22774835247,126.76840672968
+AA015,Pelabuhan Dapalan,Sulawesi Utara,4.41947834040,126.95520965339
+AA016,Pelabuhan Essang,Sulawesi Utara,4.47854900374,126.68850371769
+AA017,Pelabuhan Kakorotan,Sulawesi Utara,4.63272500000,127.15791110000
+AA018,Pelabuhan Karatung,Sulawesi Utara,4.72380555600,127.08688330000
+AA019,Pelabuhan Lirung,Sulawesi Utara,3.94296688977,126.76900573960
+AA020,Pelabuhan Marampit,Sulawesi Utara,4.73161666700,127.13044440000
+AA021,Pelabuhan Mangarang,Sulawesi Utara,3.84208941600,126.74354967100
+AA022,Pelabuhan Miangas,Sulawesi Utara,5.54995900100,126.58174700900
+AA023,Pelabuhan Rainis,Sulawesi Utara,4.23689746990,126.88904060360
+AA024,Pelabuhan Melonguane,Sulawesi Utara,3.99755833300,126.67675280000
+AA025,Pelabuhan Buhias,Sulawesi Utara,2.67623055600,125.45227500000
+AA026,Pelabuhan Pehe,Sulawesi Utara,2.75623232599,125.34709633369
+AA027,Pelabuhan Sawang,Sulawesi Utara,2.67988611100,125.39265560000
+AA028,Pelabuhan Tagulandang,Sulawesi Utara,2.34096450900,125.38117260000
+AA029,Pelabuhan Ulu Siau,Sulawesi Utara,2.71342435948,125.42472247339
+AA030,Pelabuhan Biaro,Sulawesi Utara,2.12729341200,125.36364680000
+AA031,Pelabuhan Makalehi,Sulawesi Utara,2.73423333300,125.16188890000
+AA032,Pelabuhan Amurang,Sulawesi Utara,1.24699372239,124.52117438587
+AA033,Pelabuhan Belang,Sulawesi Utara,0.92033183194,124.81516161324
+AA034,Pelabuhan Likupang,Sulawesi Utara,1.72653888377,125.06619832100
+AA035,Pelabuhan Munte/Likupang Barat,Sulawesi Utara,1.71255892009,125.04284503324
+AA036,Pelabuhan Kotabunan,Sulawesi Utara,0.81826487485,124.69262097572
+AA037,Pelabuhan Labuhan Uki,Sulawesi Utara,0.90025565942,123.92561000647
+AA038,Pelabuhan Torosik,Sulawesi Utara,0.39100537442,124.30644950605
+AA039,PPS Bitung (offshore harbour),Sulawesi Utara,1.411130467,125.14453189329
+AA040,Pelabuhan Samudera Bitung,Sulawesi Utara,1.436626,125.187339
+AA041,Pelabuhan Pananaru,Sulawesi Utara,3.39974200000,125.53978000000
+AA042,Pelabuhan Ondong Siau,Sulawesi Utara,2.754298,125.36446000000
+AA043,Pelabuhan Penyeberangan Bitung,Sulawesi Utara,1.44101700000,125.20021700000
+AA044,Pelabuhan Musi,Sulawesi Utara,3.94890063,126.6816257
+AB001,Pelabuhan Gorontalo,Gorontalo,0.50886600000,123.06307400000
+AB002,Pelabuhan Ferry Gorontalo,Gorontalo,0.49736100000,123.07069500000
+AB003,Pelabuhan Kwandang,Gorontalo,0.85356463200,122.89820894800
+AB004,KPBU Pelabuhan Anggrek,Gorontalo,0.85648857300,122.81282591700
+AB005,Pelabuhan Tilamuta,Gorontalo,0.51007998900,122.35700473700
+AB006,Pelabuhan Penyeberangan Marisa,Gorontalo,0.48623500000,122.10908100000
+AB007,Pelabuhan Bumbulan,Gorontalo,0.48718700000,122.11211800000
+AC001,Pelabuhan Taipa,Sulawesi Tengah,-0.77953000000,119.85814000000
+AC002,Pelabuhan Pantoloan,Sulawesi Tengah,-0.71067579100,119.85541737700
+AC003,Pelabuhan Wani,Sulawesi Tengah,-0.69489197100,119.84024089700
+AC004,Pelabuhan Donggala,Sulawesi Tengah,-0.66597000000,119.74458000000
+AC005,Pelabuhan Ogoamas,Sulawesi Tengah,0.74120084800,120.10487325100
+AC006,Pelabuhan Perikanan Pantai Ogotua,Sulawesi Tengah,0.95802605000,120.25321922000
+AC007,Pelabuhan Daerah Haji Hayyun Tolitoli,Sulawesi Tengah,1.03770905600,120.80949895300
+AC008,Pelabuhan Leok Buol,Sulawesi Tengah,1.19015554800,121.43817288800
+AC009,Pelabuhan Laut Moutong,Sulawesi Tengah,0.45709000000,121.21051000000
+AC010,Pelabuhan Tinombo,Sulawesi Tengah,0.38798000000,120.28916000000
+AC011,Pelabuhan Paranggi,Sulawesi Tengah,-0.47155364200,120.06369445300
+AC012,Pelabuhan Toboli,Sulawesi Tengah,-0.70325000000,120.09666000000
+AC013,Pelabuhan Loji,Sulawesi Tengah,-0.81206000000,120.17949000000
+AC014,Pelabuhan Poso,Sulawesi Tengah,-1.38131000000,120.75500000000
+AC015,Pelabuhan Ampana,Sulawesi Tengah,-0.86765619800,121.58379536000
+AC016,Pelabuhan Penyebrangan Uebone,Sulawesi Tengah,-0.91325860300,121.65947999900
+AC017,Pelabuhan Mantangisi,Sulawesi Tengah,-0.92736460300,121.69632816300
+AC018,Pelabuhan Una-Una,Sulawesi Tengah,-0.20939000000,121.63478000000
+AC019,Pelabuhan Pasokan,Sulawesi Tengah,-0.30149131400,122.33705819500
+AC020,Pelabuhan Laut Malenge,Sulawesi Tengah,-0.27155000000,122.05574000000
+AC021,Pelabuhan Wakai,Sulawesi Tengah,-0.40645401500,121.86209793400
+AC022,Pelabuhan Ferry Siliti,Sulawesi Tengah,-1.73813773300,121.81240421300
+AC023,Pelabuhan Kolonodale,Sulawesi Tengah,-1.91046711700,121.35721509600
+AC024,Pelabuhan Bungku Tengah/ Marsaoleh,Sulawesi Tengah,-2.54076000000,121.97378000000
+AC025,Pelabuhan Bunta,Sulawesi Tengah,-0.83709641500,122.16217920000
+AC026,Pelabuhan Pagimana,Sulawesi Tengah,-0.79497935900,122.66268140000
+AC027,Pelabuhan Tanjung,Sulawesi Tengah,-0.95075000000,122.79686000000
+AC028,Pelabuhan Tangkiang,Sulawesi Tengah,-1.20926564300,122.62945145200
+AC029,Pelabuhan Leme Leme Bungin,Sulawesi Tengah,-1.27130164600,122.83975580300
+AC030,Pelabuhan Laut Salakan,Sulawesi Tengah,-1.30865337000,123.29027344600
+AC031,Pelabuhan Banggai,Sulawesi Tengah,-1.58955000000,123.49866000000
+AC032,Pelabuhan Paleleh,Sulawesi Tengah,1.045145568,121.954718
+AC033,Pelabuhan Togean (Dolong Togean),Sulawesi Tengah,-0.2618103133,122.2171249
+AD001,Pelabuhan Tanjung Silopo,Sulawesi Barat,-3.47627026100,119.44688190900
+AD002,Pelabuhan Polewali,Sulawesi Barat,-3.43289620200,119.33923039900
+AD003,Pelabuhan Tinambung,Sulawesi Barat,-3.51634766000,119.03835611900
+AD004,Pelabuhan Majene,Sulawesi Barat,-3.54589708400,118.96601651800
+AD005,Pelabuhan Baru Majene,Sulawesi Barat,-3.55853440900,118.94566292800
+AD006,Pelabuhan Palipi,Sulawesi Barat,-3.31369919000,118.84956474900
+AD007,Pelabuhan Panamboang,Sulawesi Barat,-3.00600000000,118.84000000000
+AD008,Pelabuhan Dermagah Dungkait,Sulawesi Barat,-2.85347064800,118.80395034500
+AD009,Pelabuhan Penyebrangan Ferry Mamuju,Sulawesi Barat,-2.67507221800,118.86748205100
+AD010,Pelabuhan Umum Mamuju,Sulawesi Barat,-2.66813820000,118.89357972300
+AD011,Pelabuhan Belang- Belang,Sulawesi Barat,-2.47457340400,119.12791273300
+AD012,Pelabuhan Sabakattang,Sulawesi Barat,-2.22030837100,117.41073232300
+AD013,Pelabuhan Babana,Sulawesi Barat,-2.09755479100,119.19305585200
+AD014,Pelabuhan Cinoki,Sulawesi Barat,-1.68053445700,119.28208862100
+AD015,Pelabuhan Pasang Kayu SMART Mamuju,Sulawesi Barat,-1.13592265600,119.39805350200
+AD016,Pelabuhan Ambo,Sulawesi Barat,-2.53811900000,117.94476500000
+AD017,Pelabuhan Popongan,Sulawesi Barat,-2.45858719640,117.37667761716
+AD018,Pelabuhan Salissingan,Sulawesi Barat,-2.31509256229,117.23164932860
+AF001,Pelabuhan Nusantara Kendari,Sulawesi Tenggara,-3.97220704100,122.61396018100
+AF002,Pelabuhan Bungkutoko,Sulawesi Tenggara,-3.97711667000,122.61396669900
+AF003,Pelabuhan Murhum Baubau,Sulawesi Tenggara,-5.45472200000,122.61000000000
+AF004,Pelabuhan Kolaka,Sulawesi Tenggara,-4.05821254200,121.58734372500
+AF005,Pelabuhan Pomalaa/Dawi-dawi,Sulawesi Tenggara,-4.17943335600,121.60509433800
+AF006,Pelabuhan Raha,Sulawesi Tenggara,-4.84111100000,122.73080000000
+AF007,Pelabuhan Tampo,Sulawesi Tenggara,-4.62416700000,122.70940000000
+AF008,Pelabuhan Pure,Sulawesi Tenggara,-4.89726942600,122.83113664700
+AF009,Pelabuhan Tondasi,Sulawesi Tenggara,-4.74752345200,122.37083625700
+AF010,Pelabuhan Tobaku,Sulawesi Tenggara,-3.41412456900,120.88733961200
+AF011,Pelabuhan Kasipute,Sulawesi Tenggara,-4.77357114700,122.06495871400
+AF012,Pelabuhan Tanjung Pising,Sulawesi Tenggara,-5.07166700000,121.89670000000
+AF013,Pelabuhan Sikeli,Sulawesi Tenggara,-5.26228498200,121.79487732100
+AF014,Pelabuhan Dongkala,Sulawesi Tenggara,-5.31824162800,122.05119638900
+AF015,Pelabuhan Lameruru,Sulawesi Tenggara,-3.29583300000,122.29440000000
+AF016,Pelabuhan Molawe,Sulawesi Tenggara,-3.61225381400,122.20101829000
+AF017,Pelabuhan Amolengo,Sulawesi Tenggara,-4.41944096300,122.85157055900
+AF018,Pelabuhan Torobulu,Sulawesi Tenggara,-4.44546989900,122.45413159500
+AF019,Pelabuhan Langara,Sulawesi Tenggara,-4.02031770600,122.98737927300
+AF020,Pelabuhan Munse,Sulawesi Tenggara,-4.10120916700,123.25100197100
+AF021,Pelabuhan Banabungi Pasarwajo,Sulawesi Tenggara,-5.51234155300,122.84446217400
+AF022,Pelabuhan Kamaru-Lasalimu,Sulawesi Tenggara,-5.17750000000,123.06780000000
+AF023,Pelabuhan Bandar Batauga,Sulawesi Tenggara,-5.59444400000,122.59170000000
+AF024,Pelabuhan Siompu,Sulawesi Tenggara,-5.62791985700,122.52632016400
+AF025,Pelabuhan Kadatua,Sulawesi Tenggara,-5.50234771200,122.52608934400
+AF026,Pelabuhan Batu Atas Timur,Sulawesi Tenggara,-6.20554887300,122.71908640200
+AF027,Pelabuhan Wamengkoli/Waara,Sulawesi Tenggara,-5.42717580900,122.59993347100
+AF028,Pelabuhan Tolandona,Sulawesi Tenggara,-5.36659026400,122.61638373200
+AF029,Pelabuhan Mawasangka,Sulawesi Tenggara,-5.28221732300,122.28759161400
+AF030,Pelabuhan Talaga Raya,Sulawesi Tenggara,-5.47304252200,122.07500139800
+AF031,Pelabuhan Ereke - Waode Buri,Sulawesi Tenggara,-4.77301116900,123.17331073700
+AF032,Pelabuhan Labuan,Sulawesi Tenggara,-4.46835100000,122.89920800000
+AF033,Pelabuhan Wanci,Sulawesi Tenggara,-5.32994400000,123.51932300000
+AF034,Pelabuhan Kaledupa,Sulawesi Tenggara,-5.50896597700,123.77044309800
+AF035,Pelabuhan Tomia,Sulawesi Tenggara,-5.71935669800,123.90420470700
+AF036,Pelabuhan Binongko,Sulawesi Tenggara,-5.90482372600,124.03511433600
+AE001,Pelabuhan Galesong - Takalar,Sulawesi Selatan,-5.32444575900,119.35612149300
+AE002,Pelabuhan Soekarno Hatta - Makassar,Sulawesi Selatan,-5.12234235800,119.40778922800
+AE003,Pelabuhan Maccini Baji - Pangkajene Kepulauan,Sulawesi Selatan,-4.77440026300,119.49206089100
+AE004,Pelabuhan Garongkong - Barru,Sulawesi Selatan,-4.37733499600,119.61233839300
+AE005,Pelabuhan Nusantara - Pare Pare,Sulawesi Selatan,-4.01444988100,119.60992205700
+AE006,Pelabuhan Tanjung Ringgit - Palopo,Sulawesi Selatan,-2.98143288775,120.22670281016
+AE007,Pelabuhan Bangsalae Siwa - Wajo,Sulawesi Selatan,-3.67798786122,120.62993879780
+AE008,Pelabuhan Bajoe - Bone,Sulawesi Selatan,-4.54692912400,120.40431807000
+AE009,Pelabuhan Bira - Bulukumba,Sulawesi Selatan,-5.60737503400,120.46818893900
+AE010,Pelabuhan Pamatata - Selayar,Sulawesi Selatan,-5.80687348382,120.54106553584
+AE011,Pelabuhan Larea Rea - Sinjai,Sulawesi Selatan,-5.11636419300,120.28863230500
+AE012,Pelabuhan Bungeng - Jeneponto,Sulawesi Selatan,-5.64708801338,119.87542946910
+AE013,Pelabuhan Benteng - Selayar,Sulawesi Selatan,-6.10036158020,120.44861198065
+AE014,Pelabuhan Perikanan Be'ba - Takalar,Sulawesi Selatan,-5.27400000000,119.37500000000
+AE015,Pelabuhan Perikanan Untia - Makassar,Sulawesi Selatan,-5.06800000000,119.47600000000
+AH001,Pelabuhan Yos Sudarso,Maluku,-3.69350318000,128.17668300000
+AH002,Pelabuhan Penyeberangan Galala,Maluku,-3.72794766228,128.10677214161
+AH003,Pelabuhan Penyeberangan Poka,Maluku,-3.75297455247,128.08849054697
+AH004,Pelabuhan Penyeberangan Hunimua (Liang),Maluku,-3.50997986700,128.34603950000
+AH005,Pelabuhan Penyeberangan Wairiang (Kailolo),Maluku,-3.54373941503,128.41110687730
+AH006,Pelabuhan Penyeberangan Umeputih (Kulur),Maluku,-3.47963520947,128.56079090041
+AH007,Pelabuhan Penyeberangan Wahai,Maluku,-2.70519707254,129.51701804531
+AH008,Pelabuhan Penyeberangan Nalahia (Nusa Laut),Maluku,-3.63503222636,128.79055843275
+AH009,Pelabuhan Penyeberangan Jazirah Salahutu (Waai),Maluku,-3.55795938180,128.33787618251
+AH010,Pelabuhan Penyeberangan Amahai Ina Marina (Masohi),Maluku,-3.29963586194,128.94559397772
+AH011,Pelabuhan Penyeberangan Namlea,Maluku,-3.26934995700,127.08362283800
+AH012,Pelabuhan Penyeberangan Teluk Bara,Maluku,-3.03405862149,126.16663405723
+AH013,Pelabuhan Penyeberangan Waipirit,Maluku,-3.33570326900,128.34126680000
+AH014,Pelabuhan Penyeberangan Waisala,Maluku,-3.12204197132,127.93307691456
+AH015,Pelabuhan Penyeberangan Wailey,Maluku,-3.43108567200,128.61982548800
+AH016,Pelabuhan Penyeberangan Air Nanang,Maluku,-3.82602226000,130.82227449500
+AH017,Pelabuhan Penyeberangan Geser,Maluku,-3.87905163800,130.90264270000
+AH018,Pelabuhan Penyeberangan Gorom,Maluku,-3.99964052025,131.33769730170
+AH019,Pelabuhan Penyeberangan Kesui - Pulau Kasiui,Maluku,-4.49933081300,131.67487246300
+AH020,Pelabuhan Penyeberangan Teor,Maluku,-4.73779845600,131.75941786100
+AH021,Pelabuhan Penyeberangan Ilwaki,Maluku,-7.92815778800,126.40379145500
+AH022,Pelabuhan Penyeberangan Lakor,Maluku,-8.15545909500,127.78654220000
+AH023,Pelabuhan Penyeberangan Wonreli (Kisar),Maluku,-8.07927542338,127.09899267572
+AH024,Pelabuhan Penyeberangan Letwurung (Tepa),Maluku,-7.89783309900,129.86191031500
+AH025,Pelabuhan Penyeberangan Sermata,Maluku,-8.12394416238,127.70177304149
+AH026,Pelabuhan Penyeberangan Tual,Maluku,-5.46442426680,132.62308592304
+AH027,Pelabuhan Penyeberangan Toyando,Maluku,-5.59557157350,132.32865661341
+AH028,Pelabuhan Penyeberangan Elat,Maluku,-5.54479227313,132.94406638125
+AH029,Pelabuhan Penyeberangan Dobo,Maluku,-5.75783402280,134.24602093151
+AH030,Pelabuhan Penyeberangan Benjina,Maluku,-6.01093812079,134.25386369823
+AH031,Pelabuhan Penyeberangan Dermaga Lamerang,Maluku,-5.74890841986,134.23825315284
+AH032,Pelabuhan Penyeberangan Tabarfane,Maluku,-6.13018535017,134.07755807560
+AH033,Pelabuhan Penyeberangan Saumlaki,Maluku,-8.00728073059,131.26999623892
+AH034,Pelabuhan Penyeberangan Larat,Maluku,-7.05149948971,131.71766987486
+AH035,Pelabuhan Penyeberangan Wunlah,Maluku,-7.31068228530,131.40597055033
+AH036,Pelabuhan Banda Neira,Maluku,-4.52490813,129.896771
+AH037,Pelabuhan Tulehu,Maluku,-3.58389854624,128.33037428804
+AG001,Pelabuhan Ahmad Yani Ternate,Maluku Utara,0.78078788000,127.38762873200
+AG002,Pelabuhan Bastiong,Maluku Utara,0.73676295128,127.34555279859
+AG003,Pelabuhan Rum,Maluku Utara,0.73712600000,127.38595000000
+AG004,Pelabuhan Goto,Maluku Utara,0.67037371035,127.49673269799
+AG005,Pelabuhan Daruba,Maluku Utara,2.04982495600,128.29072503400
+AG006,Pelabuhan Kayoa,Maluku Utara,0.12190740300,127.44770260000
+AG007,Pelabuhan Sidangoli,Maluku Utara,0.88664383300,127.50020634800
+AG008,Pelabuhan Sofifi,Maluku Utara,0.74116897100,127.55951466100
+AG009,Pelabuhan Tobelo,Maluku Utara,1.71890325464,128.04021419899
+AG010,Pelabuhan Babang,Maluku Utara,-0.59334594559,127.66281606961
+AG011,Pelabuhan Mayau,Maluku Utara,1.31975624900,126.36408081800
+AG012,Pelabuhan Subaim,Maluku Utara,1.15220708035,128.11100924102
+AG013,Pelabuhan Moti,Maluku Utara,0.45324673400,127.43776969400
+AG014,Pelabuhan Makian,Maluku Utara,0.33105119700,127.43899679400
+AG015,Pelabuhan Kupal,Maluku Utara,-0.66222629828,127.44050635713
+AG016,Pelabuhan Busua,Maluku Utara,-0.20893898386,127.14298070578
+AG017,Pelabuhan Indari,Maluku Utara,-0.38153686931,127.30811613030
+AG018,Pelabuhan Buli,Maluku Utara,0.87259647989,128.32942411573
+AG019,Pelabuhan Gebe,Maluku Utara,-0.07963132100,129.42943563700
+AG020,Pelabuhan Weda,Maluku Utara,0.33184732043,127.93695565944
+AG021,Pelabuhan Sanana,Maluku Utara,-2.05898749640,125.99145907233
+AG022,Pelabuhan Bobong,Maluku Utara,-1.95138335200,124.38288015400
+AG023,Pelabuhan Gita,Maluku Utara,0.39140200000,127.62212300000
+AG024,Pelabuhan Hiri,Maluku Utara,0.88558600000,127.32801300000
+AG025,Pelabuhan Jailolo,Maluku Utara,1.05670000000,127.47001000000
+AG026,Pelabuhan Maba,Maluku Utara,0.69698400000,128.29539300000
+AG027,Pelabuhan Patani,Maluku Utara,0.28099900000,128.75085900000
+AG028,Pelabuhan Loleo,Maluku Utara,0.56669500000,127.53462000000
+AG029,Pelabuhan Saketa,Maluku Utara,-0.35907300000,127.84488000000
+AG030,Pelabuhan Dama,Maluku Utara,2.22217800000,127.79653800000
+AG031,Pelabuhan Tifure,Maluku Utara,0.96810300000,126.14748600000
+AG032,Pelabuhan Kawasi,Maluku Utara,-1.59004000000,127.40524600000
+AG033,Pelabuhan Laiwui,Maluku Utara,-1.33446600000,127.63626100000
+AG034,Pelabuhan Jojame,Maluku Utara,-1.20944400000,127.59832800000
+AG035,Pelabuhan Tikong,Maluku Utara,-1.64500000000,124.53000000000
+AG036,Pelabuhan Falabisahaya,Maluku Utara,-1.78978500000,125.48400600000
+AG037,Pelabuhan Pasipa,Maluku Utara,-1.88137300000,125.37882600000
+AG038,Pelabuhan Bisui,Maluku Utara,-0.47114600000,128.08307100000
+AG039,Pelabuhan Mesa,Maluku Utara,0.39903500000,128.29267800000
+AG040,Pelabuhan Mafa,Maluku Utara,0.05334100000,127.89342400000
+AG041,Pelabuhan Tomara,Maluku Utara,-0.70775000000,127.84441600000
+AG042,Pelabuhan Loloda,Maluku Utara,2.19884100000,127.76959600000
+AG043,Pelabuhan Guruapin,Maluku Utara,0.00991900000,127.41162600000
+AG044,Pelabuhan Dowora,Maluku Utara,0.69282700000,127.45627400000
+AG045,Pelabuhan Dodola,Maluku Utara,2.08504300000,128.19498000000
+AG046,Pelabuhan Maitara,Maluku Utara,0.73507700000,127.37888700000
+AG047,Pelabuhan Laigoma,Maluku Utara,0.13277000000,127.21821500000
+AG048,Pelabuhan Dufa - Dufa,Maluku Utara,0.81479000000,127.38975000000
+AG049,Pelabuhan Obi,Maluku Utara,-1.34187500000,127.65600400000
+AG050,Pelabuhan Mangole,Maluku Utara,-1.94242400000,125.91519100000
+AL001,Pelabuhan Jayapura,Papua,-2.54515660800,140.71282188300
+AL002,Pelabuhan Depapre,Papua,-2.26403341440,140.42537247452
+AL003,Pelabuhan Demta,Papua,-2.27308304664,140.17900070121
+AL004,Pelabuhan Sarmi,Papua,-1.85706245200,138.75155128500
+AL005,Pelabuhan Masi-Masi,Papua,-1.94373645800,139.01274473200
+AL006,Pelabuhan Biak,Papua,-1.18516442300,136.07575665700
+AL007,Pelabuhan Saribi (Numfor),Papua,-1.13280720800,134.87281511500
+AL008,Pelabuhan Bromsi,Papua,-1.22636735700,136.59966643800
+AL009,Pelabuhan Korido,Papua,-0.83814845300,135.58730120600
+AL010,Pelabuhan Serui,Papua,-1.88761865700,136.24510847300
+AL011,Pelabuhan Dawai,Papua,-1.81579868300,136.72514633900
+AL012,Pelabuhan Kaipuri,Papua,-1.84990978500,136.98765023400
+AL013,Pelabuhan Waren,Papua,-2.20406193600,136.42317814900
+AL014,Pelabuhan Teba,Papua,-1.42382396162,137.90445181155
+AI001,Pelabuhan Klademak,Papua Barat Daya,-0.88768164400,131.27053441000
+AI002,Pelabuhan Waesai,Papua Barat Daya,-0.43194647400,130.80481824000
+AI003,Pelabuhan Arar,Papua Barat Daya,-0.94311557969,131.16192103850
+AI004,Pelabuhan Pelayaran Rakyat Sorong,Papua Barat Daya,-0.87764516500,131.24682284900
+AI005,Pelabuhan Dermaga Usaha Mina,Papua Barat Daya,-0.87775400400,131.25259193300
+AI006,Pelabuhan Utama Sorong,Papua Barat Daya,-0.8783347549,131.2468956
+AI007,Pelabuhan Teminabuan,Papua Barat Daya,-1.623441377,131.8374751
+AI008,Pelabuhan Sausapor,Papua Barat Daya,-0.5085699024,132.082648
+AI009,Pelabuhan Inanwatan,Papua Barat Daya,-2.166855268,132.1636021
+AI010,Pelabuhan Yellu Misool,Papua Barat Daya,-2.057475517,130.4125319
+AI011,Pelabuhan Folley Misool,Papua Barat Daya,-1.772397243,130.411627
+AI012,Dermaga Marina,Papua Barat Daya,-0.87901713576,131.25525103350
+AK001,Pelabuhan Samabusa Nabire,Papua Tengah,-3.23103270000,135.58347429800
+AK002,Pelabuhan Pomako Timika,Papua Tengah,-4.84033638400,136.76839152500
+AK003,Pelabuhan Amamapare Timika,Papua Tengah,-4.86521923100,136.78937643400
+AJ001,Pelabuhan Manokwari,Papua Barat,-0.88878765400,134.07546639500
+AJ002,Pelabuhan Marampa,Papua Barat,-0.90465651600,134.06805423000
+AJ003,Pelabuhan Oransbari,Papua Barat,-1.35175236800,134.27137689200
+AJ004,Pelabuhan Fak-Fak,Papua Barat,-2.93250000000,132.30940000000
+AJ005,Pelabuhan Kaimana,Papua Barat,-3.66306000000,133.75940000000
+AJ006,Pelabuhan Bintuni,Papua Barat,-2.24082648400,133.56969335100
+AJ007,Pelabuhan Wasior,Papua Barat,-2.72716865200,134.50530698100
+AJ008,Pelabuhan Kokas,Papua Barat,-2.66900000000,132.441834
+AM001,Pelabuhan Agats,Papua Selatan,-5.63002940964,137.80761780975
+AM002,Pelabuhan Wanam,Papua Selatan,-7.55148020269,139.09951386019
+AM003,Pelabuhan Kimaam,Papua Selatan,-8.06326697824,138.92366482251
+AM004,Pelabuhan Merauke,Papua Selatan,-8.48837881751,140.33111576618

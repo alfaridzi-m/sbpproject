@@ -103,10 +103,20 @@ export interface ForecastReqGeoJSON {
   /** All feature `properties.dateTime` strings are ISO 8601 in UTC (Zulu). */
   dateTimeReference: 'UTC'
   features: ForecastReqFeature[]
+  /** Original route polyline from map drawing. */
+  geometry?: {
+    type: 'LineString'
+    /** GeoJSON order: [longitude, latitude] */
+    coordinates: [number, number][]
+  }
   /** AOI from manual route modal (drag rectangle); GeoJSON Polygon outer ring. */
   boundingPolygon?: {
     type: 'Polygon'
     coordinates: [number, number][][]
+    /** Voyage start instant (ISO 8601 UTC), same basis as feature `dateTime`. */
+    dateDeparture?: string
+    /** Voyage end instant (ISO 8601 UTC). */
+    dateArrival?: string
   }
 }
 
@@ -166,7 +176,6 @@ function splitPointsToForecastReqGeoJSON(
   }
 }
 
-const KNOT_TO_MS = 0.514444
 
 function pad2(n: number) {
   return String(n).padStart(2, '0')
@@ -210,9 +219,9 @@ function forecastRowsFromSplitPointsAndGeo(
       weather: met?.weather ?? '',
       rr: '',
       wave: met?.wave_height_m != null ? String(fmt(met.wave_height_m, 2)) : '',
-      ws: met?.wind_speed_knot != null ? String(fmt(met.wind_speed_knot * KNOT_TO_MS, 1)) : '',
+      ws: met?.wind_speed_knot != null ? String(fmt(met.wind_speed_knot, 1)) : '',
       wd: met?.wind_dir_deg != null ? String(Math.round(met.wind_dir_deg)) : (met?.wind_dir_str ?? ''),
-      aruss: met?.current_speed_cms != null ? String(fmt(met.current_speed_cms / 100, 2)) : '',
+      aruss: met?.current_speed_cms != null ? String(fmt(met.current_speed_cms, 2)) : '',
       arusd: met?.current_dir_deg != null ? String(Math.round(met.current_dir_deg)) : '',
       hslg: '',
       hsig: met?.wave_height_m != null ? String(fmt(met.wave_height_m, 2)) : ''
@@ -550,17 +559,38 @@ export function useMaritimeData() {
       forecastTimeStep.value,
       timeZone.value
     )
+    const withGeometry: ForecastReqGeoJSON = {
+      ...base,
+      geometry: {
+        type: 'LineString',
+        coordinates: coords
+      }
+    }
     const ring = manualRouteData.value?.boundingRectangle
     if (ring && ring.length >= 4) {
+      const depInstant = parseDateTimeToUtc(
+        routeInfo.value.departureDate,
+        routeInfo.value.departureTime
+      )
+      const arrInstant = parseDateTimeToUtc(
+        routeInfo.value.arrivalDate,
+        routeInfo.value.arrivalTime
+      )
       return {
-        ...base,
+        ...withGeometry,
         boundingPolygon: {
           type: 'Polygon' as const,
-          coordinates: [ring]
+          coordinates: [ring],
+          ...(depInstant && arrInstant
+            ? {
+                dateDeparture: toUtcIsoString(depInstant),
+                dateArrival: toUtcIsoString(arrInstant)
+              }
+            : {})
         }
       }
     }
-    return base
+    return withGeometry
   })
 
   return {

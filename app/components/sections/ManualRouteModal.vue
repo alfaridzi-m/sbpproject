@@ -64,7 +64,7 @@
                   ref="mapEl"
                   class="w-full h-[55vh] min-h-[400px] rounded-lg overflow-hidden border border-[var(--border)]"
                   :class="{
-                    'cursor-move': activeTool === 'pick',
+                    'cursor-default': activeTool === 'pick',
                     'cursor-crosshair': activeTool === 'draw' || activeTool === 'rectangle'
                   }"
                 />
@@ -74,46 +74,92 @@
                   </div>
                 </template>
               </ClientOnly>
-              <div class="absolute top-3 left-3 flex flex-col items-center gap-1.5 z-[500] shadow-[var(--shadow-md)] rounded-lg p-1 bg-[var(--surface)]/95 border border-[var(--border)]">
+              <div
+                class="absolute top-3 left-3 z-[500] flex items-center gap-0.5 rounded-xl border border-slate-200 bg-white/95 p-1 pl-2 shadow-[var(--shadow-md)] backdrop-blur-[1px]"
+                role="toolbar"
+                aria-label="Alat gambar peta"
+              >
+                <span
+                  class="mr-1 h-6 w-px shrink-0 self-center rounded-full bg-slate-200"
+                  aria-hidden="true"
+                />
                 <button
                   type="button"
-                  class="flex items-center justify-center w-9 h-9 p-0 rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] cursor-pointer transition-colors duration-150 hover:bg-[var(--color-white)] disabled:opacity-50 disabled:cursor-not-allowed"
-                  :class="{ 'bg-[var(--primary)] text-[var(--color-white)] border-[var(--primary)]': activeTool === 'draw' }"
-                  title="Draw"
-                  aria-label="Draw"
-                  @click="activeTool = 'draw'"
-                >
-                  <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 20h9" />
-                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  class="flex items-center justify-center w-9 h-9 p-0 rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] cursor-pointer transition-colors duration-150 hover:bg-[var(--color-white)] disabled:opacity-50 disabled:cursor-not-allowed"
-                  :class="{ 'bg-[var(--primary)] text-[var(--color-white)] border-[var(--primary)]': activeTool === 'pick' }"
-                  :disabled="coordinates.length < 2"
-                  title="Pick"
-                  aria-label="Pick"
+                  class="map-tool-btn relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-transparent bg-white text-[var(--text)] transition-colors duration-150 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)]"
+                  :class="toolBtnActiveClass('pick')"
+                  title="Pick / Geser Titik (1)"
+                  aria-label="Pick untuk geser titik"
+                  :aria-pressed="activeTool === 'pick'"
                   @click="activeTool = 'pick'"
                 >
-                  <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M7 4l10 8-10 8V4z" />
+                  <svg
+                    class="pointer-events-none h-[18px] w-[18px]"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M6 3l12 9-5 1 2 7-3-2-2-5-4 2V3z" />
                   </svg>
+                  <span
+                    class="pointer-events-none absolute bottom-0 right-0.5 text-[10px] font-bold leading-none tabular-nums"
+                    :class="activeTool === 'pick' ? 'text-[var(--primary)]' : 'text-[var(--text-muted)]'"
+                  >1</span>
                 </button>
                 <button
                   type="button"
-                  class="flex items-center justify-center w-9 h-9 p-0 rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] cursor-pointer transition-colors duration-150 hover:bg-[var(--color-white)]"
-                  :class="{ 'bg-[var(--primary)] text-[var(--color-white)] border-[var(--primary)]': activeTool === 'rectangle' }"
-                  title="Persegi (AOI)"
-                  aria-label="Gambar persegi"
+                  class="map-tool-btn relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-transparent bg-white text-[var(--text)] transition-colors duration-150 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)]"
+                  :class="toolBtnActiveClass('draw')"
+                  title="Pencil / Tambah Garis (2)"
+                  aria-label="Pencil untuk tambah garis rute"
+                  :aria-pressed="activeTool === 'draw'"
+                  @click="activeTool = 'draw'"
+                >
+                  <svg
+                    class="pointer-events-none h-[18px] w-[18px]"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M5.2 3.2 18.5 12.8 14.1 15.2l2.1 7.6-2.4-8.8L5.2 3.2z"
+                    />
+                  </svg>
+                  <span
+                    class="pointer-events-none absolute bottom-0 right-0.5 text-[10px] font-bold leading-none tabular-nums"
+                    :class="activeTool === 'draw' ? 'text-[var(--primary)]' : 'text-[var(--text-muted)]'"
+                  >2</span>
+                </button>
+                <button
+                  type="button"
+                  class="map-tool-btn relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-transparent bg-white text-[var(--text)] transition-colors duration-150 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)]"
+                  :class="toolBtnActiveClass('rectangle')"
+                  title="Persegi AOI (3)"
+                  aria-label="Gambar persegi area"
+                  :aria-pressed="activeTool === 'rectangle'"
                   @click="activeTool = 'rectangle'"
                 >
-                  <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="5" y="5" width="14" height="14" rx="1" />
-                    <path d="M5 9h14" />
-                    <path d="M9 5v14" />
+                  <svg
+                    class="pointer-events-none h-[18px] w-[18px]"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <rect x="5" y="5" width="14" height="14" rx="2.5" ry="2.5" />
                   </svg>
+                  <span
+                    class="pointer-events-none absolute bottom-0 right-0.5 text-[10px] font-bold leading-none tabular-nums"
+                    :class="activeTool === 'rectangle' ? 'text-[var(--primary)]' : 'text-[var(--text-muted)]'"
+                  >3</span>
                 </button>
               </div>
             </div>
@@ -183,6 +229,7 @@
 
 <script setup lang="ts">
 import type L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 
 export interface ManualRouteData {
   routeName: string
@@ -200,7 +247,17 @@ const emit = defineEmits<{
   submit: [data: ManualRouteData]
 }>()
 
-type ToolMode = 'draw' | 'pick' | 'rectangle'
+type ToolMode = 'pick' | 'draw' | 'rectangle'
+type MapViewState = {
+  center: [number, number]
+  zoom: number
+}
+
+function toolBtnActiveClass(tool: ToolMode) {
+  return activeTool.value === tool
+    ? 'border-[color-mix(in_srgb,var(--primary)_35%,var(--border)_65%)] bg-[color-mix(in_srgb,var(--primary)_16%,var(--surface)_84%)] text-[var(--primary)] shadow-[0_1px_2px_rgba(0,0,0,0.06)]'
+    : ''
+}
 
 const mapEl = ref<HTMLElement | null>(null)
 const routeName = ref('')
@@ -212,9 +269,9 @@ const activeTool = ref<ToolMode>('draw')
 const boundingRectangle = ref<[number, number][] | null>(null)
 
 const toolHints: Record<ToolMode, string> = {
-  draw: 'Klik pada peta untuk menggambar garis rute',
-  pick: 'Seret titik untuk memindahkan, atau klik garis untuk menambah titik',
-  rectangle: 'Klik dan seret pada peta untuk menggambar persegi (AOI); tersimpan ke GeoJSON permintaan prakiraan'
+  pick: 'Pilih mode cursor untuk geser titik koordinat (pintasan 1)',
+  draw: 'Pilih mode pencil untuk menambah titik/garis rute (pintasan 2)',
+  rectangle: 'Klik kiri + seret untuk persegi AOI 1:1; tombol tengah mouse untuk pan; pintasan 3'
 }
 
 let map: L.Map | null = null
@@ -224,11 +281,77 @@ let Leaflet: typeof L | null = null
 let baseTileLayer: L.TileLayer | null = null
 let tileSourceIndex = 0
 let tileErrorCount = 0
+let tileLoadCount = 0
+let tileWatchdogTimer: ReturnType<typeof setTimeout> | null = null
 let mapClickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
 let rectPreview: L.Rectangle | null = null
 let rectFinal: L.Rectangle | null = null
 let rectDragAnchor: L.LatLng | null = null
 let rectLastLatLng: L.LatLng | null = null
+let middlePanActive = false
+let middlePanLastPoint: L.Point | null = null
+let mapResizeObserver: ResizeObserver | null = null
+
+function teardownMapResizeObserver() {
+  mapResizeObserver?.disconnect()
+  mapResizeObserver = null
+}
+
+function clearTileWatchdog() {
+  if (!tileWatchdogTimer) return
+  clearTimeout(tileWatchdogTimer)
+  tileWatchdogTimer = null
+}
+
+function scheduleTileWatchdog(Lmod: typeof L) {
+  clearTileWatchdog()
+  tileWatchdogTimer = setTimeout(() => {
+    // If no tile has loaded, force a base-layer refresh.
+    if (!map || tileLoadCount > 0) return
+    baseTileLayer?.remove()
+    if (tileSourceIndex < TILE_SOURCES.length - 1) tileSourceIndex += 1
+    baseTileLayer = buildTileLayer(Lmod, tileSourceIndex).addTo(map)
+    map.invalidateSize({ animate: false })
+  }, 2200)
+}
+
+function attachMapResizeObserver() {
+  teardownMapResizeObserver()
+  const el = mapEl.value
+  if (!el || typeof ResizeObserver === 'undefined') return
+  mapResizeObserver = new ResizeObserver(() => {
+    map?.invalidateSize({ animate: false })
+  })
+  mapResizeObserver.observe(el)
+}
+
+/** Axis-aligned square in ~meters: anchor corner + cursor defines quadrant; side = max(|Δx|,|Δy|) in meters. */
+function squareBoundsFromAnchor(Lmod: typeof L, anchor: L.LatLng, cursor: L.LatLng): L.LatLngBounds {
+  const latRad = (anchor.lat * Math.PI) / 180
+  const metersPerDegLat = 111_320
+  const metersPerDegLng = 111_320 * Math.cos(latRad)
+  const w = (cursor.lng - anchor.lng) * metersPerDegLng
+  const h = (cursor.lat - anchor.lat) * metersPerDegLat
+  const sideMeters = Math.max(Math.abs(w), Math.abs(h))
+  if (sideMeters < 1e-3) {
+    return Lmod.latLngBounds(anchor, anchor)
+  }
+  const signLat = cursor.lat >= anchor.lat ? 1 : -1
+  const signLng = cursor.lng >= anchor.lng ? 1 : -1
+  const other = Lmod.latLng(
+    anchor.lat + signLat * (sideMeters / metersPerDegLat),
+    anchor.lng + signLng * (sideMeters / metersPerDegLng)
+  )
+  return Lmod.latLngBounds(anchor, other)
+}
+
+function scheduleMapInvalidate() {
+  const run = () => map?.invalidateSize({ animate: false })
+  void nextTick(() => {
+    requestAnimationFrame(run)
+  })
+  ;[0, 50, 150, 400].forEach(ms => setTimeout(run, ms))
+}
 
 const TILE_SOURCES = [
   {
@@ -246,6 +369,13 @@ function buildTileLayer(Lmod: typeof L, sourceIndex: number) {
   const layer = Lmod.tileLayer(source.url, {
     attribution: source.attribution,
     maxZoom: 19
+  })
+  layer.on('tileloadstart', () => {
+    if (tileLoadCount === 0) scheduleTileWatchdog(Lmod)
+  })
+  layer.on('tileload', () => {
+    tileLoadCount += 1
+    clearTileWatchdog()
   })
   layer.on('tileerror', () => {
     tileErrorCount += 1
@@ -266,37 +396,66 @@ function ensureBaseTileLayer() {
   }
 }
 
-async function initMap() {
+function forceRefreshBaseTiles() {
+  const Lmod = Leaflet
+  if (!Lmod || !map) return
+  tileLoadCount = 0
+  clearTileWatchdog()
+  baseTileLayer?.remove()
+  baseTileLayer = buildTileLayer(Lmod, tileSourceIndex).addTo(map)
+  scheduleTileWatchdog(Lmod)
+  scheduleMapInvalidate()
+}
+
+function getCurrentMapViewState(): MapViewState | null {
+  if (!map) return null
+  const center = map.getCenter()
+  const zoom = map.getZoom()
+  if (!Number.isFinite(center.lat) || !Number.isFinite(center.lng) || !Number.isFinite(zoom)) {
+    return null
+  }
+  return {
+    center: [center.lat, center.lng],
+    zoom
+  }
+}
+
+async function initMap(viewState?: MapViewState) {
   const el = mapEl.value
   if (!el) return
   const L = (await import('leaflet')).default
   Leaflet = L
   await nextTick()
   if (!map) {
-    // Prefer canvas renderer to avoid pane/renderer redraw issues
-    // when switching tools (draw <-> pick).
+    // preferCanvas caused blank tiles in some modal/resize cases; SVG renderer is more reliable here.
     map = L.map(el, {
-      preferCanvas: true,
+      preferCanvas: false,
       zoomControl: false,
       zoomAnimation: false,
       fadeAnimation: false,
       markerZoomAnimation: false
-    }).setView([2.3, 125], 6)
+    }).setView(viewState?.center ?? [2.3, 125], viewState?.zoom ?? 6)
     // Place zoom controls at bottom-right as requested.
     L.control.zoom({ position: 'bottomright' }).addTo(map)
     tileSourceIndex = 0
     tileErrorCount = 0
+    tileLoadCount = 0
     baseTileLayer = buildTileLayer(L, tileSourceIndex).addTo(map)
+    scheduleTileWatchdog(L)
     mapClickHandler = (e: L.LeafletMouseEvent) => handleMapClick(e.latlng.lng, e.latlng.lat)
     map.on('click', (e: L.LeafletMouseEvent) => mapClickHandler?.(e))
     map.on('mousedown', onMapMouseDown)
     map.on('mousemove', onMapMouseMove)
     L.DomEvent.on(document as unknown as HTMLElement, 'mouseup', onDocMouseUp)
+    attachMapResizeObserver()
+    map.whenReady(() => {
+      map?.invalidateSize({ animate: false })
+    })
   }
   ensureBaseTileLayer()
   setupToolBehavior()
   redrawFinalRectangle()
-  setTimeout(() => map?.invalidateSize(), 150)
+  scheduleMapInvalidate()
 }
 
 function boundsToRing(Lmod: typeof L, bounds: L.LatLngBounds): [number, number][] {
@@ -316,6 +475,16 @@ function boundsToRing(Lmod: typeof L, bounds: L.LatLngBounds): [number, number][
 function onMapMouseDown(e: L.LeafletMouseEvent) {
   const Lmod = Leaflet
   if (!Lmod || !map || activeTool.value !== 'rectangle') return
+  const mouseEvent = e.originalEvent as MouseEvent
+  if (mouseEvent.button === 1) {
+    // Middle button drag: pan map while staying in rectangle tool.
+    middlePanActive = true
+    middlePanLastPoint = Lmod.point(mouseEvent.clientX, mouseEvent.clientY)
+    Lmod.DomEvent.preventDefault(mouseEvent)
+    Lmod.DomEvent.stopPropagation(mouseEvent)
+    return
+  }
+  if (mouseEvent.button !== 0) return
   Lmod.DomEvent.stopPropagation(e.originalEvent)
   rectDragAnchor = e.latlng
   rectLastLatLng = e.latlng
@@ -324,9 +493,22 @@ function onMapMouseDown(e: L.LeafletMouseEvent) {
 
 function onMapMouseMove(e: L.LeafletMouseEvent) {
   const Lmod = Leaflet
-  if (!Lmod || !map || activeTool.value !== 'rectangle' || !rectDragAnchor) return
+  if (!Lmod || !map || activeTool.value !== 'rectangle') return
+  if (middlePanActive) {
+    const mouseEvent = e.originalEvent as MouseEvent
+    const nextPoint = Lmod.point(mouseEvent.clientX, mouseEvent.clientY)
+    if (middlePanLastPoint) {
+      const delta = nextPoint.subtract(middlePanLastPoint)
+      if (delta.x !== 0 || delta.y !== 0) {
+        map.panBy([-delta.x, -delta.y], { animate: false })
+      }
+    }
+    middlePanLastPoint = nextPoint
+    return
+  }
+  if (!rectDragAnchor) return
   rectLastLatLng = e.latlng
-  const bounds = Lmod.latLngBounds(rectDragAnchor, e.latlng)
+  const bounds = squareBoundsFromAnchor(Lmod, rectDragAnchor, e.latlng)
   if (!rectPreview) {
     rectPreview = Lmod.rectangle(bounds, {
       color: '#2563eb',
@@ -342,7 +524,13 @@ function onMapMouseMove(e: L.LeafletMouseEvent) {
 
 function onDocMouseUp() {
   const Lmod = Leaflet
-  if (!Lmod || !map || !rectDragAnchor) return
+  if (!Lmod || !map) return
+  if (middlePanActive) {
+    middlePanActive = false
+    middlePanLastPoint = null
+    return
+  }
+  if (!rectDragAnchor) return
   if (activeTool.value !== 'rectangle') {
     rectDragAnchor = null
     rectLastLatLng = null
@@ -353,7 +541,7 @@ function onDocMouseUp() {
   }
   map.dragging.enable()
   const end = rectLastLatLng ?? rectDragAnchor
-  const bounds = Lmod.latLngBounds(rectDragAnchor, end)
+  const bounds = squareBoundsFromAnchor(Lmod, rectDragAnchor, end)
   rectDragAnchor = null
   rectLastLatLng = null
   rectPreview?.remove()
@@ -399,6 +587,8 @@ function clearRectangle() {
   rectFinal = null
   rectDragAnchor = null
   rectLastLatLng = null
+  middlePanActive = false
+  middlePanLastPoint = null
   map?.dragging.enable()
 }
 
@@ -412,9 +602,12 @@ function setupToolBehavior() {
   const L = Leaflet
   if (!L || !map) return
   markers.forEach((m, i) => {
-    // Keep marker dragging enabled to avoid a Leaflet rendering/pane glitch
-    // when toggling draggable state during tool switches (draw <-> pick).
-    m.dragging?.enable()
+    // Cursor/pick mode is dedicated for moving existing coordinates.
+    if (activeTool.value === 'pick') {
+      m.dragging?.enable()
+    } else {
+      m.dragging?.disable()
+    }
 
     m.off('dragstart')
     // Avoid map panning while dragging markers (can cause tile/vector redraw glitches).
@@ -433,7 +626,7 @@ function setupToolBehavior() {
   })
   if (polyline) {
     polyline.off('click')
-    if (activeTool.value === 'pick') {
+    if (activeTool.value === 'draw' && coordinates.value.length >= 2) {
       polyline.on('click', (e: L.LeafletMouseEvent) => {
         L.DomEvent.stopPropagation(e)
         insertPointOnLine(e.latlng.lng, e.latlng.lat)
@@ -512,7 +705,7 @@ function updatePolyline() {
     weight: 6,
     opacity: 0.9
   }
-  // Keep the polyline instance to avoid preferCanvas redraw glitches.
+  // Keep the polyline instance to avoid pane/renderer redraw glitches.
   if (!polyline) {
     polyline = L.polyline(latLngs, style).addTo(map)
   } else {
@@ -568,42 +761,55 @@ function submit() {
 }
 
 async function reinitMapPreserveDrawing() {
-  if (!mapEl.value) return
+  const el = mapEl.value
+  if (!el) return
 
+  const viewState = getCurrentMapViewState()
   const coords = coordinates.value.map(([lng, lat]) => [lng, lat] as [number, number])
   const rect = boundingRectangle.value?.map(([lng, lat]) => [lng, lat] as [number, number]) ?? null
 
-  // Remove current map instance and all layers/panes.
+  clearTileWatchdog()
+  teardownMapResizeObserver()
+  if (Leaflet) {
+    Leaflet.DomEvent.off(document as unknown as HTMLElement, 'mouseup', onDocMouseUp)
+  }
   map?.remove()
   map = null
   baseTileLayer = null
   polyline = null
   markers.forEach(m => m.remove())
   markers.length = 0
-
   rectPreview?.remove()
   rectPreview = null
   rectFinal = null
   rectDragAnchor = null
   rectLastLatLng = null
-
   tileSourceIndex = 0
   tileErrorCount = 0
+  tileLoadCount = 0
 
-  // Restore drawing state.
   coordinates.value = coords
   boundingRectangle.value = rect
 
-  // Recreate map + layers.
   await nextTick()
-  await initMap()
+  await initMap(viewState ?? undefined)
   rebuildMarkers()
   updatePolyline()
   redrawFinalRectangle()
-  setTimeout(() => map?.invalidateSize(), 150)
+  scheduleMapInvalidate()
 }
 
 watch(activeTool, (newTool, oldTool) => {
+  if (!modelValue.value) return
+  const el = mapEl.value
+  const mapElementNotInitialized = !!el && !el.classList.contains('leaflet-container')
+  if (modelValue.value && (!map || mapElementNotInitialized)) {
+    void nextTick(() => {
+      void initMap()
+    })
+    return
+  }
+
   if (newTool !== 'rectangle') {
     rectPreview?.remove()
     rectPreview = null
@@ -612,21 +818,32 @@ watch(activeTool, (newTool, oldTool) => {
     map?.dragging.enable()
   }
 
-  // Leaflet renderer/pane state can get corrupted when toggling draw <-> pick.
-  // Re-initialize the map while preserving the current drawing.
-  if (
-    (newTool === 'pick' && oldTool === 'draw') ||
-    (newTool === 'draw' && oldTool === 'pick')
-  ) {
+  if (oldTool !== newTool) {
     void reinitMapPreserveDrawing()
     return
   }
 
   ensureBaseTileLayer()
   setupToolBehavior()
-  // Leaflet sometimes needs a size invalidation when tools change.
-  setTimeout(() => map?.invalidateSize(), 0)
+  // Keep tile pane healthy after tool changes without map teardown.
+  scheduleMapInvalidate()
 })
+
+function onMapToolsKeydown(e: KeyboardEvent) {
+  if (!modelValue.value) return
+  const el = e.target as HTMLElement | null
+  if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)) return
+  if (e.key === '1') {
+    activeTool.value = 'pick'
+    e.preventDefault()
+  } else if (e.key === '2') {
+    activeTool.value = 'draw'
+    e.preventDefault()
+  } else if (e.key === '3') {
+    activeTool.value = 'rectangle'
+    e.preventDefault()
+  }
+}
 
 watch(modelValue, (open) => {
   if (open) {
@@ -636,8 +853,20 @@ watch(modelValue, (open) => {
     coordinates.value = []
     boundingRectangle.value = null
     activeTool.value = 'draw'
-    nextTick(() => initMap())
+    tileLoadCount = 0
+    clearTileWatchdog()
+    if (import.meta.client) {
+      window.addEventListener('keydown', onMapToolsKeydown)
+    }
+    nextTick(() => {
+      void initMap().then(() => scheduleMapInvalidate())
+    })
   } else {
+    clearTileWatchdog()
+    teardownMapResizeObserver()
+    if (import.meta.client) {
+      window.removeEventListener('keydown', onMapToolsKeydown)
+    }
     if (Leaflet) {
       Leaflet.DomEvent.off(document as unknown as HTMLElement, 'mouseup', onDocMouseUp)
     }
@@ -651,8 +880,28 @@ watch(modelValue, (open) => {
     baseTileLayer = null
     tileSourceIndex = 0
     tileErrorCount = 0
+    tileLoadCount = 0
     polyline = null
     markers.length = 0
   }
 })
 </script>
+
+<style scoped>
+:deep(.leaflet-container),
+:deep(.leaflet-pane) {
+  background: transparent;
+}
+
+:deep(.leaflet-container) {
+  background: #f8fafc;
+}
+
+/* Guard against global img/reset styles breaking leaflet tiles. */
+:deep(.leaflet-container img.leaflet-tile) {
+  max-width: none !important;
+  max-height: none !important;
+  width: 256px;
+  height: 256px;
+}
+</style>

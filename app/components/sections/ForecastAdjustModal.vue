@@ -132,9 +132,9 @@ interface ParamDef {
 const parameters: ParamDef[] = [
   { key: 'visibility', label: 'Visibility', unit: 'km', color: '#3b82f6', min: 0, decimals: 1 },
   { key: 'wave', label: 'Wave', unit: 'm', color: '#06b6d4', min: 0, decimals: 2 },
-  { key: 'ws', label: 'Wind Speed', unit: 'm/s', color: '#10b981', min: 0, decimals: 1 },
+  { key: 'ws', label: 'Wind Speed', unit: 'kt', color: '#10b981', min: 0, decimals: 1 },
   { key: 'wd', label: 'Wind Dir', unit: '°', color: '#f59e0b', min: 0, max: 360, decimals: 0 },
-  { key: 'aruss', label: 'Current Speed', unit: 'm/s', color: '#8b5cf6', min: 0, decimals: 2 },
+  { key: 'aruss', label: 'Current Speed', unit: 'cm/s', color: '#8b5cf6', min: 0, decimals: 2 },
   { key: 'arusd', label: 'Current Dir', unit: '°', color: '#ec4899', min: 0, max: 360, decimals: 0 },
   { key: 'hsig', label: 'Hsig', unit: 'm', color: '#ef4444', min: 0, decimals: 2 },
 ]

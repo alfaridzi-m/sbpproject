@@ -232,7 +232,7 @@
                 placeholder="Nomor telepon"
               />
             </div>
-            <div class="flex flex-col gap-1.5 md:col-span-2">
+            <div class="flex flex-col gap-1.5">
               <label for="pdf-email" class="text-sm font-medium text-[var(--text)]">Email</label>
               <input
                 id="pdf-email"
