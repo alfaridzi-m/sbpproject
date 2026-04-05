@@ -10,7 +10,17 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="flex flex-col gap-2">
-        <label for="synoptic" class="text-sm font-medium text-[var(--text)]">Kondisi Sinoptik / Meteorological Situation</label>
+        <div class="flex items-start justify-between gap-3">
+          <label for="synoptic" class="text-sm font-medium text-[var(--text)] min-w-0 pr-1">Kondisi Sinoptik / Meteorological Situation</label>
+          <button
+            type="button"
+            class="af-btn shrink-0"
+            :disabled="isFillingSynoptic"
+            @click="autoFillSynoptic"
+          >
+            {{ isFillingSynoptic ? 'Memproses...' : 'Auto Fill' }}
+          </button>
+        </div>
         <textarea
           id="synoptic"
           v-model="synopticInfo"
@@ -20,7 +30,17 @@
         />
       </div>
       <div class="flex flex-col gap-2">
-        <label for="warnings" class="text-sm font-medium text-[var(--text)]">Peringatan Dini / Warnings</label>
+        <div class="flex items-start justify-between gap-3">
+          <label for="warnings" class="text-sm font-medium text-[var(--text)] min-w-0 pr-1">Peringatan Dini / Warnings</label>
+          <button
+            type="button"
+            class="af-btn shrink-0"
+            :disabled="isFillingWarnings"
+            @click="autoFillWarnings"
+          >
+            {{ isFillingWarnings ? 'Memproses...' : 'Auto Fill' }}
+          </button>
+        </div>
         <textarea
           id="warnings"
           v-model="warnings"
@@ -31,7 +51,17 @@
       </div>
     </div>
     <div class="flex flex-col gap-2 mt-4">
-      <label for="cyclone" class="text-sm font-medium text-[var(--text)]">Peringatan Siklon Tropis / Cyclone Warning</label>
+      <div class="flex items-start justify-between gap-3">
+        <label for="cyclone" class="text-sm font-medium text-[var(--text)] min-w-0 pr-1">Peringatan Siklon Tropis / Cyclone Warning</label>
+        <button
+          type="button"
+          class="af-btn shrink-0"
+          :disabled="isFillingCyclone"
+          @click="autoFillCyclone"
+        >
+          {{ isFillingCyclone ? 'Memproses...' : 'Auto Fill' }}
+        </button>
+      </div>
       <input
         id="cyclone"
         v-model="cycloneWarning"
@@ -40,33 +70,58 @@
         placeholder="Contoh: Tidak ada sistem siklon tropis (TC) dan badai tropis (TS) yang aktif"
       />
     </div>
-    <div class="flex justify-center mt-4">
-      <button
-        type="button"
-        class="py-2 px-6 bg-[var(--primary)] text-[var(--color-white)] border-none rounded-lg text-sm font-semibold cursor-pointer shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_var(--primary-glow)] disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none"
-        :disabled="isGenerating"
-        @click="generateSynoptic"
-      >
-        {{ isGenerating ? 'Memproses...' : 'Ai' }}
-      </button>
-    </div>
   </section>
 </template>
 
 <script setup lang="ts">
 const { synopticInfo, warnings, cycloneWarning } = useMaritimeData()
 
-const isGenerating = ref(false)
+const SYNOPTIC_TEMPLATE =
+  'Angin dominan dari selatan bertiup di wilayah prakiraan. Kondisi tekanan rendah di wilayah Darwin, Australia Bagian Utara berpotensi meningkatkan pertumbuhan awan konvektif. Ridge tekanan tinggi di Laut Cina Selatan mendukung kondisi stabil di perairan.'
 
-async function generateSynoptic() {
-  isGenerating.value = true
+const WARNINGS_TEMPLATE = 'Kecepatan angin melebihi 15 knot. Tinggi gelombang melebihi 1.25 meter'
+
+const CYCLONE_TEMPLATE =
+  'Tidak ada sistem siklon tropis (TC) dan badai tropis (TS) yang aktif.'
+
+const isFillingSynoptic = ref(false)
+const isFillingWarnings = ref(false)
+const isFillingCyclone = ref(false)
+
+async function autoFillSynoptic() {
+  isFillingSynoptic.value = true
   try {
     await new Promise(resolve => setTimeout(resolve, 800))
-    synopticInfo.value = `Angin dominan dari selatan bertiup di wilayah prakiraan. Kondisi tekanan rendah di wilayah Darwin, Australia Bagian Utara berpotensi meningkatkan pertumbuhan awan konvektif. Ridge tekanan tinggi di Laut Cina Selatan mendukung kondisi stabil di perairan.`
-    warnings.value = `Kecepatan angin melebihi 15 knot. Tinggi gelombang melebihi 1.25 meter`
+    synopticInfo.value = SYNOPTIC_TEMPLATE
   } finally {
-    isGenerating.value = false
+    isFillingSynoptic.value = false
+  }
+}
+
+async function autoFillWarnings() {
+  isFillingWarnings.value = true
+  try {
+    await new Promise(resolve => setTimeout(resolve, 800))
+    warnings.value = WARNINGS_TEMPLATE
+  } finally {
+    isFillingWarnings.value = false
+  }
+}
+
+async function autoFillCyclone() {
+  isFillingCyclone.value = true
+  try {
+    await new Promise(resolve => setTimeout(resolve, 800))
+    cycloneWarning.value = CYCLONE_TEMPLATE
+  } finally {
+    isFillingCyclone.value = false
   }
 }
 </script>
+
+<style scoped>
+.af-btn {
+  @apply py-1.5 px-3 bg-[var(--primary)] text-[var(--color-white)] border-none rounded-lg text-xs font-semibold cursor-pointer shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_var(--primary-glow)] disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none;
+}
+</style>
 

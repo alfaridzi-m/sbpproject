@@ -73,7 +73,27 @@
                 <span class="block py-1.5 px-2 rounded-md border border-transparent font-mono text-[0.75rem] leading-snug text-[var(--text)] break-all whitespace-normal select-text">{{ row.coordinate || '—' }}</span>
               </td>
               <td :class="[fieldStripe(index), 'align-middle']"><input v-model="row.visibility" type="text" placeholder="—" class="w-full min-w-[56px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
-              <td :class="[fieldStripe(index), 'align-middle']"><input v-model="row.weather" type="text" placeholder="Cuaca" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
+              <td :class="[fieldStripe(index), 'align-middle']">
+                <select
+                  v-model="row.weather"
+                  class="w-full min-w-[4.5rem] max-w-[9rem] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none cursor-pointer"
+                >
+                  <option value="">—</option>
+                  <option
+                    v-if="row.weather && !isStandardWeather(row.weather)"
+                    :value="row.weather"
+                  >
+                    {{ row.weather }}
+                  </option>
+                  <option
+                    v-for="code in WEATHER_CODES_LIST"
+                    :key="code"
+                    :value="code"
+                  >
+                    {{ code }}
+                  </option>
+                </select>
+              </td>
               <td :class="[fieldStripe(index), 'align-middle']"><input v-model="row.wave" type="text" placeholder="—" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
               <td :class="[fieldStripe(index), 'align-middle']"><input v-model="row.ws" type="text" placeholder="—" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
               <td :class="[fieldStripe(index), 'align-middle']"><input v-model="row.wd" type="text" placeholder="—" class="w-full min-w-[70px] py-1.5 px-2 border border-[var(--input-border)] rounded-md bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] hover:border-[var(--input-border)] focus:border-[var(--table-header-bg)] focus:bg-[var(--surface)] focus:outline-none" /></td>
@@ -112,6 +132,15 @@ import ForecastAdjustModal from './ForecastAdjustModal.vue'
 
 const { forecastData, addForecastRow } = useMaritimeData()
 const showAdjustModal = ref(false)
+
+/** BMKG-style weather codes (matches PDF legend / en route WX column). */
+const WEATHER_CODES_LIST = ['NSW', 'FU', 'FG', 'SL RA', 'MOD RA', 'HVY RA', 'SHRA', 'TSRA'] as const
+
+const WEATHER_CODES = new Set<string>(WEATHER_CODES_LIST)
+
+function isStandardWeather(v: string | undefined): boolean {
+  return WEATHER_CODES.has((v ?? '').trim())
+}
 
 function showDayGapBefore(index: number): boolean {
   if (index === 0) return false

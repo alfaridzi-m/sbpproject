@@ -107,8 +107,6 @@
                   />
                 </div>
               </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="flex flex-col gap-1.5">
                 <label class="text-sm font-medium text-[var(--text)]">Waktu Tiba</label>
                 <div class="flex items-center gap-2 flex-wrap">
@@ -117,31 +115,35 @@
                     v-model="routeInfo.arrivalDate"
                     type="date"
                     class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                    placeholder="Tanggal"
                   />
                   <input
                     id="arrival-time"
                     v-model="routeInfo.arrivalTime"
                     type="time"
                     class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                    placeholder="Waktu"
                   />
                 </div>
               </div>
-              <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-[var(--text)]">Issued</label>
-                <div class="flex items-center gap-2 flex-wrap">
-                  <input
-                    id="issued-date"
-                    v-model="routeInfo.issuedDate"
-                    type="date"
-                    class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-                  />
-                  <input
-                    id="issued-time"
-                    v-model="routeInfo.issuedTime"
-                    type="time"
-                    class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-                  />
-                </div>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-[var(--text)]">Issued</label>
+              <div class="flex items-center gap-2 flex-wrap">
+                <input
+                  id="issued-date"
+                  v-model="routeInfo.issuedDate"
+                  type="date"
+                  class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                  placeholder="Tanggal"
+                />
+                <input
+                  id="issued-time"
+                  v-model="routeInfo.issuedTime"
+                  type="time"
+                  class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+                  placeholder="Waktu"
+                />
               </div>
             </div>
           </div>

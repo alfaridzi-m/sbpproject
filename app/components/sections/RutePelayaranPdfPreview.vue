@@ -12,8 +12,8 @@
             :src="bmkgLogoUrl"
             alt="BMKG Logo"
             class="bmkg-logo shrink-0 object-contain"
-            width="70"
-            height="88"
+            width="56"
+            height="70"
           />
           <div class="flex-1 text-center">
             <p class="text-[0.875rem] font-bold m-0 mb-0.5 text-teal-700 tracking-wide">AGENCY FOR METEOROLOGY, CLIMATOLOGY, AND GEOPHYSICS</p>
@@ -67,9 +67,7 @@
         <!-- 5. WARNINGS -->
         <div class="mb-1 pb-3 border-b border-slate-300 pdf-avoid-split">
           <h3 class="text-[0.8125rem] font-bold m-0 mb-1.5 text-slate-900">Warnings</h3>
-          <p class="m-0 text-[0.75rem] leading-relaxed">
-            <span class="bg-yellow-200 px-1 py-0.5">{{ warnings || '—' }}</span>
-          </p>
+          <p class="m-0 text-[0.75rem] leading-relaxed bg-yellow-200 px-1 py-0.5">{{ warnings || '—' }}</p>
           <p class="m-0 text-[0.75rem] leading-relaxed text-slate-800 mt-1.5">
             <span class="font-bold">Cyclone Warning</span> : {{ cycloneWarning || 'No Tropical Cyclone (TC) and Tropical Storms (TS).' }}
           </p>
@@ -78,7 +76,7 @@
         <!-- 6. ROUTE MAP -->
         <div class="mb-4 pdf-avoid-split">
           <div class="border border-slate-300 rounded overflow-hidden bg-slate-50">
-            <div ref="mapContainerRef" class="w-full h-[220px]" />
+            <div ref="mapContainerRef" data-map-container class="w-full h-[220px]" />
           </div>
           <div class="flex items-center gap-2 mt-1.5 text-[0.5625rem] text-slate-600 flex-wrap">
             <span class="font-semibold">Tinggi Gelombang (m):</span>
@@ -95,7 +93,7 @@
         <!-- 7. METEOGRAM -->
         <div class="mb-1 pb-1 border-b border-slate-300 pdf-avoid-split">
           <h3 class="text-[0.8125rem] font-bold m-0 mb-2 text-slate-900 underline">Meteogram</h3>
-          <div class="border border-slate-300 rounded p-1 bg-white text-xs">
+          <div data-meteogram class="border border-slate-300 rounded p-1 bg-white text-xs">
             <svg
               class="w-full h-auto block"
               :viewBox="`0 0 ${chartWidth} ${chartHeight}`"
@@ -169,7 +167,7 @@
       <div class="pdf-page pdf-page-start px-8 pb-8 pt-0 flex flex-col">
         <!-- 1. HEADER (repeated) -->
         <header class="flex items-center gap-4 -mx-8 px-8 py-3 mb-4 border-b border-slate-300 bg-slate-100">
-          <img :src="bmkgLogoUrl" alt="BMKG Logo" class="bmkg-logo shrink-0 object-contain" width="70" height="88" />
+          <img :src="bmkgLogoUrl" alt="BMKG Logo" class="bmkg-logo shrink-0 object-contain" width="56" height="70" />
           <div class="flex-1 text-center">
             <p class="text-[0.875rem] font-bold m-0 mb-0.5 text-teal-700 tracking-wide">AGENCY FOR METEOROLOGY, CLIMATOLOGY, AND GEOPHYSICS</p>
             <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">{{ routeInfo.namaUpt || 'Stasiun Meteorologi Klas II Maritim Paotere Makassar' }}</p>
@@ -217,7 +215,7 @@
         <h2 class="text-center text-[0.875rem] font-bold m-0 mb-3 text-slate-900">Port Forecast</h2>
 
         <!-- 5. THRESHOLD LEVEL LEGEND -->
-        <div class="mb-4 text-[0.5625rem] leading-relaxed text-slate-600 border border-slate-300 rounded p-2.5 pdf-avoid-split">
+        <div class="mb-4 text-[0.5625rem] leading-relaxed text-slate-600 bg-white border border-slate-300 rounded p-2.5 pdf-avoid-split">
           <p class="m-0 mb-2 text-slate-700">
             NSW = No Significant Weather, FU = Smoke, FG = Fog, SL RA = Slight Rain, MOD RA = Moderate Rain, HVY RA = Heavy Rain, SHRA = Shower Rain, TSRA = Thunderstorm
           </p>
@@ -228,17 +226,17 @@
             <div class="space-y-1">
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="font-semibold text-slate-700 w-10">Waves</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-yellow-300 border border-yellow-400" /> Moderate (1.25-2.5 m)</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-purple-400 border border-purple-500" /> Rough (2.5-4.0 m)</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-blue-900 border border-blue-950" /> Very Rough (&gt;4 m)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#FEF001] border border-black/20" /> Moderate (1.25-2.5 m)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#FE0105] border border-black/20" /> Rough (2.5-4.0 m)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#9A1490] border border-black/20" /> Very Rough (&gt;4 m)</span>
               </div>
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="font-semibold text-slate-700 w-10">Winds</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-slate-200 border border-slate-300" /> Moderate (11-16 kts)</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-yellow-300 border border-yellow-400" /> Fresh (17-21 kts)</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-purple-400 border border-purple-500" /> Strong (22-27 kts)</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-blue-900 border border-blue-950" /> Near Gale (28-33 kts)</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-slate-900 border border-slate-950" /> Gale (&gt;33 kts)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#FEF001] border border-black/20" /> Moderate (11-16 kts)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#FFB565] border border-black/20" /> Fresh (17-21 kts)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#FE4B01] border border-black/20" /> Strong (22-27 kts)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#FE0105] border border-black/20" /> Near Gale (28-33 kts)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#9A1490] border border-black/20" /> Gale (&gt;33 kts)</span>
               </div>
             </div>
           </div>
@@ -398,7 +396,7 @@
       >
         <!-- 1. HEADER (repeated) -->
         <header class="flex items-center gap-4 -mx-8 px-8 py-3 mb-4 border-b border-slate-300 bg-slate-100">
-          <img :src="bmkgLogoUrl" alt="BMKG Logo" class="bmkg-logo shrink-0 object-contain" width="70" height="88" />
+          <img :src="bmkgLogoUrl" alt="BMKG Logo" class="bmkg-logo shrink-0 object-contain" width="56" height="70" />
           <div class="flex-1 text-center">
             <p class="text-[0.875rem] font-bold m-0 mb-0.5 text-teal-700 tracking-wide">AGENCY FOR METEOROLOGY, CLIMATOLOGY, AND GEOPHYSICS</p>
             <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">{{ routeInfo.namaUpt || 'Stasiun Meteorologi Klas II Maritim Paotere Makassar' }}</p>
@@ -448,7 +446,7 @@
         </h2>
 
         <!-- THRESHOLD LEVEL LEGEND (first forecast page only) -->
-        <div v-if="pageIdx === 0" class="mb-4 text-[0.5625rem] leading-relaxed text-slate-600 border border-slate-300 rounded p-2.5 pdf-avoid-split">
+        <div v-if="pageIdx === 0" class="mb-4 text-[0.5625rem] leading-relaxed text-slate-600 bg-white border border-slate-300 rounded p-2.5 pdf-avoid-split">
           <p class="m-0 mb-2 text-slate-700">
             NSW = No Significant Weather, FU = Smoke, FG = Fog, SL RA = Slight Rain, MOD RA = Moderate Rain, HVY RA = Heavy Rain, SHRA = Shower Rain, TSRA = Thunderstorm
           </p>
@@ -459,17 +457,17 @@
             <div class="space-y-1">
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="font-semibold text-slate-700 w-10">Waves</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-yellow-300 border border-yellow-400" /> Moderate (1.25-2.5 m)</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-purple-400 border border-purple-500" /> Rough (2.5-4.0 m)</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-blue-900 border border-blue-950" /> Very Rough (&gt;4 m)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#FEF001] border border-black/20" /> Moderate (1.25-2.5 m)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#FE0105] border border-black/20" /> Rough (2.5-4.0 m)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#9A1490] border border-black/20" /> Very Rough (&gt;4 m)</span>
               </div>
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="font-semibold text-slate-700 w-10">Winds</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-slate-200 border border-slate-300" /> Moderate (11-16 kts)</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-yellow-300 border border-yellow-400" /> Fresh (17-21 kts)</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-purple-400 border border-purple-500" /> Strong (22-27 kts)</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-blue-900 border border-blue-950" /> Near Gale (28-33 kts)</span>
-                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-slate-900 border border-slate-950" /> Gale (&gt;33 kts)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#FEF001] border border-black/20" /> Moderate (11-16 kts)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#FFB565] border border-black/20" /> Fresh (17-21 kts)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#FE4B01] border border-black/20" /> Strong (22-27 kts)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#FE0105] border border-black/20" /> Near Gale (28-33 kts)</span>
+                <span class="flex items-center gap-0.5"><span class="inline-block w-3.5 h-2.5 bg-[#9A1490] border border-black/20" /> Gale (&gt;33 kts)</span>
               </div>
             </div>
           </div>
@@ -560,11 +558,14 @@
         </div>
       </div>
 
-      <!-- ========== PAGE 4 — Significant Wave Height ========== -->
-      <div class="pdf-page pdf-page-start px-8 pb-8 pt-0 flex flex-col">
-        <!-- HEADER -->
+      <!-- ========== Significant Wave Height (paginated: max 4 images per page, 2×2 grid) ========== -->
+      <div
+        v-for="(pageImages, pageIdx) in wavePlotPages"
+        :key="'wave-plots-' + pageIdx"
+        class="pdf-page pdf-page-start px-8 pb-8 pt-0 flex flex-col"
+      >
         <header class="flex items-center gap-4 -mx-8 px-8 py-3 mb-4 border-b border-slate-300 bg-slate-100">
-          <img :src="bmkgLogoUrl" alt="BMKG Logo" class="bmkg-logo shrink-0 object-contain" width="70" height="88" />
+          <img :src="bmkgLogoUrl" alt="BMKG Logo" class="bmkg-logo shrink-0 object-contain" width="56" height="70" />
           <div class="flex-1 text-center">
             <p class="text-[0.875rem] font-bold m-0 mb-0.5 text-teal-700 tracking-wide">AGENCY FOR METEOROLOGY, CLIMATOLOGY, AND GEOPHYSICS</p>
             <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">{{ routeInfo.namaUpt || 'Stasiun Meteorologi Klas II Maritim Paotere Makassar' }}</p>
@@ -573,14 +574,12 @@
           </div>
         </header>
 
-        <!-- DOCUMENT TITLE -->
         <div class="text-center mb-1">
           <h1 class="text-[0.9375rem] font-bold m-0 text-slate-900">
             En Route and Port Weather Forecast Information for {{ routeInfo.shipName || '[Nama Kapal]' }}
           </h1>
         </div>
 
-        <!-- ROUTE INFO -->
         <div class="mb-5 pdf-avoid-split">
           <div class="border-b-[3px] border-double border-slate-900 mb-3" />
           <div class="grid grid-cols-2 gap-x-8 gap-y-0.5 px-1">
@@ -608,27 +607,37 @@
           <div class="border-b-[3px] border-double border-slate-900 mt-3" />
         </div>
 
-        <!-- PLOT IMAGES — Significant Wave Height -->
-        <div class="grid grid-cols-2 gap-3 pdf-avoid-split">
-          <div class="border border-slate-300 rounded overflow-hidden">
-            <img src="/image.png" alt="Significant Wave Height and Direction" class="w-full h-auto block" />
-          </div>
-          <div class="border border-slate-300 rounded overflow-hidden">
-            <img src="/image2.png" alt="Primary Swell Height and Direction" class="w-full h-auto block" />
+        <h2 class="text-center text-[0.875rem] font-bold m-0 mb-3 text-slate-900">
+          Significant Wave Height<template v-if="pageIdx > 0"></template>
+        </h2>
+
+        <div class="grid grid-cols-2 gap-1 pdf-avoid-split">
+          <div
+            v-for="(src, imgIdx) in pageImages"
+            :key="'wave-img-' + pageIdx + '-' + imgIdx"
+            class="rounded overflow-hidden flex justify-center items-start"
+          >
+            <img
+              :src="src"
+              :alt="`Significant wave height plot ${pageIdx * imagesPerPlotPage + imgIdx + 1}`"
+              class="block w-full max-h-[80mm] object-contain object-top"
+            />
           </div>
         </div>
 
-        <!-- DISCLAIMER (pinned bottom) -->
         <div class="mt-auto pt-3 border-t border-slate-200 pdf-avoid-split">
           <p class="m-0 text-[0.6875rem] italic text-slate-500">Disclaimer : {{ disclaimer }}</p>
         </div>
       </div>
 
-      <!-- ========== PAGE 5 — Wind ========== -->
-      <div class="pdf-page pdf-page-start px-8 pb-8 pt-0 flex flex-col">
-        <!-- HEADER -->
+      <!-- ========== Wind plots (paginated: max 4 images per page, 2×2 grid) ========== -->
+      <div
+        v-for="(pageImages, pageIdx) in windPlotPages"
+        :key="'wind-plots-' + pageIdx"
+        class="pdf-page pdf-page-start px-8 pb-8 pt-0 flex flex-col"
+      >
         <header class="flex items-center gap-4 -mx-8 px-8 py-3 mb-4 border-b border-slate-300 bg-slate-100">
-          <img :src="bmkgLogoUrl" alt="BMKG Logo" class="bmkg-logo shrink-0 object-contain" width="70" height="88" />
+          <img :src="bmkgLogoUrl" alt="BMKG Logo" class="bmkg-logo shrink-0 object-contain" width="56" height="70" />
           <div class="flex-1 text-center">
             <p class="text-[0.875rem] font-bold m-0 mb-0.5 text-teal-700 tracking-wide">AGENCY FOR METEOROLOGY, CLIMATOLOGY, AND GEOPHYSICS</p>
             <p class="text-[0.75rem] font-semibold m-0 mb-0.5 text-slate-800">{{ routeInfo.namaUpt || 'Stasiun Meteorologi Klas II Maritim Paotere Makassar' }}</p>
@@ -637,14 +646,12 @@
           </div>
         </header>
 
-        <!-- DOCUMENT TITLE -->
         <div class="text-center mb-1">
           <h1 class="text-[0.9375rem] font-bold m-0 text-slate-900">
             En Route and Port Weather Forecast Information for {{ routeInfo.shipName || '[Nama Kapal]' }}
           </h1>
         </div>
 
-        <!-- ROUTE INFO -->
         <div class="mb-5 pdf-avoid-split">
           <div class="border-b-[3px] border-double border-slate-900 mb-3" />
           <div class="grid grid-cols-2 gap-x-8 gap-y-0.5 px-1">
@@ -672,17 +679,24 @@
           <div class="border-b-[3px] border-double border-slate-900 mt-3" />
         </div>
 
-        <!-- PLOT IMAGES — Wind -->
-        <div class="grid grid-cols-2 gap-3 pdf-avoid-split">
-          <div class="border border-slate-300 rounded overflow-hidden">
-            <img src="/image.png" alt="Wind Speed and Direction Plot 1" class="w-full h-auto block" />
-          </div>
-          <div class="border border-slate-300 rounded overflow-hidden">
-            <img src="/image2.png" alt="Wind Speed and Direction Plot 2" class="w-full h-auto block" />
+        <h2 class="text-center text-[0.875rem] font-bold m-0 mb-3 text-slate-900">
+          Wind<template v-if="pageIdx > 0"></template>
+        </h2>
+
+        <div class="grid grid-cols-2 gap-1 pdf-avoid-split">
+          <div
+            v-for="(src, imgIdx) in pageImages"
+            :key="'wind-img-' + pageIdx + '-' + imgIdx"
+            class="rounded overflow-hidden flex justify-center items-start"
+          >
+            <img
+              :src="src"
+              :alt="`Wind speed and direction plot ${pageIdx * imagesPerPlotPage + imgIdx + 1}`"
+              class="block w-full max-h-[80mm] object-contain object-top"
+            />
           </div>
         </div>
 
-        <!-- DISCLAIMER (pinned bottom) -->
         <div class="mt-auto pt-3 border-t border-slate-200 pdf-avoid-split">
           <p class="m-0 text-[0.6875rem] italic text-slate-500">Disclaimer : {{ disclaimer }}</p>
         </div>
@@ -873,18 +887,21 @@ const portDestForecast = ref<PortForecastRow[]>([
 
 function gustClass(gust: string): string {
   const v = parseFloat(gust) || 0
-  if (v >= 34) return 'bg-slate-900 text-white'
-  if (v >= 28) return 'bg-blue-900 text-white'
-  if (v >= 22) return 'bg-purple-400 text-white'
-  if (v >= 17) return 'bg-yellow-300'
-  if (v >= 15) return 'bg-purple-400 text-white'
-  if (v >= 11) return 'bg-yellow-300'
+  if (v >= 34) return 'bg-[#9A1490] text-white'
+  if (v >= 28) return 'bg-[#FE0105] text-white'
+  if (v >= 22) return 'bg-[#FE4B01] text-white'
+  if (v >= 17) return 'bg-[#FFB565] text-slate-900'
+  if (v >= 11) return 'bg-[#FEF001] text-slate-900'
   return ''
 }
 
 // --- Page 3: En Route Forecast helpers ---
 function weatherAbbrev(weather: string, rr: string): string {
-  const w = (weather || '').toLowerCase()
+  const norm = (weather || '').trim().replace(/\s+/g, ' ')
+  const upper = norm.toUpperCase()
+  const known = new Set(['NSW', 'FU', 'FG', 'SL RA', 'MOD RA', 'HVY RA', 'SHRA', 'TSRA'])
+  if (known.has(upper)) return upper
+  const w = norm.toLowerCase()
   const rainfall = parseFloat(rr) || 0
   if (w.includes('petir') || w.includes('thunderstorm')) return 'TSRA'
   if (w.includes('hujan shower') || w.includes('shower')) return 'SHRA'
@@ -898,9 +915,9 @@ function weatherAbbrev(weather: string, rr: string): string {
 
 function waveHeightClass(wave: string): string {
   const v = parseFloat(wave) || 0
-  if (v >= 4.0) return 'bg-purple-700 text-white'
-  if (v >= 2.5) return 'bg-purple-400 text-white'
-  if (v >= 1.25) return 'bg-yellow-300'
+  if (v >= 4.0) return 'bg-[#9A1490] text-white'
+  if (v >= 2.5) return 'bg-[#FE0105] text-white'
+  if (v >= 1.25) return 'bg-[#FEF001] text-slate-900'
   return ''
 }
 
@@ -990,6 +1007,58 @@ const enRoutePages = computed<EnRouteFlatItem[][]>(() => {
 
   return pages
 })
+
+/** Max images per PDF page for wave / wind plot sections (2×2 grid). */
+const imagesPerPlotPage = 4
+
+function chunkPlotImages<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize < 1) return items.length ? [items] : []
+  const pages: T[][] = []
+  for (let i = 0; i < items.length; i += chunkSize) {
+    pages.push(items.slice(i, i + chunkSize))
+  }
+  return pages
+}
+
+/** Paths under `public/` like `/swh_2026032600.png` — discovered at runtime. */
+const { data: plotImagePaths } = useFetch<{ swhPaths: string[]; wsPaths: string[] }>(
+  '/api/maritime/plot-images',
+  { default: () => ({ swhPaths: [], wsPaths: [] }) }
+)
+
+function pad2(n: number) {
+  return String(n).padStart(2, '0')
+}
+
+/** Matches map filenames: `swh_2026032600.png` → issued time as UTC (same as route forecast inputs). */
+function dateTimeToYyyyMmDdHhUtc(dateStr: string, timeStr: string): string | null {
+  if (!dateStr || !timeStr) return null
+  const dp = dateStr.split('-').map(Number)
+  const tp = timeStr.split(':').map(Number)
+  if (dp.length < 3 || tp.length < 2) return null
+  const [y, m, d] = dp as [number, number, number]
+  const [hh, mm] = tp as [number, number]
+  if ([y, m, d, hh, mm].some(n => !Number.isFinite(n))) return null
+  const dt = new Date(Date.UTC(y, m - 1, d, hh, mm, 0))
+  return `${dt.getUTCFullYear()}${pad2(dt.getUTCMonth() + 1)}${pad2(dt.getUTCDate())}${pad2(dt.getUTCHours())}`
+}
+
+const significantWavePlotImageUrls = computed(() => {
+  const paths = plotImagePaths.value?.swhPaths
+  if (paths?.length) return paths
+  const s = dateTimeToYyyyMmDdHhUtc(routeInfo.value.issuedDate, routeInfo.value.issuedTime)
+  return s ? [`/swh_${s}.png`] : []
+})
+
+const windPlotImageUrls = computed(() => {
+  const paths = plotImagePaths.value?.wsPaths
+  if (paths?.length) return paths
+  const s = dateTimeToYyyyMmDdHhUtc(routeInfo.value.issuedDate, routeInfo.value.issuedTime)
+  return s ? [`/ws_${s}.png`] : []
+})
+
+const wavePlotPages = computed(() => chunkPlotImages(significantWavePlotImageUrls.value, imagesPerPlotPage))
+const windPlotPages = computed(() => chunkPlotImages(windPlotImageUrls.value, imagesPerPlotPage))
 
 // --- Leaflet Map ---
 const DEFAULT_COORDINATES: [number, number][] = [
@@ -1152,7 +1221,7 @@ onMounted(async () => {
 
   try {
     map = Leaflet.map(el, { preferCanvas: true, zoomControl: false, attributionControl: false }).setView([2.3, 125], 6)
-    Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
+    Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { crossOrigin: 'anonymous' }).addTo(map)
 
     await renderRouteOnMap(Leaflet)
     await nextTick()
@@ -1208,64 +1277,652 @@ async function svgToPngDataUrl(svgUrl: string): Promise<string> {
   })
 }
 
+async function imgToDataUrl(src: string): Promise<string> {
+  const absUrl = src.startsWith('http') || src.startsWith('data:')
+    ? src
+    : new URL(src.startsWith('/') ? src : `/${src}`, window.location.origin).href
+  return new Promise<string>((resolve) => {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      try {
+        const c = document.createElement('canvas')
+        c.width = img.naturalWidth || img.width
+        c.height = img.naturalHeight || img.height
+        const ctx = c.getContext('2d')
+        if (!ctx) { resolve(absUrl); return }
+        ctx.drawImage(img, 0, 0)
+        resolve(c.toDataURL('image/png'))
+      } catch { resolve(absUrl) }
+    }
+    img.onerror = () => resolve(absUrl)
+    img.src = absUrl
+  })
+}
+
 async function downloadPdf() {
   const el = pdfDocumentRef.value
   if (!el) return
 
   isDownloading.value = true
   try {
-    let logoDataUrl: string | null = null
-    try {
-      logoDataUrl = await svgToPngDataUrl('/logo-bmkg.svg')
-    } catch {
-      // ignore
-    }
-
-    const html2canvas = (await import('html2canvas')).default
     const { jsPDF } = await import('jspdf')
-
-    const filename = `rute-pelayaran-${(routeInfo.value.shipName || 'report').replace(/[^a-zA-Z0-9-_]/g, '_')}.pdf`
-    const pages = el.querySelectorAll<HTMLElement>('.pdf-page')
-    if (!pages.length) return
-
-    const A4_W = 210
-    const A4_H = 297
+    const { default: autoTable } = await import('jspdf-autotable')
 
     const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true })
 
-    for (let i = 0; i < pages.length; i++) {
-      if (i > 0) pdf.addPage()
+    const PW = 210
+    const PH = 297
+    const M = 8
+    const CW = PW - 2 * M
 
-      const page = pages[i]!
-      const canvas = await html2canvas(page, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        windowWidth: page.offsetWidth,
-        windowHeight: page.offsetHeight,
-        onclone: (_doc: Document, clonedPage: HTMLElement) => {
-          if (logoDataUrl) {
-            clonedPage.querySelectorAll<HTMLImageElement>('.bmkg-logo').forEach(img => {
-              img.src = logoDataUrl!
-            })
-          }
-          clonedPage.style.boxShadow = 'none'
-          clonedPage.style.border = 'none'
-          clonedPage.style.margin = '0'
-        },
-      })
+    type RGB = [number, number, number]
+    const TEAL700: RGB = [13, 148, 136]
+    const SL900: RGB = [15, 23, 42]
+    const SL800: RGB = [30, 41, 59]
+    const SL700: RGB = [51, 65, 85]
+    const SL600: RGB = [71, 85, 105]
+    const SL500: RGB = [100, 116, 139]
+    const SL300: RGB = [203, 213, 225]
+    const SL200: RGB = [226, 232, 240]
+    const SL100: RGB = [241, 245, 249]
+    const WHITE: RGB = [255, 255, 255]
+    const BLACK: RGB = [0, 0, 0]
+    const TH1: RGB = [30, 43, 74]
+    const TH2: RGB = [45, 63, 101]
+    const DATE_BG: RGB = [219, 234, 254]
+    const YEL200: RGB = [254, 240, 138]
+    /** Threshold legend / PDF cell highlights — palette: FEF001, FFB565, FE4B01, FE0105, 9A1490 */
+    const TH_C1: RGB = [254, 240, 1]
+    const TH_C2: RGB = [255, 181, 101]
+    const TH_C3: RGB = [254, 75, 1]
+    const TH_C4: RGB = [254, 1, 5]
+    const TH_C5: RGB = [154, 20, 144]
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.92)
-      pdf.addImage(imgData, 'JPEG', 0, 0, A4_W, A4_H)
+    /* ── Pre-load assets ── */
+    let logoImg: string | null = null
+    try { logoImg = await svgToPngDataUrl('/logo-bmkg.svg') } catch { /* ignore */ }
+
+    let mapImg: string | null = null
+    if (mapContainerRef.value && map) {
+      try {
+        map.invalidateSize()
+        await new Promise(r => setTimeout(r, 1500))
+        const h2c = (await import('html2canvas')).default
+        const c = await h2c(mapContainerRef.value, { scale: 2, useCORS: true, backgroundColor: '#f8fafc' })
+        mapImg = c.toDataURL('image/png')
+      } catch { /* ignore */ }
     }
 
-    const blob = pdf.output('blob')
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    a.click()
-    URL.revokeObjectURL(url)
+    let meteogramImg: string | null = null
+    const mgSvg = el.querySelector('[data-meteogram] svg') as SVGSVGElement | null
+    if (mgSvg) {
+      try {
+        const svgRect = mgSvg.getBoundingClientRect()
+        const clone = mgSvg.cloneNode(true) as SVGSVGElement
+        clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+        clone.setAttribute('width', String(svgRect.width))
+        clone.setAttribute('height', String(svgRect.height))
+        const svgStr = new XMLSerializer().serializeToString(clone)
+        const svgDataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgStr)))
+        meteogramImg = await new Promise<string | null>((resolve) => {
+          const img = new Image()
+          img.onload = () => {
+            const canvas = document.createElement('canvas')
+            const s = 2
+            canvas.width = Math.round(svgRect.width * s)
+            canvas.height = Math.round(svgRect.height * s)
+            const ctx = canvas.getContext('2d')
+            if (!ctx) { resolve(null); return }
+            ctx.fillStyle = '#ffffff'
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            ctx.scale(s, s)
+            ctx.drawImage(img, 0, 0, svgRect.width, svgRect.height)
+            resolve(canvas.toDataURL('image/png'))
+          }
+          img.onerror = () => resolve(null)
+          img.src = svgDataUrl
+        })
+      } catch { /* ignore */ }
+    }
+    if (!meteogramImg) {
+      const mgContainer = el.querySelector('[data-meteogram]') as HTMLElement | null
+      if (mgContainer) {
+        try {
+          const h2c = (await import('html2canvas')).default
+          const c = await h2c(mgContainer, { scale: 2, useCORS: true, backgroundColor: '#ffffff' })
+          meteogramImg = c.toDataURL('image/png')
+        } catch { /* ignore */ }
+      }
+    }
+
+    const plotCache = new Map<string, string>()
+    await Promise.all(
+      [...significantWavePlotImageUrls.value, ...windPlotImageUrls.value].map(async src => {
+        try { plotCache.set(src, await imgToDataUrl(src)) } catch { /* ignore */ }
+      })
+    )
+
+    const plotDims = new Map<string, { w: number; h: number }>()
+    for (const src of new Set([...significantWavePlotImageUrls.value, ...windPlotImageUrls.value])) {
+      const dataUrl = plotCache.get(src)
+      if (!dataUrl) continue
+      try {
+        const dim = await new Promise<{ w: number; h: number }>((resolve) => {
+          const im = new Image()
+          im.onload = () => resolve({ w: im.naturalWidth || im.width, h: im.naturalHeight || im.height })
+          im.onerror = () => resolve({ w: 1200, h: 800 })
+          im.src = dataUrl
+        })
+        plotDims.set(src, dim)
+      } catch {
+        plotDims.set(src, { w: 1200, h: 800 })
+      }
+    }
+
+    /* ── Helper: header ── */
+    function addHeader(startY: number): number {
+      const H = 26
+      pdf.setFillColor(...SL100)
+      pdf.rect(0, startY, PW, H, 'F')
+      pdf.setDrawColor(...SL300)
+      pdf.setLineWidth(0.3)
+      pdf.line(0, startY + H, PW, startY + H)
+      if (logoImg) { try { pdf.addImage(logoImg, 'PNG', M, startY + 2, 14, 17) } catch { /* ignore */ } }
+      const cx = PW / 2
+      let ty = startY + 5
+      pdf.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...TEAL700)
+      pdf.text('AGENCY FOR METEOROLOGY, CLIMATOLOGY, AND GEOPHYSICS', cx, ty, { align: 'center' })
+      ty += 4.5
+      pdf.setFontSize(8).setTextColor(...SL800)
+      pdf.text(routeInfo.value.namaUpt || 'Stasiun Meteorologi Klas II Maritim Paotere Makassar', cx, ty, { align: 'center' })
+      ty += 3.5
+      pdf.setFont('helvetica', 'normal').setFontSize(7).setTextColor(...SL600)
+      pdf.text(routeInfo.value.alamat || 'Jl. Salodong, Kel. Untia, Kec. Biringkanaya, Kota Makassar, Sulawesi Selatan (90243)', cx, ty, { align: 'center', maxWidth: CW - 30 })
+      ty += 3.5
+      pdf.text(`Telp: ${routeInfo.value.telp || '081242069700'} | Email: ${routeInfo.value.email || 'stamar.paotere@bmkg.go.id'}`, cx, ty, { align: 'center' })
+      return startY + H + 4
+    }
+
+    /* ── Helper: document title ── */
+    function addDocTitle(y: number): number {
+      pdf.setFont('helvetica', 'bold').setFontSize(10).setTextColor(...SL900)
+      pdf.text(`En Route and Port Weather Forecast Information for ${routeInfo.value.shipName || '[Nama Kapal]'}`, PW / 2, y, { align: 'center', maxWidth: CW })
+      return y + 6
+    }
+
+    /* ── Helper: route info block ── */
+    function addRouteBlock(y: number): number {
+      pdf.setDrawColor(...SL900)
+      pdf.setLineWidth(0.7)
+      pdf.line(M, y, M + CW, y)
+      pdf.setLineWidth(0.2)
+      pdf.line(M, y + 0.9, M + CW, y + 0.9)
+      y += 3.5
+      const lx = M + 2
+      const rx = M + CW / 2 + 4
+      const pairs: [string, string, number][][] = [
+        [['Port of Origin', routeInfo.value.portOrigin || '\u2014', lx], ['Port of Destination', routeInfo.value.portDestination || '\u2014', rx]],
+        [['Estimated Time of Departure', (formatDateTime(routeInfo.value.departureDate, routeInfo.value.departureTime) || '\u2014') + ' LT', lx], ['Estimated Time of Arrival', (formatDateTime(routeInfo.value.arrivalDate, routeInfo.value.arrivalTime) || '\u2014') + ' LT', rx]],
+        [['Issued', (formatDateTime(routeInfo.value.issuedDate, routeInfo.value.issuedTime) || '\u2014') + ' LT', lx]],
+      ]
+      for (const row of pairs) {
+        for (const [label, value, x] of row) {
+          pdf.setFont('helvetica', 'bold').setFontSize(7.5).setTextColor(...SL900)
+          pdf.text(label as string, x as number, y)
+          pdf.setFont('helvetica', 'normal').setTextColor(...SL700)
+          pdf.text(value as string, x as number, y + 3.2)
+        }
+        y += 8
+      }
+      y -= 2
+      pdf.setDrawColor(...SL900)
+      pdf.setLineWidth(0.2)
+      pdf.line(M, y, M + CW, y)
+      pdf.setLineWidth(0.7)
+      pdf.line(M, y + 0.9, M + CW, y + 0.9)
+      return y + 5
+    }
+
+    /* ── Helper: disclaimer at page bottom (line + comfortable gap + wrapped text) ── */
+    function addDisclaimer() {
+      const bottomMargin = 12
+      const lineHeightMm = 4
+      const gapLineToText = 6
+      pdf.setFont('helvetica', 'italic').setFontSize(7).setTextColor(...SL500)
+      const lines = pdf.splitTextToSize(`Disclaimer : ${disclaimer.value}`, CW)
+      const n = Math.max(1, lines.length)
+      const lastBaseline = PH - bottomMargin
+      const firstBaseline = lastBaseline - (n - 1) * lineHeightMm
+      const separatorY = firstBaseline - gapLineToText
+      pdf.setDrawColor(...SL300).setLineWidth(0.2)
+      pdf.line(M, separatorY, M + CW, separatorY)
+      let ty = firstBaseline
+      for (const line of lines) {
+        pdf.text(line, M, ty)
+        ty += lineHeightMm
+      }
+    }
+
+    function addPlotImagesGrid(startY: number, imgs: string[]) {
+      const reserveBottom = 38
+      const cellGap = 2
+      const gridW = (CW - cellGap) / 2
+      const availableH = PH - startY - reserveBottom
+      const rowH = Math.max(32, (availableH - cellGap) / 2)
+      for (let i = 0; i < imgs.length; i++) {
+        const col = i % 2
+        const row = Math.floor(i / 2)
+        const cellX = M + col * (gridW + cellGap)
+        const cellY = startY + row * (rowH + cellGap)
+        const srcKey = imgs[i]!
+        const src = plotCache.get(srcKey) || srcKey
+        const dim = plotDims.get(srcKey) || { w: 1200, h: 800 }
+        const nw = dim.w
+        const nh = dim.h
+        const scale = Math.min(gridW / nw, rowH / nh)
+        const dw = nw * scale
+        const dh = nh * scale
+        const ix = cellX + (gridW - dw) / 2
+        const iy = cellY + (rowH - dh) / 2
+        try {
+          pdf.addImage(src, 'PNG', ix, iy, dw, dh)
+        } catch {
+          try { pdf.addImage(src, 'JPEG', ix, iy, dw, dh) } catch { /* ignore */ }
+        }
+      }
+    }
+
+    /* ── Helper: new page with header/title/route ── */
+    function newPageWithHeader(): number {
+      pdf.addPage()
+      let ny = addHeader(0)
+      ny = addDocTitle(ny)
+      ny = addRouteBlock(ny)
+      return ny
+    }
+
+    /* ── Helper: gust cell color ── */
+    function gustCellColor(v: number): { fill?: RGB; text?: RGB } {
+      if (v >= 34) return { fill: TH_C5, text: WHITE }
+      if (v >= 28) return { fill: TH_C4, text: WHITE }
+      if (v >= 22) return { fill: TH_C3, text: WHITE }
+      if (v >= 17) return { fill: TH_C2, text: SL900 }
+      if (v >= 11) return { fill: TH_C1, text: SL900 }
+      return {}
+    }
+
+    /* ── Helper: wave height cell color ── */
+    function waveCellColor(v: number): { fill?: RGB; text?: RGB } {
+      if (v >= 4.0) return { fill: TH_C5, text: WHITE }
+      if (v >= 2.5) return { fill: TH_C4, text: WHITE }
+      if (v >= 1.25) return { fill: TH_C1, text: SL900 }
+      return {}
+    }
+
+    /* ── Helper: threshold legend box ── */
+    function addThresholdLegend(y: number): number {
+      const boxH = 24
+      pdf.setFillColor(255, 255, 255).setDrawColor(...SL300).setLineWidth(0.3)
+      pdf.roundedRect(M, y, CW, boxH, 1, 1, 'FD')
+      let ly = y + 3.5
+      pdf.setFont('helvetica', 'normal').setFontSize(5.5).setTextColor(...SL700)
+      pdf.text('NSW = No Significant Weather, FU = Smoke, FG = Fog, SL RA = Slight Rain, MOD RA = Moderate Rain, HVY RA = Heavy Rain, SHRA = Shower Rain, TSRA = Thunderstorm', M + 3, ly, { maxWidth: CW - 6 })
+      ly += 6
+      pdf.setFont('helvetica', 'bold').setTextColor(...SL700)
+      pdf.text('Thresholds', M + 3, ly)
+      pdf.text('Level', M + 3, ly + 3)
+      let lx = M + 22
+      pdf.text('Waves', lx, ly)
+      lx += 12
+      pdf.setFont('helvetica', 'normal').setTextColor(...SL600)
+      for (const [label, color] of [['Moderate (1.25-2.5 m)', TH_C1], ['Rough (2.5-4.0 m)', TH_C4], ['Very Rough (>4 m)', TH_C5]] as [string, RGB][]) {
+        pdf.setFillColor(...color)
+        pdf.rect(lx, ly - 2, 3.5, 2.2, 'F')
+        lx += 4.5
+        pdf.text(label, lx, ly)
+        lx += pdf.getTextWidth(label) + 2
+      }
+      ly += 4
+      lx = M + 22
+      pdf.setFont('helvetica', 'bold').setTextColor(...SL700)
+      pdf.text('Winds', lx, ly)
+      lx += 12
+      pdf.setFont('helvetica', 'normal').setTextColor(...SL600)
+      for (const [label, color] of [['Moderate (11-16 kts)', TH_C1], ['Fresh (17-21 kts)', TH_C2], ['Strong (22-27 kts)', TH_C3], ['Near Gale (28-33 kts)', TH_C4], ['Gale (>33 kts)', TH_C5]] as [string, RGB][]) {
+        pdf.setFillColor(...color)
+        pdf.rect(lx, ly - 2, 3.5, 2.2, 'F')
+        lx += 4.5
+        pdf.text(label, lx, ly)
+        lx += pdf.getTextWidth(label) + 2
+      }
+      return y + boxH + 4
+    }
+
+    /* ── Helper: port forecast table ── */
+    function addPortTable(y: number, rows: PortForecastRow[], dateLabel: string): number {
+      autoTable(pdf, {
+        startY: y,
+        margin: { left: M, right: M },
+        tableWidth: CW,
+        theme: 'grid',
+        styles: { fontSize: 6, cellPadding: 1.2, lineColor: BLACK, lineWidth: 0.15, halign: 'center' as const, valign: 'middle' as const, font: 'helvetica' },
+        head: [
+          [
+            { content: 'Time', styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: 'WX', styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: 'Visibility', styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: 'Winds', colSpan: 3, styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: 'Waves', colSpan: 2, styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: 'Current', colSpan: 2, styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+          ],
+          [
+            { content: '', styles: { fillColor: TH2, textColor: WHITE } },
+            { content: '', styles: { fillColor: TH2, textColor: WHITE } },
+            { content: '', styles: { fillColor: TH2, textColor: WHITE } },
+            { content: '10 m', colSpan: 3, styles: { fillColor: TH2, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: '', colSpan: 2, styles: { fillColor: TH2, textColor: WHITE } },
+            { content: 'Surface', colSpan: 2, styles: { fillColor: TH2, textColor: WHITE, fontStyle: 'bold' as const } },
+          ],
+          [
+            { content: 'LT', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: '', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: '(km)', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: 'Dir', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: 'Spd\n(kts)', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: 'Gust\n(kts)', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: 'Total Wave\nDir', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: 'Hsig\n(m)', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: 'Dir', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: 'Spd\n(cm/s)', styles: { fillColor: WHITE, textColor: SL900 } },
+          ],
+        ],
+        body: [
+          [{ content: dateLabel, colSpan: 10, styles: { fillColor: DATE_BG, fontStyle: 'bold' as const, halign: 'left' as const } }],
+          ...rows.map(r => [r.time, r.wx, r.visibility, r.windDir, r.windSpd, r.windGust, r.waveDir, r.waveHsig, r.currentDir, r.currentSpd]),
+        ],
+        columnStyles: {
+          0: { cellWidth: CW * 0.08 }, 1: { cellWidth: CW * 0.08 }, 2: { cellWidth: CW * 0.12 },
+          3: { cellWidth: CW * 0.09 }, 4: { cellWidth: CW * 0.10 }, 5: { cellWidth: CW * 0.10 },
+          6: { cellWidth: CW * 0.13 }, 7: { cellWidth: CW * 0.09 }, 8: { cellWidth: CW * 0.10 }, 9: { cellWidth: CW * 0.11 },
+        },
+        didParseCell: (data: any) => {
+          if (data.section === 'body' && data.row.index > 0 && data.column.index === 5) {
+            const gc = gustCellColor(parseFloat(data.cell.raw as string) || 0)
+            if (gc.fill) data.cell.styles.fillColor = gc.fill
+            if (gc.text) data.cell.styles.textColor = gc.text
+          }
+        },
+      })
+      return (pdf as any).lastAutoTable.finalY
+    }
+
+    /* ── Helper: en route forecast table ── */
+    function addEnRouteTable(y: number, pageRows: EnRouteFlatItem[]): number {
+      const bodyData: any[][] = []
+      for (const item of pageRows) {
+        if (item.type === 'date-header') {
+          bodyData.push([{ content: item.dateLabel || '', colSpan: 10, styles: { fillColor: DATE_BG, fontStyle: 'bold' as const, halign: 'left' as const } }])
+        } else if (item.row) {
+          const r = item.row
+          bodyData.push([r.coordinate || '\u2014', r.time, weatherAbbrev(r.weather, r.rr), r.visibility || '\u2014', r.wave, r.ws, r.wd, estimateGust(r.ws), r.aruss, r.arusd])
+        }
+      }
+      if (!bodyData.length) {
+        bodyData.push([{ content: 'Belum ada data', colSpan: 10, styles: { halign: 'center' as const, textColor: SL500 } }])
+      }
+      autoTable(pdf, {
+        startY: y,
+        margin: { left: M, right: M },
+        tableWidth: CW,
+        theme: 'grid',
+        styles: { fontSize: 6, cellPadding: 1.2, lineColor: BLACK, lineWidth: 0.15, halign: 'center' as const, valign: 'middle' as const, font: 'helvetica' },
+        head: [
+          [
+            { content: 'Coordinate', styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: 'Time', styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: 'Weather', styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: 'Visibility', styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: 'Wave Height', styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: 'Wind Speed &\nDirection', colSpan: 2, styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: 'Gust', styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: 'Current Speed &\nDirection', colSpan: 2, styles: { fillColor: TH1, textColor: WHITE, fontStyle: 'bold' as const } },
+          ],
+          [
+            { content: '', styles: { fillColor: TH2, textColor: WHITE } },
+            { content: '', styles: { fillColor: TH2, textColor: WHITE } },
+            { content: '', styles: { fillColor: TH2, textColor: WHITE } },
+            { content: '', styles: { fillColor: TH2, textColor: WHITE } },
+            { content: '', styles: { fillColor: TH2, textColor: WHITE } },
+            { content: '(kt)', colSpan: 2, styles: { fillColor: TH2, textColor: WHITE, fontStyle: 'bold' as const } },
+            { content: '', styles: { fillColor: TH2, textColor: WHITE } },
+            { content: '(cm/s)', colSpan: 2, styles: { fillColor: TH2, textColor: WHITE, fontStyle: 'bold' as const } },
+          ],
+          [
+            { content: '', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: '(LT)', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: '', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: '(km)', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: '(m)', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: 'Spd', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: 'Dir', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: '(kt)', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: 'Spd', styles: { fillColor: WHITE, textColor: SL900 } },
+            { content: 'Dir', styles: { fillColor: WHITE, textColor: SL900 } },
+          ],
+        ],
+        body: bodyData,
+        columnStyles: {
+          0: { cellWidth: CW * 0.17, halign: 'left' as const },
+          1: { cellWidth: CW * 0.08 }, 2: { cellWidth: CW * 0.09 }, 3: { cellWidth: CW * 0.10 },
+          4: { cellWidth: CW * 0.10 }, 5: { cellWidth: CW * 0.09 }, 6: { cellWidth: CW * 0.09 },
+          7: { cellWidth: CW * 0.08 }, 8: { cellWidth: CW * 0.10 }, 9: { cellWidth: CW * 0.10 },
+        },
+        didParseCell: (data: any) => {
+          if (data.section !== 'body') return
+          const raw = data.cell.raw as string
+          if (data.column.index === 4 && raw) {
+            const wc = waveCellColor(parseFloat(raw) || 0)
+            if (wc.fill) data.cell.styles.fillColor = wc.fill
+            if (wc.text) data.cell.styles.textColor = wc.text
+          }
+          if (data.column.index === 7 && raw) {
+            const gc = gustCellColor(parseFloat(raw) || 0)
+            if (gc.fill) data.cell.styles.fillColor = gc.fill
+            if (gc.text) data.cell.styles.textColor = gc.text
+          }
+        },
+      })
+      return (pdf as any).lastAutoTable.finalY
+    }
+
+    /* ═══════════════════════════════════════
+       PAGE 1 — Overview
+       ═══════════════════════════════════════ */
+    let y = addHeader(0)
+    y = addDocTitle(y)
+    y = addRouteBlock(y)
+
+    pdf.setFont('helvetica', 'bold').setFontSize(8.5).setTextColor(...SL900)
+    pdf.text('Meteorological Situation', M, y)
+    const msW = pdf.getTextWidth('Meteorological Situation')
+    pdf.setDrawColor(...SL900).setLineWidth(0.3)
+    pdf.line(M, y + 0.5, M + msW, y + 0.5)
+    y += 4
+    pdf.setFont('helvetica', 'normal').setFontSize(7.5).setTextColor(...SL800)
+    const synLines = pdf.splitTextToSize(synopticInfo.value || '\u2014', CW)
+    pdf.text(synLines, M, y)
+    y += synLines.length * 3 + 3
+    pdf.setDrawColor(...SL300).setLineWidth(0.2)
+    pdf.line(M, y, M + CW, y)
+    y += 4
+
+    pdf.setFont('helvetica', 'bold').setFontSize(8.5).setTextColor(...SL900)
+    pdf.text('Warnings', M, y)
+    y += 4
+    const warnText = warnings.value || '\u2014'
+    pdf.setFont('helvetica', 'normal').setFontSize(7.5)
+    const warnLines = pdf.splitTextToSize(warnText, CW - 4)
+    const warnH = warnLines.length * 3 + 2
+    pdf.setFillColor(...YEL200)
+    pdf.rect(M, y - 2.5, CW, warnH, 'F')
+    pdf.setTextColor(...SL800)
+    pdf.text(warnLines, M + 2, y)
+    y += warnH + 2
+
+    pdf.setFont('helvetica', 'bold').setFontSize(7.5).setTextColor(...SL800)
+    const cyLabel = 'Cyclone Warning'
+    pdf.text(cyLabel, M, y)
+    const cyW = pdf.getTextWidth(cyLabel)
+    pdf.setFont('helvetica', 'normal')
+    pdf.text(` : ${cycloneWarning.value || 'No Tropical Cyclone (TC) and Tropical Storms (TS).'}`, M + cyW, y, { maxWidth: CW - cyW })
+    y += 5
+    pdf.setDrawColor(...SL300).setLineWidth(0.2)
+    pdf.line(M, y, M + CW, y)
+    y += 3
+
+    if (mapImg) {
+      const mapH = 55
+      pdf.setDrawColor(...SL300).setLineWidth(0.3)
+      pdf.rect(M, y, CW, mapH, 'S')
+      try { pdf.addImage(mapImg, 'PNG', M + 0.3, y + 0.3, CW - 0.6, mapH - 0.6) } catch { /* ignore */ }
+      y += mapH + 2
+    }
+
+    pdf.setFontSize(5.5).setFont('helvetica', 'bold').setTextColor(...SL600)
+    let lx = M
+    pdf.text('Tinggi Gelombang (m):', lx, y)
+    lx += pdf.getTextWidth('Tinggi Gelombang (m):') + 2
+    pdf.setFont('helvetica', 'normal')
+    for (const [label, c] of [['<=0.5', [22, 163, 74]], ['0.5-1.25', [96, 165, 250]], ['1.25-2.5', [250, 204, 21]], ['2.5-4.0', [249, 115, 22]], ['4.0-6.0', [239, 68, 68]], ['6.0-9.0', [107, 33, 168]], ['>9.0', [31, 41, 55]]] as [string, number[]][]) {
+      pdf.setFillColor(c[0]!, c[1]!, c[2]!)
+      pdf.rect(lx, y - 1.8, 4, 2, 'F')
+      lx += 5
+      pdf.setTextColor(...SL600)
+      pdf.text(label, lx, y)
+      lx += pdf.getTextWidth(label) + 1.5
+    }
+    y += 5
+
+    pdf.setFont('helvetica', 'bold').setFontSize(8.5).setTextColor(...SL900)
+    pdf.text('Meteogram', M, y)
+    const mgTW = pdf.getTextWidth('Meteogram')
+    pdf.setDrawColor(...SL900).setLineWidth(0.3)
+    pdf.line(M, y + 0.5, M + mgTW, y + 0.5)
+    y += 3
+    if (meteogramImg) {
+      const mgH = Math.round(CW * chartHeight / chartWidth)
+      try { pdf.addImage(meteogramImg, 'PNG', M, y, CW, mgH) } catch { /* ignore */ }
+      y += mgH + 2
+      const legCx = PW / 2
+      pdf.setFontSize(6)
+      const visLineX = legCx - 30
+      pdf.setDrawColor(253, 164, 175).setLineWidth(0.5)
+      pdf.line(visLineX, y - 1, visLineX + 8, y - 1)
+      pdf.setFont('helvetica', 'normal').setTextColor(...SL800)
+      pdf.text('Visibility', visLineX + 10, y)
+      const wsLineX = legCx + 10
+      pdf.setDrawColor(39, 121, 253).setLineWidth(0.5)
+      pdf.line(wsLineX, y - 1, wsLineX + 8, y - 1)
+      pdf.text('Wind Speed', wsLineX + 10, y)
+      y += 3
+    }
+    addDisclaimer()
+
+    /* ═══════════════════════════════════════
+       PAGE 2 — Port Forecast
+       ═══════════════════════════════════════ */
+    y = newPageWithHeader()
+    pdf.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...SL900)
+    pdf.text('Port Forecast', PW / 2, y, { align: 'center' })
+    y += 5
+    y = addThresholdLegend(y)
+
+    pdf.setFont('helvetica', 'bold').setFontSize(8).setTextColor(...SL900)
+    pdf.text('Port of Origin', M, y)
+    y += 3
+    y = addPortTable(y, portOriginForecast.value, portOriginDateLabel.value)
+    y += 4
+
+    pdf.setFont('helvetica', 'bold').setFontSize(8).setTextColor(...SL900)
+    pdf.text('Port of Destination', M, y)
+    y += 3
+    y = addPortTable(y, portDestForecast.value, portDestDateLabel.value)
+    y += 5
+
+    pdf.setFont('helvetica', 'bold').setFontSize(8.5).setTextColor(...SL900)
+    pdf.text('Safety Advisory', M, y)
+    y += 4
+    pdf.setFont('helvetica', 'normal').setFontSize(7.5).setTextColor(...SL800)
+    pdf.text('The following conditions may pose risks to navigation safety:', M, y)
+    y += 4.5
+    const safetyItems = [
+      { bold: 'Fishing vessels', rest: ' when wind speed reaches 15 knots and wave height reaches 1.25 meters.' },
+      { bold: 'Barges', rest: ' when wind speed reaches 16 knots and wave height reaches 1.5 meters.' },
+      { bold: 'Ferry', rest: ' vessels when wind speed reaches 21 knots and wave height reaches 2.5 meters.' },
+      { bold: 'Large vessels', rest: ' (Cargo/Cruise ships) when wind speed reaches 27 knots and wave height reaches 4.0 meters.' },
+    ]
+    for (const item of safetyItems) {
+      pdf.setFont('helvetica', 'normal').setTextColor(...SL800)
+      pdf.text('\u2022', M + 2, y)
+      pdf.setFont('helvetica', 'bold')
+      pdf.text(item.bold, M + 5, y)
+      const bw = pdf.getTextWidth(item.bold)
+      pdf.setFont('helvetica', 'normal')
+      pdf.text(item.rest, M + 5 + bw, y, { maxWidth: CW - 7 - bw })
+      y += 4
+    }
+    addDisclaimer()
+
+    /* ═══════════════════════════════════════
+       PAGE 3+ — En Route Forecast
+       ═══════════════════════════════════════ */
+    const erPages = enRoutePages.value
+    for (let pi = 0; pi < erPages.length; pi++) {
+      y = newPageWithHeader()
+      pdf.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...SL900)
+      pdf.text(pi === 0 ? 'En route Forecast' : 'En route Forecast (continued)', PW / 2, y, { align: 'center' })
+      y += 5
+      if (pi === 0) y = addThresholdLegend(y)
+      y = addEnRouteTable(y, erPages[pi]!)
+      if (pi === erPages.length - 1) {
+        y += 10
+        pdf.setFont('helvetica', 'normal').setFontSize(8.5).setTextColor(...SL800)
+        pdf.text('Forecaster on Duty', PW - M - 5, y, { align: 'right' })
+        y += 18
+        pdf.setFont('helvetica', 'bold').setTextColor(...SL900)
+        pdf.text(`(${routeInfo.value.forecaster || '\u2014'})`, PW - M - 5, y, { align: 'right' })
+      }
+      addDisclaimer()
+    }
+
+    /* ═══════════════════════════════════════
+       Significant Wave Height pages
+       ═══════════════════════════════════════ */
+    for (let pi = 0; pi < wavePlotPages.value.length; pi++) {
+      y = newPageWithHeader()
+      pdf.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...SL900)
+      pdf.text('Significant Wave Height', PW / 2, y, { align: 'center' })
+      y += 5
+      addPlotImagesGrid(y, wavePlotPages.value[pi]!)
+      addDisclaimer()
+    }
+
+    /* ═══════════════════════════════════════
+       Wind pages
+       ═══════════════════════════════════════ */
+    for (let pi = 0; pi < windPlotPages.value.length; pi++) {
+      y = newPageWithHeader()
+      pdf.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...SL900)
+      pdf.text('Wind', PW / 2, y, { align: 'center' })
+      y += 5
+      addPlotImagesGrid(y, windPlotPages.value[pi]!)
+      addDisclaimer()
+    }
+
+    /* ── Save ── */
+    const filename = `rute-pelayaran-${(routeInfo.value.shipName || 'report').replace(/[^a-zA-Z0-9-_]/g, '_')}.pdf`
+    pdf.save(filename)
   } catch (err) {
     console.error('PDF generation failed:', err)
   } finally {
