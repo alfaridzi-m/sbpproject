@@ -204,6 +204,13 @@
                 AOI tersimpan
               </span>
             </div>
+            <p
+              v-if="boundaryWarning"
+              class="mt-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800"
+              role="alert"
+            >
+              {{ boundaryWarning }}
+            </p>
           </div>
           <div class="flex gap-3 justify-end mt-6 pt-4 border-t border-[var(--border)]">
             <button
@@ -267,6 +274,14 @@ const coordinates = ref<[number, number][]>([])
 const activeTool = ref<ToolMode>('draw')
 /** Closed outer ring for GeoJSON Polygon (from drag-rectangle tool) */
 const boundingRectangle = ref<[number, number][] | null>(null)
+const boundaryWarning = ref('')
+
+const BOUNDARY_LIMITS = {
+  minLng: 90,
+  maxLng: 145,
+  minLat: -15,
+  maxLat: 15
+} as const
 
 const toolHints: Record<ToolMode, string> = {
   pick: 'Pilih mode cursor untuk geser titik koordinat (pintasan 1)',
@@ -286,11 +301,58 @@ let tileWatchdogTimer: ReturnType<typeof setTimeout> | null = null
 let mapClickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
 let rectPreview: L.Rectangle | null = null
 let rectFinal: L.Rectangle | null = null
+let boundaryRect: L.Rectangle | null = null
 let rectDragAnchor: L.LatLng | null = null
 let rectLastLatLng: L.LatLng | null = null
 let middlePanActive = false
 let middlePanLastPoint: L.Point | null = null
 let mapResizeObserver: ResizeObserver | null = null
+let boundaryWarningTimer: ReturnType<typeof setTimeout> | null = null
+
+function showBoundaryWarning(message = 'Gambar garis/persegi harus berada di area 90°E - 145°E dan 15°S - 15°N.') {
+  boundaryWarning.value = message
+  if (boundaryWarningTimer) clearTimeout(boundaryWarningTimer)
+  boundaryWarningTimer = setTimeout(() => {
+    boundaryWarning.value = ''
+  }, 3000)
+}
+
+function clearBoundaryWarning() {
+  boundaryWarning.value = ''
+  if (!boundaryWarningTimer) return
+  clearTimeout(boundaryWarningTimer)
+  boundaryWarningTimer = null
+}
+
+function isPointInsideBoundary(lng: number, lat: number) {
+  return lng >= BOUNDARY_LIMITS.minLng
+    && lng <= BOUNDARY_LIMITS.maxLng
+    && lat >= BOUNDARY_LIMITS.minLat
+    && lat <= BOUNDARY_LIMITS.maxLat
+}
+
+function isBoundsInsideBoundary(bounds: L.LatLngBounds) {
+  const sw = bounds.getSouthWest()
+  const ne = bounds.getNorthEast()
+  return isPointInsideBoundary(sw.lng, sw.lat) && isPointInsideBoundary(ne.lng, ne.lat)
+}
+
+function drawBoundaryOverlay(Lmod: typeof L) {
+  if (!map) return
+  const boundaryBounds = Lmod.latLngBounds(
+    Lmod.latLng(BOUNDARY_LIMITS.minLat, BOUNDARY_LIMITS.minLng),
+    Lmod.latLng(BOUNDARY_LIMITS.maxLat, BOUNDARY_LIMITS.maxLng)
+  )
+  boundaryRect?.remove()
+  boundaryRect = Lmod.rectangle(boundaryBounds, {
+    color: '#dc2626',
+    weight: 2,
+    dashArray: '8 6',
+    fillOpacity: 0,
+    interactive: false
+  }).addTo(map)
+  boundaryRect.bringToFront()
+}
 
 function teardownMapResizeObserver() {
   mapResizeObserver?.disconnect()
@@ -441,6 +503,7 @@ async function initMap(viewState?: MapViewState) {
     tileErrorCount = 0
     tileLoadCount = 0
     baseTileLayer = buildTileLayer(L, tileSourceIndex).addTo(map)
+    drawBoundaryOverlay(L)
     scheduleTileWatchdog(L)
     mapClickHandler = (e: L.LeafletMouseEvent) => handleMapClick(e.latlng.lng, e.latlng.lat)
     map.on('click', (e: L.LeafletMouseEvent) => mapClickHandler?.(e))
@@ -509,16 +572,21 @@ function onMapMouseMove(e: L.LeafletMouseEvent) {
   if (!rectDragAnchor) return
   rectLastLatLng = e.latlng
   const bounds = squareBoundsFromAnchor(Lmod, rectDragAnchor, e.latlng)
+  const insideBoundary = isBoundsInsideBoundary(bounds)
   if (!rectPreview) {
     rectPreview = Lmod.rectangle(bounds, {
-      color: '#2563eb',
+      color: insideBoundary ? '#2563eb' : '#dc2626',
       weight: 2,
       dashArray: '6 4',
-      fillColor: '#3b82f6',
+      fillColor: insideBoundary ? '#3b82f6' : '#ef4444',
       fillOpacity: 0.15
     }).addTo(map)
   } else {
     rectPreview.setBounds(bounds)
+    rectPreview.setStyle({
+      color: insideBoundary ? '#2563eb' : '#dc2626',
+      fillColor: insideBoundary ? '#3b82f6' : '#ef4444'
+    })
   }
 }
 
@@ -549,6 +617,11 @@ function onDocMouseUp() {
   const sw = bounds.getSouthWest()
   const ne = bounds.getNorthEast()
   if (sw.equals(ne)) return
+  if (!isBoundsInsideBoundary(bounds)) {
+    showBoundaryWarning()
+    return
+  }
+  clearBoundaryWarning()
   const ring = boundsToRing(Lmod, bounds)
   boundingRectangle.value = ring
   rectFinal?.remove()
@@ -594,6 +667,11 @@ function clearRectangle() {
 
 function handleMapClick(lng: number, lat: number) {
   if (activeTool.value === 'draw') {
+    if (!isPointInsideBoundary(lng, lat)) {
+      showBoundaryWarning()
+      return
+    }
+    clearBoundaryWarning()
     addPoint(lng, lat)
   }
 }
@@ -620,6 +698,12 @@ function setupToolBehavior() {
       map?.dragging.enable()
       if (activeTool.value !== 'pick') return
       const latlng = m.getLatLng()
+      if (!isPointInsideBoundary(latlng.lng, latlng.lat)) {
+        showBoundaryWarning('Titik tidak boleh digeser keluar area 90°E - 145°E dan 15°S - 15°N.')
+        m.setLatLng([coordinates.value[i]?.[1] ?? latlng.lat, coordinates.value[i]?.[0] ?? latlng.lng])
+        return
+      }
+      clearBoundaryWarning()
       coordinates.value[i] = [latlng.lng, latlng.lat]
       updatePolyline()
     })
@@ -651,6 +735,10 @@ function pointToSegmentDistance(L: NonNullable<typeof Leaflet>, click: L.LatLng,
 function insertPointOnLine(clickLng: number, clickLat: number) {
   const L = Leaflet
   if (!L || !map || coordinates.value.length < 2) return
+  if (!isPointInsideBoundary(clickLng, clickLat)) {
+    showBoundaryWarning()
+    return
+  }
   const coords = coordinates.value
   let bestIdx = 1
   let bestDist = Infinity
@@ -689,6 +777,10 @@ function rebuildMarkers() {
 function addPoint(lng: number, lat: number) {
   const L = Leaflet
   if (!L || !map) return
+  if (!isPointInsideBoundary(lng, lat)) {
+    showBoundaryWarning()
+    return
+  }
   coordinates.value.push([lng, lat])
   const m = L.marker([lat, lng], { draggable: true }).addTo(map)
   markers.push(m)
@@ -738,6 +830,7 @@ function clearLineOnly() {
 function clearAllDrawing() {
   clearRectangle()
   clearLineOnly()
+  clearBoundaryWarning()
 }
 
 function close() {
@@ -782,6 +875,8 @@ async function reinitMapPreserveDrawing() {
   rectPreview?.remove()
   rectPreview = null
   rectFinal = null
+  boundaryRect?.remove()
+  boundaryRect = null
   rectDragAnchor = null
   rectLastLatLng = null
   tileSourceIndex = 0
@@ -852,6 +947,7 @@ watch(modelValue, (open) => {
     toPort.value = ''
     coordinates.value = []
     boundingRectangle.value = null
+    clearBoundaryWarning()
     activeTool.value = 'draw'
     tileLoadCount = 0
     clearTileWatchdog()
@@ -873,6 +969,8 @@ watch(modelValue, (open) => {
     clearAllDrawing()
     rectPreview = null
     rectFinal = null
+    boundaryRect?.remove()
+    boundaryRect = null
     rectDragAnchor = null
     rectLastLatLng = null
     map?.remove()
@@ -883,6 +981,7 @@ watch(modelValue, (open) => {
     tileLoadCount = 0
     polyline = null
     markers.length = 0
+    clearBoundaryWarning()
   }
 })
 </script>

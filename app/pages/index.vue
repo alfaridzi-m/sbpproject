@@ -6,7 +6,7 @@
         style="background: linear-gradient(90deg, var(--color-green), var(--color-blue))"
       />
       <h1 class="text-[1.875rem] font-bold m-0 mb-2 text-[var(--text)] tracking-tight">
-        Aplikasi Forecast Maritim
+        Aplikasi MFSTUDIO under Spbe
       </h1>
       <p class="text-[0.9375rem] text-[var(--text-muted)] m-0 max-w-xl mx-auto leading-relaxed">
         Informasi cuaca dan perencanaan rute kapal

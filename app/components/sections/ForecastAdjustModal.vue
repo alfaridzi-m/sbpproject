@@ -58,50 +58,98 @@
               No forecast data available. Run the forecast first.
             </div>
             <template v-else>
-              <div class="flex items-center justify-between mb-2 shrink-0">
-                <p class="text-[11px] text-[var(--text-muted)] m-0">
-                  Scroll to zoom · Hold Shift + drag to pan · Drag points to adjust
+              <div class="flex flex-wrap items-center justify-between gap-2 shrink-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    class="px-2.5 py-1.5 rounded-md text-xs font-medium cursor-pointer bg-[var(--surface)] text-[var(--text-muted)] border border-[var(--border)] shadow-[var(--shadow-sm)] transition-colors hover:text-[var(--text)] hover:border-[var(--text-muted)]"
+                    @click="resetCurrentTab"
+                  >
+                    Reset tab
+                  </button>
+                  <button
+                    v-if="isZoomed"
+                    type="button"
+                    class="px-2.5 py-1.5 rounded-md text-xs font-medium cursor-pointer bg-[var(--surface)] text-[var(--text-muted)] border border-[var(--border)] shadow-[var(--shadow-sm)] transition-colors hover:text-[var(--text)] hover:border-[var(--text-muted)]"
+                    @click="resetZoom"
+                  >
+                    Reset zoom
+                  </button>
+                </div>
+                <p class="text-[11px] text-[var(--text-muted)] m-0 text-right">
+                  Scroll to zoom · Shift+drag to pan · Drag points to adjust
                 </p>
-                <button
-                  v-if="isZoomed"
-                  type="button"
-                  class="px-2.5 py-1 rounded-md text-[11px] font-medium cursor-pointer bg-[var(--surface)] text-[var(--text-muted)] border border-[var(--border)] transition-colors hover:text-[var(--text)] hover:border-[var(--text-muted)]"
-                  @click="resetZoom"
-                >
-                  Reset Zoom
-                </button>
               </div>
-              <div class="relative w-full flex-1" style="min-height: 320px">
+              <div class="relative w-full flex-1 min-h-0" style="min-height: 320px">
                 <canvas ref="chartCanvas" style="touch-action: none" />
+              </div>
+              <div
+                class="shrink-0 rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_96%,var(--border)_4%)] px-4 py-3"
+              >
+                <h3 class="text-xs font-semibold text-[var(--text)] m-0 mb-2 tracking-wide uppercase text-[var(--text-muted)]">
+                  Data manipulation
+                </h3>
+                <p class="text-[11px] text-[var(--text-muted)] m-0 mb-3">
+                  Scale the <strong class="text-[var(--text)] font-medium">{{ getActiveParam().label }}</strong> series linearly into a target range, or round to reporting precision.
+                </p>
+                <div class="flex flex-wrap items-end gap-3">
+                  <div class="flex flex-col gap-0.5">
+                    <label class="text-[10px] font-medium text-[var(--text-muted)] uppercase tracking-wide" for="fc-norm-min">Target min</label>
+                    <input
+                      id="fc-norm-min"
+                      v-model.number="normTargetMin"
+                      type="number"
+                      step="any"
+                      class="w-[6.5rem] py-1.5 px-2 rounded-md border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm"
+                    />
+                  </div>
+                  <div class="flex flex-col gap-0.5">
+                    <label class="text-[10px] font-medium text-[var(--text-muted)] uppercase tracking-wide" for="fc-norm-max">Target max</label>
+                    <input
+                      id="fc-norm-max"
+                      v-model.number="normTargetMax"
+                      type="number"
+                      step="any"
+                      class="w-[6.5rem] py-1.5 px-2 rounded-md border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    class="px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] shadow-[var(--shadow-sm)] transition-colors hover:border-[var(--text-muted)]"
+                    title="Map current min→target min and current max→target max (linear)"
+                    @click="normalizeActiveTabRange"
+                  >
+                    Normalize range
+                  </button>
+                  <button
+                    type="button"
+                    class="px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] shadow-[var(--shadow-sm)] transition-colors hover:border-[var(--text-muted)]"
+                    title="Nearest integer (visibility, wind/current speed); nearest 0.1 (wave, hsig); nearest 10° for directions"
+                    @click="roundActiveTabNearest"
+                  >
+                    Round nearest
+                  </button>
+                </div>
               </div>
             </template>
           </div>
 
           <!-- Footer -->
-          <div class="flex items-center justify-between px-6 py-4 border-t border-[var(--border)] shrink-0">
+          <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-[var(--border)] shrink-0">
             <button
               type="button"
-              class="px-4 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--surface)] text-[var(--text-muted)] border border-[var(--border)] shadow-[var(--shadow-sm)] transition-colors duration-200 hover:text-[var(--text)] hover:border-[var(--text-muted)]"
-              @click="resetCurrentTab"
+              class="px-5 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] shadow-[var(--shadow-sm)] transition-colors duration-200 hover:bg-[var(--surface-hover)]"
+              @click="cancel"
             >
-              Reset Tab
+              Cancel
             </button>
-            <div class="flex gap-3">
-              <button
-                type="button"
-                class="px-5 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] shadow-[var(--shadow-sm)] transition-colors duration-200 hover:bg-[var(--surface-hover)]"
-                @click="cancel"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                class="px-5 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--primary)] text-[var(--color-white)] border-none shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_var(--primary-glow)]"
-                @click="apply"
-              >
-                Apply Changes
-              </button>
-            </div>
+            <button
+              type="button"
+              class="px-5 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--primary)] text-[var(--color-white)] border-none shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_var(--primary-glow)]"
+              @click="apply"
+            >
+              Apply Changes
+            </button>
           </div>
         </div>
       </div>
@@ -143,6 +191,10 @@ const activeTab = ref<ParamKey>('visibility')
 const chartCanvas = ref<HTMLCanvasElement | null>(null)
 const isZoomed = ref(false)
 
+/** Target range for “Normalize range” (linear map from current series min/max). */
+const normTargetMin = ref(0)
+const normTargetMax = ref(1)
+
 const originalValues = ref<Record<string, Record<ParamKey, number>>>({})
 const editedValues = ref<Record<string, Record<ParamKey, number>>>({})
 
@@ -158,12 +210,159 @@ function getActiveParam(): ParamDef {
   return parameters.find(p => p.key === activeTab.value)!
 }
 
+function clampDirectionDeg(deg: number): number {
+  return Math.min(360, Math.max(0, deg))
+}
+
+/** Calm: ws ≤ 0 ⇒ wd 0. Otherwise “north” is 360, not 0. */
+function normalizeWindDirection(ws: number, wd: number): number {
+  if (!(ws > 0)) return 0
+  if (wd === 0) return 360
+  return wd
+}
+
+/** Nearest 10° on [0, 360] (e.g. 124→120, 275→280, 8→10). */
+function roundNearestDirectionDeg(deg: number): number {
+  const d = clampDirectionDeg(deg)
+  if (d === 0) return 0
+  const t = Math.round(d / 10) * 10
+  return clampDirectionDeg(t)
+}
+
+function roundValueNearest(key: ParamKey, value: number, edits?: Record<ParamKey, number>): number {
+  const p = parameters.find(x => x.key === key)!
+  let v: number
+  if (key === 'visibility' || key === 'ws' || key === 'aruss') {
+    v = Math.round(value)
+  } else if (key === 'wave' || key === 'hsig') {
+    v = Math.round(value * 10) / 10
+  } else if (key === 'wd') {
+    v = roundNearestDirectionDeg(value)
+    v = normalizeWindDirection(edits?.ws ?? 0, v)
+  } else if (key === 'arusd') {
+    v = roundNearestDirectionDeg(value)
+  } else {
+    v = value
+  }
+  v = Math.max(p.min, v)
+  if (p.max != null) v = Math.min(p.max, v)
+  if (key === 'wave' || key === 'hsig') return Number(v.toFixed(1))
+  return Math.round(v)
+}
+
+function roundActiveTabNearest() {
+  const key = activeTab.value
+  for (const row of forecastData.value) {
+    const edits = editedValues.value[row.id]
+    if (!edits) continue
+    edits[key] = roundValueNearest(key, edits[key], edits)
+    if (key === 'ws' || key === 'wd') {
+      edits.wd = normalizeWindDirection(edits.ws, edits.wd)
+    }
+  }
+  nextTick(() => buildChart())
+}
+
+function snapValueForActiveParam(key: ParamKey, v: number): number {
+  const p = parameters.find(x => x.key === key)!
+  let x = v
+  x = Math.max(p.min, x)
+  if (p.max != null) x = Math.min(p.max, x)
+  if (key === 'wave' || key === 'hsig') return Number(x.toFixed(1))
+  return Math.round(x)
+}
+
+/** Linear map: current series min → target min, max → target max. */
+function normalizeActiveTabRange() {
+  const key = activeTab.value
+  const tMin = normTargetMin.value
+  const tMax = normTargetMax.value
+  if (!Number.isFinite(tMin) || !Number.isFinite(tMax) || tMin >= tMax) return
+
+  const values: number[] = []
+  for (const row of forecastData.value) {
+    const v = editedValues.value[row.id]?.[key]
+    if (v != null && Number.isFinite(v)) values.push(v)
+  }
+  if (!values.length) return
+
+  const vmin = Math.min(...values)
+  const vmax = Math.max(...values)
+
+  if (vmin === vmax) {
+    const mid = (tMin + tMax) / 2
+    for (const row of forecastData.value) {
+      const ed = editedValues.value[row.id]
+      if (ed) ed[key] = snapValueForActiveParam(key, mid)
+    }
+  } else {
+    const scale = (tMax - tMin) / (vmax - vmin)
+    for (const row of forecastData.value) {
+      const ed = editedValues.value[row.id]
+      if (!ed) continue
+      const nv = (ed[key] - vmin) * scale + tMin
+      ed[key] = snapValueForActiveParam(key, nv)
+    }
+  }
+
+  if (key === 'ws' || key === 'wd') {
+    for (const row of forecastData.value) {
+      const ed = editedValues.value[row.id]
+      if (ed) ed.wd = normalizeWindDirection(ed.ws, ed.wd)
+    }
+  }
+  nextTick(() => buildChart())
+}
+
+function syncNormalizeRangeDefaults() {
+  if (!forecastData.value.length) return
+  const p = getActiveParam()
+  const key = p.key
+  let lo = Number.POSITIVE_INFINITY
+  let hi = Number.NEGATIVE_INFINITY
+  for (const row of forecastData.value) {
+    const v = editedValues.value[row.id]?.[key]
+    if (v != null && Number.isFinite(v)) {
+      lo = Math.min(lo, v)
+      hi = Math.max(hi, v)
+    }
+  }
+  if (!Number.isFinite(lo)) {
+    lo = p.min
+    hi = p.max ?? p.min + 1
+  }
+  if (hi <= lo) hi = lo + 1e-4
+  normTargetMin.value = lo
+  normTargetMax.value = hi
+}
+
+/** How values are written back to forecast rows on Apply (no “30.0”; dirs three digits). */
+function formatEditedValueForApply(key: ParamKey, val: number, edits?: Record<ParamKey, number>): string {
+  if (key === 'wd') {
+    const ws = edits?.ws ?? 0
+    const d = Math.round(normalizeWindDirection(ws, val))
+    if (d === 0) return ''
+    return String(d).padStart(3, '0')
+  }
+  if (key === 'arusd') {
+    const d = Math.round(val)
+    if (d === 0) return ''
+    return String(d).padStart(3, '0')
+  }
+  if (val === 0) return ''
+  if (key === 'wave' || key === 'hsig') return val.toFixed(1)
+  if (key === 'visibility' || key === 'ws' || key === 'aruss') return String(Math.round(val))
+  const p = parameters.find(x => x.key === key)!
+  return val.toFixed(p.decimals)
+}
+
 function initSnapshot() {
   originalValues.value = {}
   editedValues.value = {}
   for (const row of forecastData.value) {
     const vals = {} as Record<ParamKey, number>
     for (const p of parameters) vals[p.key] = readRowNum(row, p.key)
+    vals.wd = normalizeWindDirection(vals.ws, vals.wd)
     originalValues.value[row.id] = { ...vals }
     editedValues.value[row.id] = { ...vals }
   }
@@ -336,13 +535,21 @@ function setupDrag() {
     if (param.max != null) value = Math.min(param.max, value)
     value = Number(value.toFixed(param.decimals))
 
-    chartInstance.data.datasets[0].data[dragIdx] = value
-    chartInstance.update('none')
-
     const rowId = forecastData.value[dragIdx]?.id
     if (rowId && editedValues.value[rowId]) {
-      editedValues.value[rowId][activeTab.value] = value
+      const ed = editedValues.value[rowId]
+      ed[activeTab.value] = value
+      if (activeTab.value === 'ws' || activeTab.value === 'wd') {
+        ed.wd = normalizeWindDirection(ed.ws, ed.wd)
+      }
     }
+
+    let plotY = value
+    if (activeTab.value === 'wd' && rowId && editedValues.value[rowId]) {
+      plotY = editedValues.value[rowId].wd
+    }
+    chartInstance.data.datasets[0].data[dragIdx] = plotY
+    chartInstance.update('none')
   }
 
   function onUp(e: PointerEvent) {
@@ -382,8 +589,12 @@ function switchTab(key: ParamKey) {
 function resetCurrentTab() {
   for (const row of forecastData.value) {
     const orig = originalValues.value[row.id]
-    if (orig && editedValues.value[row.id]) {
-      editedValues.value[row.id][activeTab.value] = orig[activeTab.value]
+    const edits = editedValues.value[row.id]
+    if (orig && edits) {
+      edits[activeTab.value] = orig[activeTab.value]
+      if (activeTab.value === 'ws' || activeTab.value === 'wd') {
+        edits.wd = normalizeWindDirection(edits.ws, edits.wd)
+      }
     }
   }
   nextTick(() => buildChart())
@@ -395,8 +606,7 @@ function apply() {
     if (!edits) continue
     const r = row as unknown as Record<string, string>
     for (const p of parameters) {
-      const val = edits[p.key]
-      r[p.key] = val === 0 ? '' : val.toFixed(p.decimals)
+      r[p.key] = formatEditedValueForApply(p.key, edits[p.key], edits)
     }
   }
   emit('update:modelValue', false)
@@ -406,10 +616,15 @@ function cancel() {
   emit('update:modelValue', false)
 }
 
+watch(activeTab, () => {
+  syncNormalizeRangeDefaults()
+})
+
 watch(() => props.modelValue, async (v) => {
   if (v) {
     initSnapshot()
     await nextTick()
+    syncNormalizeRangeDefaults()
     setTimeout(() => buildChart(), 60)
   } else {
     destroyChart()

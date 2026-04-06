@@ -226,9 +226,22 @@
         </div>
 
         <!-- Forecaster on Duty -->
-        <div class="mt-8 text-right pr-4 pdf-avoid-split">
-          <p class="m-0 text-[0.8125rem] text-slate-800">Forecaster on Duty</p>
-          <p class="m-0 mt-16 text-[0.8125rem] text-slate-900">({{ routeInfo.forecaster || '—' }})</p>
+        <div class="mt-8 pr-4 pdf-avoid-split w-full flex justify-end">
+          <div class="flex min-w-0 max-w-[14rem] flex-col items-center gap-2 text-center">
+            <p class="m-0 w-full text-[0.8125rem] text-slate-800">Forecaster on Duty</p>
+            <img
+              v-if="signatureDataUrl"
+              :src="signatureDataUrl"
+              alt="Tanda tangan forecaster"
+              class="block max-h-[4.5rem] max-w-[13rem] w-auto h-auto object-contain"
+            >
+            <p
+              class="m-0 w-full text-[0.8125rem] font-semibold text-slate-900 break-words"
+              :class="signatureDataUrl ? '' : 'pt-12'"
+            >
+              ({{ routeInfo.forecaster || '—' }})
+            </p>
+          </div>
         </div>
 
         <!-- DISCLAIMER (pinned bottom) -->
@@ -247,6 +260,11 @@ import 'leaflet/dist/leaflet.css'
 
 const { routeInfo, forecastData, synopticInfo, warnings, cycloneWarning, disclaimer, manualRouteData } = useMaritimeData()
 const bmkgLogoUrl = useBmkgLogoUrl()
+
+const signatureDataUrl = computed(() => {
+  const u = routeInfo.value.signatureImageDataUrl?.trim()
+  return u || ''
+})
 
 const pdfDocumentRef = ref<HTMLElement | null>(null)
 const mapContainerRef = ref<HTMLElement | null>(null)

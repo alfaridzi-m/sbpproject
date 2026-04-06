@@ -246,6 +246,14 @@
               />
             </div>
           </div>
+          <ClientOnly>
+            <SectionsSignaturePdfForm class="mt-4 pt-4 border-t border-[var(--border)]" />
+            <template #fallback>
+              <p class="mt-4 pt-4 border-t border-[var(--border)] text-xs text-[var(--text-muted)] m-0">
+                Memuat form tanda tangan…
+              </p>
+            </template>
+          </ClientOnly>
         </div>
       </div>
       <div class="flex flex-col gap-4 min-w-0 w-full">

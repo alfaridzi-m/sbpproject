@@ -32,7 +32,11 @@
 
         <!-- 3. ROUTE INFORMATION -->
         <div class="mb-5 pdf-avoid-split">
-          <div class="border-b-[3px] border-double border-slate-900 mb-3" />
+          <div class="pdf-rule-double-top mb-3" aria-hidden="true">
+            <div class="pdf-rule-thick" />
+            <div class="pdf-rule-gap" />
+            <div class="pdf-rule-thin" />
+          </div>
           <div class="grid grid-cols-2 gap-x-8 gap-y-0.5 px-1">
             <div>
               <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Port of Origin</p>
@@ -55,7 +59,11 @@
               <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ formatDateTime(routeInfo.issuedDate, routeInfo.issuedTime) || '—' }} LT</p>
             </div>
           </div>
-          <div class="border-b-[3px] border-double border-slate-900 mt-3" />
+          <div class="pdf-rule-double-bottom mt-3" aria-hidden="true">
+            <div class="pdf-rule-thin" />
+            <div class="pdf-rule-gap" />
+            <div class="pdf-rule-thick" />
+          </div>
         </div>
 
         <!-- 4. METEOROLOGICAL SITUATION -->
@@ -185,7 +193,11 @@
 
         <!-- 3. ROUTE INFO (repeated) -->
         <div class="mb-5 pdf-avoid-split">
-          <div class="border-b-[3px] border-double border-slate-900 mb-3" />
+          <div class="pdf-rule-double-top mb-3" aria-hidden="true">
+            <div class="pdf-rule-thick" />
+            <div class="pdf-rule-gap" />
+            <div class="pdf-rule-thin" />
+          </div>
           <div class="grid grid-cols-2 gap-x-8 gap-y-0.5 px-1">
             <div>
               <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Port of Origin</p>
@@ -208,7 +220,11 @@
               <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ formatDateTime(routeInfo.issuedDate, routeInfo.issuedTime) || '—' }} LT</p>
             </div>
           </div>
-          <div class="border-b-[3px] border-double border-slate-900 mt-3" />
+          <div class="pdf-rule-double-bottom mt-3" aria-hidden="true">
+            <div class="pdf-rule-thin" />
+            <div class="pdf-rule-gap" />
+            <div class="pdf-rule-thick" />
+          </div>
         </div>
 
         <!-- 4. PORT FORECAST TITLE -->
@@ -414,7 +430,11 @@
 
         <!-- 3. ROUTE INFO (repeated) -->
         <div class="mb-5 pdf-avoid-split">
-          <div class="border-b-[3px] border-double border-slate-900 mb-3" />
+          <div class="pdf-rule-double-top mb-3" aria-hidden="true">
+            <div class="pdf-rule-thick" />
+            <div class="pdf-rule-gap" />
+            <div class="pdf-rule-thin" />
+          </div>
           <div class="grid grid-cols-2 gap-x-8 gap-y-0.5 px-1">
             <div>
               <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Port of Origin</p>
@@ -437,7 +457,11 @@
               <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ formatDateTime(routeInfo.issuedDate, routeInfo.issuedTime) || '—' }} LT</p>
             </div>
           </div>
-          <div class="border-b-[3px] border-double border-slate-900 mt-3" />
+          <div class="pdf-rule-double-bottom mt-3" aria-hidden="true">
+            <div class="pdf-rule-thin" />
+            <div class="pdf-rule-gap" />
+            <div class="pdf-rule-thick" />
+          </div>
         </div>
 
         <!-- 4. EN ROUTE FORECAST TITLE -->
@@ -545,10 +569,24 @@
         </div>
 
         <!-- 6. FORECASTER ON DUTY (last en-route page only) -->
-        <div v-if="pageIdx === enRoutePages.length - 1" class="mt-8 text-right pr-4 pdf-avoid-split">
-          <p class="m-0 text-[0.8125rem] text-slate-800">Forecaster on Duty</p>
-          <div class="mt-16">
-            <p class="m-0 text-[0.8125rem] font-semibold text-slate-900">({{ routeInfo.forecaster || '—' }})</p>
+        <div
+          v-if="pageIdx === enRoutePages.length - 1"
+          class="mt-8 pr-4 pdf-avoid-split w-full flex justify-end"
+        >
+          <div class="flex min-w-0 max-w-[14rem] flex-col items-center gap-2 text-center">
+            <p class="m-0 w-full text-[0.8125rem] text-slate-800">Forecaster on Duty</p>
+            <img
+              v-if="signatureDataUrl"
+              :src="signatureDataUrl"
+              alt="Tanda tangan forecaster"
+              class="block max-h-[4.5rem] max-w-[13rem] w-auto h-auto object-contain"
+            >
+            <p
+              class="m-0 w-full text-[0.8125rem] font-semibold text-slate-900 break-words"
+              :class="signatureDataUrl ? '' : 'pt-12'"
+            >
+              ({{ routeInfo.forecaster || '—' }})
+            </p>
           </div>
         </div>
 
@@ -581,7 +619,11 @@
         </div>
 
         <div class="mb-5 pdf-avoid-split">
-          <div class="border-b-[3px] border-double border-slate-900 mb-3" />
+          <div class="pdf-rule-double-top mb-3" aria-hidden="true">
+            <div class="pdf-rule-thick" />
+            <div class="pdf-rule-gap" />
+            <div class="pdf-rule-thin" />
+          </div>
           <div class="grid grid-cols-2 gap-x-8 gap-y-0.5 px-1">
             <div>
               <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Port of Origin</p>
@@ -604,7 +646,11 @@
               <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ formatDateTime(routeInfo.issuedDate, routeInfo.issuedTime) || '—' }} LT</p>
             </div>
           </div>
-          <div class="border-b-[3px] border-double border-slate-900 mt-3" />
+          <div class="pdf-rule-double-bottom mt-3" aria-hidden="true">
+            <div class="pdf-rule-thin" />
+            <div class="pdf-rule-gap" />
+            <div class="pdf-rule-thick" />
+          </div>
         </div>
 
         <h2 class="text-center text-[0.875rem] font-bold m-0 mb-3 text-slate-900">
@@ -653,7 +699,11 @@
         </div>
 
         <div class="mb-5 pdf-avoid-split">
-          <div class="border-b-[3px] border-double border-slate-900 mb-3" />
+          <div class="pdf-rule-double-top mb-3" aria-hidden="true">
+            <div class="pdf-rule-thick" />
+            <div class="pdf-rule-gap" />
+            <div class="pdf-rule-thin" />
+          </div>
           <div class="grid grid-cols-2 gap-x-8 gap-y-0.5 px-1">
             <div>
               <p class="m-0 font-bold text-[0.75rem] text-slate-900 leading-tight">Port of Origin</p>
@@ -676,7 +726,11 @@
               <p class="m-0 text-[0.75rem] text-slate-700 leading-tight">{{ formatDateTime(routeInfo.issuedDate, routeInfo.issuedTime) || '—' }} LT</p>
             </div>
           </div>
-          <div class="border-b-[3px] border-double border-slate-900 mt-3" />
+          <div class="pdf-rule-double-bottom mt-3" aria-hidden="true">
+            <div class="pdf-rule-thin" />
+            <div class="pdf-rule-gap" />
+            <div class="pdf-rule-thick" />
+          </div>
         </div>
 
         <h2 class="text-center text-[0.875rem] font-bold m-0 mb-3 text-slate-900">
@@ -712,6 +766,12 @@ import 'leaflet/dist/leaflet.css'
 
 const { routeInfo, forecastData, synopticInfo, warnings, cycloneWarning, disclaimer, safetyAdvisory, manualRouteData, availableRoutes, selectedRouteId, splitPointCoordinates } = useMaritimeData()
 const bmkgLogoUrl = useBmkgLogoUrl()
+
+/** Explicit computed so preview + img src always track `signatureImageDataUrl`. */
+const signatureDataUrl = computed(() => {
+  const u = routeInfo.value.signatureImageDataUrl?.trim()
+  return u || ''
+})
 
 const pdfDocumentRef = ref<HTMLElement | null>(null)
 const mapContainerRef = ref<HTMLElement | null>(null)
@@ -1420,6 +1480,25 @@ async function downloadPdf() {
       }
     }
 
+    async function signatureMmBox(dataUrl: string): Promise<{ w: number; h: number }> {
+      const maxW = 48
+      const maxH = 18
+      const dim = await new Promise<{ w: number; h: number }>((resolve) => {
+        const im = new Image()
+        im.onload = () => resolve({ w: im.naturalWidth || 1, h: im.naturalHeight || 1 })
+        im.onerror = () => resolve({ w: 1, h: 1 })
+        im.src = dataUrl
+      })
+      const ar = dim.w / dim.h
+      let w = maxW
+      let h = w / ar
+      if (h > maxH) {
+        h = maxH
+        w = h * ar
+      }
+      return { w, h }
+    }
+
     /* ── Helper: header ── */
     function addHeader(startY: number): number {
       const H = 26
@@ -1444,11 +1523,18 @@ async function downloadPdf() {
       return startY + H + 4
     }
 
-    /* ── Helper: document title ── */
+    /* ── Helper: document title (wrapped lines; no fill — matches on-screen preview) ── */
     function addDocTitle(y: number): number {
+      const title = `En Route and Port Weather Forecast Information for ${routeInfo.value.shipName || '[Nama Kapal]'}`
       pdf.setFont('helvetica', 'bold').setFontSize(10).setTextColor(...SL900)
-      pdf.text(`En Route and Port Weather Forecast Information for ${routeInfo.value.shipName || '[Nama Kapal]'}`, PW / 2, y, { align: 'center', maxWidth: CW })
-      return y + 6
+      const lines = pdf.splitTextToSize(title, CW - 4)
+      const lh = 4.5
+      let ty = y
+      for (const line of lines) {
+        pdf.text(line, PW / 2, ty, { align: 'center' })
+        ty += lh
+      }
+      return y + (lines.length - 1) * lh + 6
     }
 
     /* ── Helper: route info block ── */
@@ -1888,10 +1974,32 @@ async function downloadPdf() {
       if (pi === erPages.length - 1) {
         y += 10
         pdf.setFont('helvetica', 'normal').setFontSize(8.5).setTextColor(...SL800)
-        pdf.text('Forecaster on Duty', PW - M - 5, y, { align: 'right' })
-        y += 18
-        pdf.setFont('helvetica', 'bold').setTextColor(...SL900)
-        pdf.text(`(${routeInfo.value.forecaster || '\u2014'})`, PW - M - 5, y, { align: 'right' })
+        const dutyY = y
+        const rightEdge = PW - M - 5
+        const colW = 48
+        const colCx = rightEdge - colW / 2
+        pdf.text('Forecaster on Duty', colCx, dutyY, { align: 'center', maxWidth: colW })
+        y = dutyY + 4
+        const sigUrl = routeInfo.value.signatureImageDataUrl
+        if (sigUrl) {
+          try {
+            const { w: sigW, h: sigH } = await signatureMmBox(sigUrl)
+            pdf.addImage(sigUrl, 'PNG', colCx - sigW / 2, y, sigW, sigH)
+            y += sigH + 3
+          } catch {
+            y = dutyY + 18
+          }
+        } else {
+          y = dutyY + 18
+        }
+        pdf.setFont('helvetica', 'bold').setFontSize(8.5).setTextColor(...SL900)
+        const nameLines = pdf.splitTextToSize(`(${routeInfo.value.forecaster || '\u2014'})`, colW)
+        let nameY = y
+        for (const line of nameLines) {
+          pdf.text(line, colCx, nameY, { align: 'center' })
+          nameY += 4
+        }
+        y = nameY
       }
       addDisclaimer()
     }
@@ -2020,5 +2128,30 @@ defineExpose({ downloadPdf })
 
 .port-td-border {
   border: 1px solid #000000;
+}
+
+/* Route rules — aligned with jsPDF (top = thick+thin, bottom = thin+thick) */
+.pdf-rule-double-top,
+.pdf-rule-double-bottom {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.pdf-rule-thick {
+  height: 2px;
+  background-color: rgb(15 23 42);
+  flex-shrink: 0;
+}
+
+.pdf-rule-thin {
+  height: 1px;
+  background-color: rgb(15 23 42);
+  flex-shrink: 0;
+}
+
+.pdf-rule-gap {
+  height: 2px;
+  flex-shrink: 0;
 }
 </style>

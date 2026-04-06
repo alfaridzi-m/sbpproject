@@ -9,6 +9,8 @@ export interface RouteInfo {
   issuedDate: string
   issuedTime: string
   forecaster: string
+  /** PNG data URL for “Forecaster on Duty” signature in PDF preview / export */
+  signatureImageDataUrl: string
   namaUpt: string
   alamat: string
   telp: string
@@ -341,6 +343,7 @@ export function useMaritimeData() {
     issuedDate: '',
     issuedTime: '',
     forecaster: '',
+    signatureImageDataUrl: '',
     namaUpt: '',
     alamat: '',
     telp: '',
@@ -496,26 +499,6 @@ export function useMaritimeData() {
     }
   }
 
-  function addForecastRow() {
-    forecastData.value.push({
-      id: `row-${Date.now()}`,
-      date: '',
-      time: '',
-      coordinate: '',
-      visibility: '',
-      weather: '',
-      rr: '',
-      wave: '',
-      ws: '',
-      wd: '',
-      temp: '',
-      aruss: '',
-      arusd: '',
-      hslg: '',
-      hsig: ''
-    })
-  }
-
   const splitPointCoordinates = computed<[number, number][]>(() => {
     const coords = manualRouteData.value?.coordinates
     if (!coords || coords.length < 2) return []
@@ -613,7 +596,6 @@ export function useMaritimeData() {
     splitPointCoordinates,
     forecastReq,
     processRoute,
-    addForecastRow,
     saveRoute,
     fetchAvailableRoutes,
     selectRouteById
