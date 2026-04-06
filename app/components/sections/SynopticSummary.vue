@@ -3,7 +3,7 @@
     class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 shadow-[var(--shadow-card)]"
   >
     <div class="mb-4 rounded-lg border border-[color-mix(in_srgb,var(--accent)_30%,var(--border)_70%)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface)_92%)] px-4 py-3">
-      <h2 class="inline-flex items-center rounded-md bg-[color-mix(in_srgb,var(--accent)_18%,white_82%)] px-2.5 py-1 text-base font-semibold m-0 mb-1 text-[var(--text)]">
+      <h2 class="inline-flex items-center rounded-md bg-[color-mix(in_srgb,var(--accent)_18%,var(--surface)_82%)] px-2.5 py-1 text-base font-semibold m-0 mb-1 text-[var(--text)]">
         Kondisi Sinoptik & Peringatan
       </h2>
       <p class="text-xs text-[var(--text-muted)] m-0">Ringkasan meteorologi dan peringatan</p>

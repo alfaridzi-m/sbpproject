@@ -4,7 +4,7 @@
   >
     <div class="mb-4 rounded-lg border border-[color-mix(in_srgb,var(--accent)_30%,var(--border)_70%)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface)_92%)] px-4 py-3 flex items-start justify-between gap-3">
       <div>
-        <h2 class="inline-flex items-center rounded-md bg-[color-mix(in_srgb,var(--accent)_18%,white_82%)] px-2.5 py-1 text-base font-semibold m-0 mb-1 text-[var(--text)]">
+        <h2 class="inline-flex items-center rounded-md bg-[color-mix(in_srgb,var(--accent)_18%,var(--surface)_82%)] px-2.5 py-1 text-base font-semibold m-0 mb-1 text-[var(--text)]">
           Forecast Table Data
         </h2>
         <p class="text-xs text-[var(--text-muted)] m-0">Tanggal, waktu, dan koordinat hanya baca; kolom lain dapat diedit</p>
@@ -36,7 +36,7 @@
             <!-- Table header (repeated per day) -->
             <tr
               class="bg-[var(--table-header-bg)] text-[var(--table-header-text)] font-bold [&>th]:border-none [&>th]:border-b [&>th]:border-[var(--color-white)]/20 [&>th]:align-top [&>th]:py-2.5"
-              :class="bIdx > 0 ? 'border-t-[3px] border-blue-300' : ''"
+              :class="bIdx > 0 ? 'border-t-[3px] border-[var(--bulk-row-border)]' : ''"
             >
               <th class="whitespace-nowrap" scope="col">
                 <span class="block leading-tight">Data</span>
@@ -88,11 +88,11 @@
             </tr>
             <!-- Set all rows — only this date -->
             <tr
-              class="bg-blue-50 text-slate-800 border-t-2 border-blue-200 [&>th]:border [&>th]:border-blue-200 [&>th]:border-solid [&>th]:py-2.5 [&>th]:px-2 [&>th]:align-middle"
+              class="bg-[var(--bulk-row-bg)] text-[var(--bulk-row-text)] border-t-2 border-[var(--bulk-row-border)] [&>th]:border [&>th]:border-[var(--bulk-row-border)] [&>th]:border-solid [&>th]:py-2.5 [&>th]:px-2 [&>th]:align-middle"
             >
-              <th colspan="3" class="text-left text-[11px] font-semibold text-blue-950/85 whitespace-normal max-w-[14rem]" scope="row">
+              <th colspan="3" class="text-left text-[11px] font-semibold text-[var(--bulk-label-text)] whitespace-normal max-w-[14rem]" scope="row">
                 <span class="block">Set all rows</span>
-                <span class="block font-normal text-blue-900/70 mt-0.5">{{ block.displayDate }}</span>
+                <span class="block font-normal text-[var(--bulk-label-sub)] mt-0.5">{{ block.displayDate }}</span>
               </th>
               <th>
                 <input
@@ -100,7 +100,7 @@
                   type="text"
                   placeholder="km"
                   :title="`Set visibility for all rows on ${block.displayDate}`"
-                  class="w-full min-w-[56px] py-1.5 px-2 border border-blue-200 rounded-md bg-white text-slate-800 text-xs placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-400/40 focus:outline-none"
+                  class="w-full min-w-[56px] py-1.5 px-2 border border-[var(--bulk-input-border)] rounded-md bg-[var(--bulk-input-bg)] text-[var(--bulk-row-text)] text-xs placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent-ring)] focus:outline-none"
                   @change="applyBulkText('visibility', block.dateKey)"
                 />
               </th>
@@ -108,7 +108,7 @@
                 <select
                   v-model="bulkPack(block.dateKey).weather"
                   :title="`Weather for all rows on ${block.displayDate}`"
-                  class="w-full min-w-[4.5rem] max-w-[9rem] py-1.5 px-2 border border-blue-200 rounded-md bg-white text-slate-800 text-xs cursor-pointer focus:border-blue-500 focus:ring-1 focus:ring-blue-400/40 focus:outline-none"
+                  class="w-full min-w-[4.5rem] max-w-[9rem] py-1.5 px-2 border border-[var(--bulk-input-border)] rounded-md bg-[var(--bulk-input-bg)] text-[var(--bulk-row-text)] text-xs cursor-pointer focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent-ring)] focus:outline-none"
                   @change="applyBulkWeather(block.dateKey)"
                 >
                   <option value="">—</option>
@@ -126,7 +126,7 @@
                   v-model="bulkPack(block.dateKey).wave"
                   type="text"
                   placeholder="m"
-                  class="w-full min-w-[56px] py-1.5 px-2 border border-blue-200 rounded-md bg-white text-slate-800 text-xs placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-400/40 focus:outline-none"
+                  class="w-full min-w-[56px] py-1.5 px-2 border border-[var(--bulk-input-border)] rounded-md bg-[var(--bulk-input-bg)] text-[var(--bulk-row-text)] text-xs placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent-ring)] focus:outline-none"
                   @change="applyBulkText('wave', block.dateKey)"
                 />
               </th>
@@ -135,7 +135,7 @@
                   v-model="bulkPack(block.dateKey).ws"
                   type="text"
                   placeholder="kt"
-                  class="w-full min-w-[56px] py-1.5 px-2 border border-blue-200 rounded-md bg-white text-slate-800 text-xs placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-400/40 focus:outline-none"
+                  class="w-full min-w-[56px] py-1.5 px-2 border border-[var(--bulk-input-border)] rounded-md bg-[var(--bulk-input-bg)] text-[var(--bulk-row-text)] text-xs placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent-ring)] focus:outline-none"
                   @change="applyBulkText('ws', block.dateKey)"
                 />
               </th>
@@ -144,7 +144,7 @@
                   v-model="bulkPack(block.dateKey).wd"
                   type="text"
                   placeholder="°"
-                  class="w-full min-w-[56px] py-1.5 px-2 border border-blue-200 rounded-md bg-white text-slate-800 text-xs placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-400/40 focus:outline-none"
+                  class="w-full min-w-[56px] py-1.5 px-2 border border-[var(--bulk-input-border)] rounded-md bg-[var(--bulk-input-bg)] text-[var(--bulk-row-text)] text-xs placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent-ring)] focus:outline-none"
                   @change="applyBulkText('wd', block.dateKey)"
                 />
               </th>
@@ -153,7 +153,7 @@
                   v-model="bulkPack(block.dateKey).aruss"
                   type="text"
                   placeholder="cm/s"
-                  class="w-full min-w-[56px] py-1.5 px-2 border border-blue-200 rounded-md bg-white text-slate-800 text-xs placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-400/40 focus:outline-none"
+                  class="w-full min-w-[56px] py-1.5 px-2 border border-[var(--bulk-input-border)] rounded-md bg-[var(--bulk-input-bg)] text-[var(--bulk-row-text)] text-xs placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent-ring)] focus:outline-none"
                   @change="applyBulkText('aruss', block.dateKey)"
                 />
               </th>
@@ -162,7 +162,7 @@
                   v-model="bulkPack(block.dateKey).arusd"
                   type="text"
                   placeholder="°"
-                  class="w-full min-w-[56px] py-1.5 px-2 border border-blue-200 rounded-md bg-white text-slate-800 text-xs placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-400/40 focus:outline-none"
+                  class="w-full min-w-[56px] py-1.5 px-2 border border-[var(--bulk-input-border)] rounded-md bg-[var(--bulk-input-bg)] text-[var(--bulk-row-text)] text-xs placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent-ring)] focus:outline-none"
                   @change="applyBulkText('arusd', block.dateKey)"
                 />
               </th>
@@ -171,11 +171,11 @@
                   v-model="bulkPack(block.dateKey).hsig"
                   type="text"
                   placeholder="m"
-                  class="w-full min-w-[56px] py-1.5 px-2 border border-blue-200 rounded-md bg-white text-slate-800 text-xs placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-400/40 focus:outline-none"
+                  class="w-full min-w-[56px] py-1.5 px-2 border border-[var(--bulk-input-border)] rounded-md bg-[var(--bulk-input-bg)] text-[var(--bulk-row-text)] text-xs placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent-ring)] focus:outline-none"
                   @change="applyBulkText('hsig', block.dateKey)"
                 />
               </th>
-              <th class="w-10 text-center text-blue-800/70 text-xs font-medium">
+              <th class="w-10 text-center text-[var(--text-muted)] text-xs font-medium">
                 —
               </th>
             </tr>

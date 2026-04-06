@@ -2,7 +2,7 @@
   <Teleport to="body">
     <div
       v-if="modelValue"
-      class="fixed inset-0 flex items-center justify-center z-[1000] p-4 bg-slate-900/45 backdrop-blur-[2px]"
+      class="fixed inset-0 flex items-center justify-center z-[1000] p-4 bg-black/50 backdrop-blur-[2px]"
       @click.self="close"
     >
       <div class="bg-[var(--surface)] rounded-xl shadow-[var(--shadow-card)] border border-[var(--border)] w-[80vw] h-[90vh] max-w-[80vw] max-h-[90vh] overflow-y-auto flex flex-col">
@@ -75,17 +75,17 @@
                 </template>
               </ClientOnly>
               <div
-                class="absolute top-3 left-3 z-[500] flex items-center gap-0.5 rounded-xl border border-slate-200 bg-white/95 p-1 pl-2 shadow-[var(--shadow-md)] backdrop-blur-[1px]"
+                class="absolute top-3 left-3 z-[500] flex items-center gap-0.5 rounded-xl border border-[var(--toolbar-border)] bg-[var(--toolbar-bg)] p-1 pl-2 shadow-[var(--shadow-md)] backdrop-blur-[1px]"
                 role="toolbar"
                 aria-label="Alat gambar peta"
               >
                 <span
-                  class="mr-1 h-6 w-px shrink-0 self-center rounded-full bg-slate-200"
+                  class="mr-1 h-6 w-px shrink-0 self-center rounded-full bg-[var(--border)]"
                   aria-hidden="true"
                 />
                 <button
                   type="button"
-                  class="map-tool-btn relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-transparent bg-white text-[var(--text)] transition-colors duration-150 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)]"
+                  class="map-tool-btn relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-transparent bg-[var(--surface)] text-[var(--text)] transition-colors duration-150 hover:bg-[var(--toolbar-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)]"
                   :class="toolBtnActiveClass('pick')"
                   title="Pick / Geser Titik (1)"
                   aria-label="Pick untuk geser titik"
@@ -112,7 +112,7 @@
                 </button>
                 <button
                   type="button"
-                  class="map-tool-btn relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-transparent bg-white text-[var(--text)] transition-colors duration-150 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)]"
+                  class="map-tool-btn relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-transparent bg-[var(--surface)] text-[var(--text)] transition-colors duration-150 hover:bg-[var(--toolbar-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)]"
                   :class="toolBtnActiveClass('draw')"
                   title="Pencil / Tambah Garis (2)"
                   aria-label="Pencil untuk tambah garis rute"
@@ -136,7 +136,7 @@
                 </button>
                 <button
                   type="button"
-                  class="map-tool-btn relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-transparent bg-white text-[var(--text)] transition-colors duration-150 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)]"
+                  class="map-tool-btn relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-transparent bg-[var(--surface)] text-[var(--text)] transition-colors duration-150 hover:bg-[var(--toolbar-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)]"
                   :class="toolBtnActiveClass('rectangle')"
                   title="Persegi AOI (3)"
                   aria-label="Gambar persegi area"
@@ -206,7 +206,7 @@
             </div>
             <p
               v-if="boundaryWarning"
-              class="mt-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800"
+              class="mt-2 rounded-md border border-[var(--warning-border)] bg-[var(--warning-bg)] px-3 py-2 text-xs text-[var(--warning-text)]"
               role="alert"
             >
               {{ boundaryWarning }}
@@ -993,7 +993,7 @@ watch(modelValue, (open) => {
 }
 
 :deep(.leaflet-container) {
-  background: #f8fafc;
+  background: var(--input-bg, #f8fafc);
 }
 
 /* Guard against global img/reset styles breaking leaflet tiles. */

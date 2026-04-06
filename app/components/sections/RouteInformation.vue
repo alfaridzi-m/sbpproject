@@ -1,419 +1,252 @@
 <template>
   <section
-    class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 shadow-[var(--shadow-card)]"
+    class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-[var(--shadow-card)] overflow-hidden"
   >
-    <div class="mb-5 rounded-lg border border-[color-mix(in_srgb,var(--accent)_30%,var(--border)_70%)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface)_92%)] px-4 py-3">
-      <h2 class="inline-flex items-center rounded-md bg-[color-mix(in_srgb,var(--accent)_18%,white_82%)] px-2.5 py-1 text-base font-semibold m-0 mb-1 text-[var(--text)]">
-        Informasi Rute Pelayaran
-      </h2>
-      <p class="text-xs text-[var(--text-muted)] m-0">Data kapal, jadwal, dan peta rute</p>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-      <div class="flex flex-col gap-1.5">
-        <label for="station-select" class="text-sm font-medium text-[var(--text)]">Stasiun</label>
+    <!-- Route selector bar -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 px-5 pt-5 pb-4 bg-[color-mix(in_srgb,var(--accent)_6%,var(--surface)_94%)] border-b border-[var(--border)]">
+      <div class="flex-1 min-w-0 flex flex-col gap-1">
+        <label for="station-select" class="text-[0.7rem] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Stasiun</label>
         <select
           id="station-select"
           v-model="selectedStation"
-          class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+          class="ri-select"
         >
-          <option
-            v-for="s in stationOptions"
-            :key="s"
-            :value="s"
-          >
-            {{ s }}
-          </option>
+          <option v-for="s in stationOptions" :key="s" :value="s">{{ s }}</option>
         </select>
       </div>
-      <div class="flex flex-col gap-1.5">
-        <label for="top-route-select" class="text-sm font-medium text-[var(--text)]">Rute</label>
+      <div class="flex-1 min-w-0 flex flex-col gap-1">
+        <label for="top-route-select" class="text-[0.7rem] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Rute</label>
         <select
           id="top-route-select"
           :value="selectedRouteId"
-          class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
+          class="ri-select"
           @change="selectRouteById(($event.target as HTMLSelectElement).value)"
         >
-          <option value="">
-            Pilih rute...
-          </option>
-          <option
-            v-for="r in availableRoutes"
-            :key="r.id"
-            :value="r.id"
-          >
-            {{ r.label }}
-          </option>
+          <option value="">Pilih rute...</option>
+          <option v-for="r in availableRoutes" :key="r.id" :value="r.id">{{ r.label }}</option>
         </select>
+      </div>
+      <div class="flex gap-2 shrink-0">
         <button
           type="button"
-          class="w-fit px-3 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--surface)] text-[var(--primary)] border border-[var(--primary)] shadow-[var(--shadow-sm)] transition-colors duration-200 hover:bg-[var(--primary-hover)] disabled:opacity-60 disabled:cursor-not-allowed"
+          class="ri-btn-outline"
           :disabled="!canFlipRoute"
           @click="flipRouteDirection"
         >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" /></svg>
           Switch
+        </button>
+        <button
+          type="button"
+          class="ri-btn-outline"
+          @click="openManualRouteModal"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+          Manual
         </button>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-      <div class="flex flex-col gap-4">
-        <!-- Kapal -->
-        <div class="rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--primary)_6%)] p-4">
-          <h3 class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] m-0 mb-3">Kapal</h3>
-          <div class="flex flex-col gap-1.5">
-            <label for="ship-name" class="text-sm font-medium text-[var(--text)]">Nama Kapal</label>
-            <input
-              id="ship-name"
-              v-model="routeInfo.shipName"
-              type="text"
-              class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-              placeholder="Contoh: KM. Dharma Lintas Utama"
-            />
-          </div>
-        </div>
+    <!-- Map (full width, prominent) -->
+    <div class="min-h-[320px] w-full">
+      <SectionsRouteMap
+        :route-coordinates="manualRouteData?.coordinates ?? undefined"
+        :split-markers="splitPointCoordinates"
+        :polygon-ring="manualRouteData?.boundingRectangle ?? undefined"
+      />
+    </div>
 
-        <!-- Zona Waktu -->
-        <div class="rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--accent)_6%)] p-4">
-          <h3 class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] m-0 mb-3">Zona Waktu</h3>
-          <div class="flex flex-col gap-1.5">
-            <span class="text-sm font-medium text-[var(--text)]">
-              UTC
-            </span>
-          </div>
-        </div>
+    <!-- Summary stats bar -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 border-b border-[var(--border)]">
+      <div class="ri-stat-cell">
+        <dt>Route</dt>
+        <dd>{{ routeNameText || '-' }}</dd>
+      </div>
+      <div class="ri-stat-cell">
+        <dt>Distance</dt>
+        <dd>{{ routeDistanceNmText || '-' }}</dd>
+      </div>
+      <div class="ri-stat-cell">
+        <dt>Speed</dt>
+        <dd>{{ shipSpeedKnotsText || '-' }}</dd>
+      </div>
+      <div class="ri-stat-cell">
+        <dt>Duration</dt>
+        <dd>{{ shipEstDurationText || '-' }}</dd>
+      </div>
+      <div class="ri-stat-cell col-span-2 sm:col-span-1">
+        <dt>Time Step</dt>
+        <dd class="text-[var(--primary)]">{{ forecastTimeStep }} jam</dd>
+      </div>
+    </div>
 
-        <!-- Jadwal -->
-        <div class="rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--primary)_6%)] p-4">
-          <h3 class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] m-0 mb-3">Jadwal</h3>
-          <div class="flex flex-col gap-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-[var(--text)]">Waktu Keberangkatan</label>
-                <div class="flex items-center gap-2 flex-wrap">
-                  <input
-                    id="departure-date"
-                    v-model="routeInfo.departureDate"
-                    type="date"
-                    class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-                    placeholder="Tanggal"
-                  />
-                  <input
-                    id="departure-time"
-                    v-model="routeInfo.departureTime"
-                    type="time"
-                    class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-                    placeholder="Waktu"
-                  />
-                </div>
-              </div>
-              <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-[var(--text)]">Waktu Tiba</label>
-                <div class="flex items-center gap-2 flex-wrap">
-                  <input
-                    id="arrival-date"
-                    v-model="routeInfo.arrivalDate"
-                    type="date"
-                    class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-                    placeholder="Tanggal"
-                  />
-                  <input
-                    id="arrival-time"
-                    v-model="routeInfo.arrivalTime"
-                    type="time"
-                    class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-                    placeholder="Waktu"
-                  />
-                </div>
-              </div>
+    <div class="p-5 flex flex-col gap-5">
+      <!-- Ship + Schedule + Step — 2 column grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <!-- Left column: Ship & Forecast step -->
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1 flex flex-col gap-1.5">
+              <label for="ship-name" class="ri-label">Nama Kapal</label>
+              <input id="ship-name" v-model="routeInfo.shipName" type="text" class="ri-input" placeholder="KM. Dharma Lintas Utama" />
             </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-medium text-[var(--text)]">Issued</label>
-              <div class="flex items-center gap-2 flex-wrap">
-                <input
-                  id="issued-date"
-                  v-model="routeInfo.issuedDate"
-                  type="date"
-                  class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-                  placeholder="Tanggal"
-                />
-                <input
-                  id="issued-time"
-                  v-model="routeInfo.issuedTime"
-                  type="time"
-                  class="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-                  placeholder="Waktu"
-                />
-              </div>
+            <div class="shrink-0 flex flex-col gap-1.5">
+              <span class="ri-label">Zona Waktu</span>
+              <div class="ri-input-static">UTC</div>
+            </div>
+          </div>
+          <div>
+            <span class="ri-label mb-2 block">Forecast Time Step</span>
+            <div class="flex flex-nowrap gap-1.5">
+              <button
+                v-for="step in ([1, 3, 6] as const)"
+                :key="step"
+                type="button"
+                class="flex-1 py-2 rounded-lg text-sm font-semibold border cursor-pointer transition-all duration-150"
+                :class="forecastTimeStep === step
+                  ? 'bg-[var(--primary)] text-white border-[var(--primary)] shadow-[var(--shadow-sm)]'
+                  : 'bg-[var(--surface)] text-[var(--text)] border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)]'"
+                @click="forecastTimeStep = step"
+              >
+                {{ step }}h
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Forecast Time Step -->
-        <div class="rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--accent)_6%)] p-4">
-          <h3 class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] m-0 mb-3">Forecast Time Step</h3>
-          <div class="flex flex-col gap-1.5">
-            <span class="text-sm font-medium text-[var(--text)]">
-              Pilih: <span class="text-[var(--primary)]">{{ forecastTimeStep }} jam</span>
-            </span>
-            <div class="flex flex-nowrap gap-2">
-              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
-                <input
-                  type="checkbox"
-                  class="accent-[var(--primary)]"
-                  :checked="forecastTimeStep === 1"
-                  @change="(e) => { if ((e.target as HTMLInputElement).checked) forecastTimeStep = 1 }"
-                >
-                <span class="text-sm font-medium text-[var(--text)]">1 Jam</span>
-              </label>
+        <!-- Right column: Schedule -->
+        <div class="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_96%,var(--accent)_4%)] p-4">
+          <h3 class="text-[0.7rem] font-semibold uppercase tracking-wider text-[var(--text-muted)] m-0">Jadwal</h3>
+          <div class="grid grid-cols-[auto_1fr_1fr] gap-x-3 gap-y-2.5 items-center">
+            <span class="ri-label-inline">Berangkat</span>
+            <input id="departure-date" v-model="routeInfo.departureDate" type="date" class="ri-input text-xs" />
+            <input id="departure-time" v-model="routeInfo.departureTime" type="time" class="ri-input text-xs" />
 
-              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
-                <input
-                  type="checkbox"
-                  class="accent-[var(--primary)]"
-                  :checked="forecastTimeStep === 3"
-                  @change="(e) => { if ((e.target as HTMLInputElement).checked) forecastTimeStep = 3 }"
-                >
-                <span class="text-sm font-medium text-[var(--text)]">3 Jam</span>
-              </label>
+            <span class="ri-label-inline">Tiba</span>
+            <input id="arrival-date" v-model="routeInfo.arrivalDate" type="date" class="ri-input text-xs" />
+            <input id="arrival-time" v-model="routeInfo.arrivalTime" type="time" class="ri-input text-xs" />
 
-              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] cursor-pointer hover:border-[var(--accent)]">
-                <input
-                  type="checkbox"
-                  class="accent-[var(--primary)]"
-                  :checked="forecastTimeStep === 6"
-                  @change="(e) => { if ((e.target as HTMLInputElement).checked) forecastTimeStep = 6 }"
-                >
-                <span class="text-sm font-medium text-[var(--text)]">6 Jam</span>
-              </label>
-            </div>
+            <span class="ri-label-inline">Issued</span>
+            <input id="issued-date" v-model="routeInfo.issuedDate" type="date" class="ri-input text-xs" />
+            <input id="issued-time" v-model="routeInfo.issuedTime" type="time" class="ri-input text-xs" />
           </div>
         </div>
+      </div>
 
-        <!-- Forecaster & PDF header (upt / kontak) -->
-        <div class="rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--accent)_6%)] p-4">
-          <h3 class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] m-0 mb-3">Forecaster &amp; header PDF</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="flex flex-col gap-1.5 md:col-span-2">
-              <label for="forecaster" class="text-sm font-medium text-[var(--text)]">Forecaster</label>
-              <input
-                id="forecaster"
-                v-model="routeInfo.forecaster"
-                type="text"
-                class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-                placeholder="Nama forecaster"
-              />
+      <!-- Forecaster & PDF Header — collapsible -->
+      <details class="group rounded-xl border border-[var(--border)] overflow-hidden">
+        <summary class="flex items-center gap-2 px-4 py-3 cursor-pointer select-none bg-[color-mix(in_srgb,var(--surface)_96%,var(--accent)_4%)] hover:bg-[var(--surface-hover)]">
+          <svg class="w-4 h-4 text-[var(--text-muted)] transition-transform duration-200 group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+          <span class="text-sm font-semibold text-[var(--text)]">Forecaster & Header PDF</span>
+          <span class="text-[0.65rem] text-[var(--text-muted)] ml-auto">Nama, UPT, alamat, tanda tangan</span>
+        </summary>
+        <div class="p-4 border-t border-[var(--border)]">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="flex flex-col gap-1.5 sm:col-span-2 lg:col-span-1">
+              <label for="forecaster" class="ri-label">Forecaster</label>
+              <input id="forecaster" v-model="routeInfo.forecaster" type="text" class="ri-input" placeholder="Nama forecaster" />
             </div>
             <div class="flex flex-col gap-1.5">
-              <label for="nama-upt" class="text-sm font-medium text-[var(--text)]">Nama Upt</label>
-              <input
-                id="nama-upt"
-                v-model="routeInfo.namaUpt"
-                type="text"
-                class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-                placeholder="Nama unit pelaksana teknis"
-              />
-            </div>
-            <div class="flex flex-col gap-1.5 md:col-span-2">
-              <label for="pdf-alamat" class="text-sm font-medium text-[var(--text)]">Alamat</label>
-              <textarea
-                id="pdf-alamat"
-                v-model="routeInfo.alamat"
-                rows="2"
-                class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)] resize-y min-h-[2.75rem]"
-                placeholder="Alamat lengkap kantor (header PDF)"
-              />
+              <label for="nama-upt" class="ri-label">Nama UPT</label>
+              <input id="nama-upt" v-model="routeInfo.namaUpt" type="text" class="ri-input" placeholder="Unit pelaksana teknis" />
             </div>
             <div class="flex flex-col gap-1.5">
-              <label for="pdf-telp" class="text-sm font-medium text-[var(--text)]">Telp</label>
-              <input
-                id="pdf-telp"
-                v-model="routeInfo.telp"
-                type="text"
-                class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-                placeholder="Nomor telepon"
-              />
+              <label for="pdf-telp" class="ri-label">Telp</label>
+              <input id="pdf-telp" v-model="routeInfo.telp" type="text" class="ri-input" placeholder="Nomor telepon" />
+            </div>
+            <div class="flex flex-col gap-1.5 sm:col-span-2">
+              <label for="pdf-alamat" class="ri-label">Alamat</label>
+              <textarea id="pdf-alamat" v-model="routeInfo.alamat" rows="2" class="ri-input resize-y min-h-[2.75rem]" placeholder="Alamat lengkap kantor (header PDF)" />
             </div>
             <div class="flex flex-col gap-1.5">
-              <label for="pdf-email" class="text-sm font-medium text-[var(--text)]">Email</label>
-              <input
-                id="pdf-email"
-                v-model="routeInfo.email"
-                type="email"
-                autocomplete="email"
-                class="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)]"
-                placeholder="email@domain.go.id"
-              />
+              <label for="pdf-email" class="ri-label">Email</label>
+              <input id="pdf-email" v-model="routeInfo.email" type="email" autocomplete="email" class="ri-input" placeholder="email@domain.go.id" />
             </div>
           </div>
           <ClientOnly>
             <SectionsSignaturePdfForm class="mt-4 pt-4 border-t border-[var(--border)]" />
             <template #fallback>
-              <p class="mt-4 pt-4 border-t border-[var(--border)] text-xs text-[var(--text-muted)] m-0">
-                Memuat form tanda tangan…
-              </p>
+              <p class="mt-4 pt-4 border-t border-[var(--border)] text-xs text-[var(--text-muted)] m-0">Memuat form tanda tangan…</p>
             </template>
           </ClientOnly>
         </div>
-      </div>
-      <div class="flex flex-col gap-4 min-w-0 w-full">
-        <div class="min-h-[300px] min-w-0 w-full">
-          <SectionsRouteMap
-            :route-coordinates="manualRouteData?.coordinates ?? undefined"
-            :split-markers="splitPointCoordinates"
-            :polygon-ring="manualRouteData?.boundingRectangle ?? undefined"
-          />
-        </div>
-        <div class="rounded-xl p-4 border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
-          <h3 class="text-sm font-semibold m-0 mb-3 text-[var(--text)]">Summary Request</h3>
-          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
-            <div>
-              <dt class="text-xs text-[var(--text-muted)] mb-1">Stasiun</dt>
-              <dd class="text-sm font-medium text-[var(--text)] break-words">
-                {{ selectedStation || '-' }}
-              </dd>
-            </div>
-            <div>
-              <dt class="text-xs text-[var(--text-muted)] mb-1">Route name</dt>
-              <dd class="text-sm font-medium text-[var(--text)] break-words">
-                {{ routeNameText || '-' }}
-              </dd>
-            </div>
-            <div>
-              <dt class="text-xs text-[var(--text-muted)] mb-1">Ship name</dt>
-              <dd class="text-sm font-medium text-[var(--text)] break-words">
-                {{ routeInfo.shipName || '-' }}
-              </dd>
-            </div>
-            <div>
-              <dt class="text-xs text-[var(--text-muted)] mb-1">Forecast time step</dt>
-              <dd class="text-sm font-medium text-[var(--text)] break-words">
-                {{ forecastTimeStep }} jam
-              </dd>
-            </div>
-            <div>
-              <dt class="text-xs text-[var(--text-muted)] mb-1">Departure time</dt>
-              <dd class="text-sm font-medium text-[var(--text)] break-words">
-                {{ departureTimeText || '-' }}
-              </dd>
-            </div>
-            <div>
-              <dt class="text-xs text-[var(--text-muted)] mb-1">Arrival time</dt>
-              <dd class="text-sm font-medium text-[var(--text)] break-words">
-                {{ arrivalTimeText || '-' }}
-              </dd>
-            </div>
-            <div class="sm:col-span-2">
-              <dt class="text-xs text-[var(--text-muted)] mb-1">Issued Time</dt>
-              <dd class="text-sm font-medium text-[var(--text)] break-words">
-                {{ issuedTimeText || '-' }}
-              </dd>
-            </div>
-            <div>
-              <dt class="text-xs text-[var(--text-muted)] mb-1">Ship speed (route/duration)</dt>
-              <dd class="text-sm font-medium text-[var(--text)] break-words">
-                {{ shipSpeedKnotsText || '-' }}
-              </dd>
-            </div>
-            <div>
-              <dt class="text-xs text-[var(--text-muted)] mb-1">Route distance</dt>
-              <dd class="text-sm font-medium text-[var(--text)] break-words">
-                {{ routeDistanceNmText || '-' }}
-              </dd>
-            </div>
-            <div>
-              <dt class="text-xs text-[var(--text-muted)] mb-1">Ship estimation duration</dt>
-              <dd class="text-sm font-medium text-[var(--text)] break-words">
-                {{ shipEstDurationText || '-' }}
-              </dd>
-            </div>
-          </dl>
-        </div>
-      </div>
-    </div>
+      </details>
 
-    <div class="mb-4">
-      <div class="rounded-xl p-4 border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-3">
-          <div class="min-w-0 flex-1">
-            <h3 class="text-sm font-semibold m-0 text-[var(--text)]">GeoJSON</h3>
-            <p class="text-xs text-[var(--text-muted)] m-0 mt-1">
-              Pembaruan langsung: rute (LineString) atau permintaan prakiraan (Point per langkah waktu + dateTime).
-            </p>
-          </div>
+      <!-- GeoJSON — collapsible -->
+      <details class="group rounded-xl border border-[var(--border)] overflow-hidden">
+        <summary class="flex items-center gap-2 px-4 py-3 cursor-pointer select-none bg-[color-mix(in_srgb,var(--surface)_96%,var(--accent)_4%)] hover:bg-[var(--surface-hover)]">
+          <svg class="w-4 h-4 text-[var(--text-muted)] transition-transform duration-200 group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+          <span class="text-sm font-semibold text-[var(--text)]">GeoJSON</span>
+          <span class="text-[0.65rem] text-[var(--text-muted)]">Rute & forecast request</span>
           <button
             type="button"
-            class="shrink-0 px-3 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--surface)] text-[var(--primary)] border border-[var(--primary)] shadow-[var(--shadow-sm)] transition-colors duration-200 hover:bg-[var(--primary-hover)] disabled:opacity-60 disabled:cursor-not-allowed"
+            class="ml-auto shrink-0 px-2.5 py-1 rounded-md text-xs font-medium cursor-pointer bg-[var(--surface)] text-[var(--primary)] border border-[var(--primary)] shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] disabled:opacity-60 disabled:cursor-not-allowed"
             :disabled="!activeGeoJsonText || !canCopyGeoJson"
-            @click="copyGeoJson"
+            @click.stop="copyGeoJson"
           >
             {{ copied ? 'Copied' : 'Copy' }}
           </button>
-        </div>
-        <div
-          class="flex flex-wrap gap-1.5 mb-3 p-1 rounded-lg bg-[color-mix(in_srgb,var(--border)_35%,var(--surface)_65%)] border border-[var(--border)]"
-          role="tablist"
-        >
-          <button
-            type="button"
-            role="tab"
-            :aria-selected="geoJsonTab === 'forecast'"
-            class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors border border-transparent"
-            :class="geoJsonTab === 'forecast'
-              ? 'bg-[var(--surface)] text-[var(--text)] border-[var(--border)] shadow-[var(--shadow-sm)]'
-              : 'text-[var(--text-muted)] hover:text-[var(--text)]'"
-            @click="geoJsonTab = 'forecast'"
+        </summary>
+        <div class="p-4 border-t border-[var(--border)]">
+          <div
+            class="flex flex-wrap gap-1.5 mb-3 p-1 rounded-lg bg-[color-mix(in_srgb,var(--border)_35%,var(--surface)_65%)] border border-[var(--border)]"
+            role="tablist"
           >
-            Forecast request
-          </button>
-          <button
-            type="button"
-            role="tab"
-            :aria-selected="geoJsonTab === 'route'"
-            class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors border border-transparent"
-            :class="geoJsonTab === 'route'
-              ? 'bg-[var(--surface)] text-[var(--text)] border-[var(--border)] shadow-[var(--shadow-sm)]'
-              : 'text-[var(--text-muted)] hover:text-[var(--text)]'"
-            @click="geoJsonTab = 'route'"
-          >
-            Route (LineString)
-          </button>
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="geoJsonTab === 'forecast'"
+              class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors border border-transparent"
+              :class="geoJsonTab === 'forecast'
+                ? 'bg-[var(--surface)] text-[var(--text)] border-[var(--border)] shadow-[var(--shadow-sm)]'
+                : 'text-[var(--text-muted)] hover:text-[var(--text)]'"
+              @click="geoJsonTab = 'forecast'"
+            >
+              Forecast request
+            </button>
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="geoJsonTab === 'route'"
+              class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors border border-transparent"
+              :class="geoJsonTab === 'route'
+                ? 'bg-[var(--surface)] text-[var(--text)] border-[var(--border)] shadow-[var(--shadow-sm)]'
+                : 'text-[var(--text-muted)] hover:text-[var(--text)]'"
+              @click="geoJsonTab = 'route'"
+            >
+              Route (LineString)
+            </button>
+          </div>
+          <textarea
+            class="w-full min-h-[220px] resize-y px-3 py-2 text-xs font-mono border border-[var(--border)] rounded-lg bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]"
+            :value="activeGeoJsonText"
+            readonly
+            spellcheck="false"
+          />
         </div>
-        <textarea
-          class="w-full min-h-[280px] resize-y px-3 py-2 text-xs font-mono border border-[var(--border)] rounded-lg bg-[var(--input-bg)] text-[var(--text)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]"
-          :value="activeGeoJsonText"
-          readonly
-          spellcheck="false"
-        />
+      </details>
+
+      <!-- Error -->
+      <div
+        v-if="processError"
+        class="rounded-lg border border-[var(--danger,#ef4444)] bg-[color-mix(in_srgb,var(--danger,#ef4444)_8%,var(--surface)_92%)] px-4 py-3 text-sm text-[var(--danger,#ef4444)]"
+      >
+        <strong>Error:</strong> {{ processError }}
       </div>
-    </div>
 
-    <div
-      v-if="processError"
-      class="mt-4 rounded-lg border border-[var(--danger,#ef4444)] bg-[color-mix(in_srgb,var(--danger,#ef4444)_8%,var(--surface)_92%)] px-4 py-3 text-sm text-[var(--danger,#ef4444)]"
-    >
-      <strong>Error:</strong> {{ processError }}
-    </div>
-
-    <div class="flex items-center justify-end pt-4 flex-wrap gap-4">
-      <div class="flex gap-3 items-center">
+      <!-- Action bar -->
+      <div class="flex items-center justify-end gap-3 pt-1">
         <button
           type="button"
-          class="px-5 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--surface)] text-[var(--primary)] border border-[var(--primary)] shadow-[var(--shadow-sm)] transition-colors duration-200 hover:bg-[var(--primary-hover)]"
-          @click="openManualRouteModal"
-        >
-          Buat Rute Manual
-        </button>
-        <button
-          type="button"
-          class="px-5 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--primary)] text-[var(--color-white)] border-none shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_var(--primary-glow)] disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none"
+          class="px-6 py-2.5 rounded-xl text-sm font-semibold cursor-pointer bg-[var(--primary)] text-[var(--color-white)] border-none shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_var(--primary-glow)] disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none"
           :disabled="isLoading"
           @click="handleProcess"
         >
-          {{ isLoading ? 'Memproses...' : 'Proses' }}
+          {{ isLoading ? 'Memproses...' : 'Proses Forecast' }}
         </button>
       </div>
     </div>
+
     <ManualRouteModal
       v-model="showModal"
       @submit="onManualRouteSubmit"
@@ -793,3 +626,33 @@ async function handleProcess() {
   await processRoute()
 }
 </script>
+
+<style scoped>
+.ri-select {
+  @apply px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)];
+}
+.ri-input {
+  @apply px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--surface)] shadow-[var(--shadow-sm)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring)];
+}
+.ri-input-static {
+  @apply px-3 py-2 text-sm font-semibold text-[var(--primary)] border border-[var(--border)] rounded-lg bg-[color-mix(in_srgb,var(--primary)_6%,var(--surface)_94%)];
+}
+.ri-label {
+  @apply text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide;
+}
+.ri-label-inline {
+  @apply text-xs font-medium text-[var(--text)] whitespace-nowrap;
+}
+.ri-btn-outline {
+  @apply inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium cursor-pointer bg-[var(--surface)] text-[var(--primary)] border border-[var(--primary)] shadow-[var(--shadow-sm)] transition-colors duration-200 hover:bg-[var(--primary-hover)] disabled:opacity-60 disabled:cursor-not-allowed;
+}
+.ri-stat-cell {
+  @apply flex flex-col gap-0.5 px-4 py-3 border-b border-r border-[var(--border)] last:border-r-0;
+}
+.ri-stat-cell dt {
+  @apply text-[0.65rem] font-semibold uppercase tracking-wider text-[var(--text-muted)];
+}
+.ri-stat-cell dd {
+  @apply text-xs font-medium text-[var(--text)] break-words m-0 leading-snug;
+}
+</style>

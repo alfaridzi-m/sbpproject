@@ -210,6 +210,20 @@ function getActiveParam(): ParamDef {
   return parameters.find(p => p.key === activeTab.value)!
 }
 
+function isDarkMode(): boolean {
+  if (!import.meta.client) return false
+  return document.documentElement.getAttribute('data-theme') === 'dark'
+}
+
+function getChartLabelColor(): string {
+  return isDarkMode() ? '#94a3b8' : '#6b7280'
+}
+
+function getChartGridColor(opacity = 1): string {
+  const base = isDarkMode() ? 0.15 : 0.12
+  return `rgba(128,128,128,${base * opacity})`
+}
+
 function clampDirectionDeg(deg: number): number {
   return Math.min(360, Math.max(0, deg))
 }
@@ -423,7 +437,7 @@ async function buildChart() {
         pointRadius: 7,
         pointHoverRadius: 11,
         pointBackgroundColor: param.color,
-        pointBorderColor: '#ffffff',
+        pointBorderColor: isDarkMode() ? '#1a1d27' : '#ffffff',
         pointBorderWidth: 2.5,
         pointHitRadius: 15,
         borderWidth: 2.5,
@@ -441,20 +455,20 @@ async function buildChart() {
             display: true,
             text: `${param.label} (${param.unit})`,
             font: { size: 12, weight: 'bold' as const },
-            color: '#6b7280',
+            color: getChartLabelColor(),
           },
-          grid: { color: 'rgba(128,128,128,0.12)' },
-          ticks: { color: '#6b7280', font: { size: 11 } },
+          grid: { color: getChartGridColor() },
+          ticks: { color: getChartLabelColor(), font: { size: 11 } },
         },
         x: {
           ticks: {
             maxRotation: 45,
             font: { size: 10 },
-            color: '#6b7280',
+            color: getChartLabelColor(),
             autoSkip: true,
             maxTicksLimit: 20,
           },
-          grid: { color: 'rgba(128,128,128,0.08)' },
+          grid: { color: getChartGridColor(0.6) },
         },
       },
       plugins: {
