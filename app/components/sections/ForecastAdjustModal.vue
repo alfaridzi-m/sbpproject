@@ -295,8 +295,9 @@ async function buildChart() {
 }
 
 function setupDrag() {
-  const canvas = chartCanvas.value
-  if (!canvas || !chartInstance) return
+  const canvasEl = chartCanvas.value
+  if (!canvasEl || !chartInstance) return
+  const canvas: HTMLCanvasElement = canvasEl
 
   let dragging = false
   let dragIdx = -1

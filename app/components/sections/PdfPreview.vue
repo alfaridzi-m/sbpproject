@@ -27,10 +27,17 @@
       </div>
       <button
         type="button"
-        class="py-2 px-5 bg-[var(--primary)] text-white border-none rounded-lg text-sm font-medium cursor-pointer shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_rgba(1,167,62,0.35)] disabled:opacity-60 disabled:shadow-none"
+        :disabled="isDownloading"
+        :aria-busy="isDownloading"
+        class="inline-flex items-center justify-center gap-2 py-2 px-5 min-w-[10.5rem] bg-[var(--primary)] text-white border-none rounded-lg text-sm font-medium cursor-pointer shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_rgba(1,167,62,0.35)] disabled:opacity-90 disabled:shadow-none disabled:cursor-wait"
         @click="onDownloadClick"
       >
-        Download PDF
+        <span
+          v-if="isDownloading"
+          class="size-4 shrink-0 rounded-full border-2 border-white/35 border-t-white animate-spin"
+          aria-hidden="true"
+        />
+        <span>{{ isDownloading ? 'Downloading…' : 'Download PDF' }}</span>
       </button>
     </div>
     <div class="max-h-[calc(100vh-12rem)] overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--surface-muted)]">
@@ -51,12 +58,19 @@ const { pdfTemplate } = useMaritimeData()
 
 const rutePreviewRef = ref<any | null>(null)
 const wisataPreviewRef = ref<any | null>(null)
+const isDownloading = ref(false)
 
-const onDownloadClick = () => {
-  if (pdfTemplate.value === 'rute-pelayaran') {
-    rutePreviewRef.value?.downloadPdf?.()
-  } else if (pdfTemplate.value === 'wisata-bahari') {
-    wisataPreviewRef.value?.downloadPdf?.()
+const onDownloadClick = async () => {
+  if (isDownloading.value) return
+  isDownloading.value = true
+  try {
+    if (pdfTemplate.value === 'rute-pelayaran') {
+      await rutePreviewRef.value?.downloadPdf?.()
+    } else if (pdfTemplate.value === 'wisata-bahari') {
+      await wisataPreviewRef.value?.downloadPdf?.()
+    }
+  } finally {
+    isDownloading.value = false
   }
 }
 </script>
