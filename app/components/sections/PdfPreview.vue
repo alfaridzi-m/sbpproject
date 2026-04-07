@@ -24,21 +24,52 @@
         >
           Wisata Bahari
         </button>
+        <button
+          type="button"
+          :class="['py-2 px-4 rounded-lg text-sm cursor-pointer transition-all duration-200 shadow-[var(--shadow-sm)]', pdfTemplate === 'rutin' ? 'bg-[var(--primary)] text-white border border-[var(--primary)] shadow-[var(--shadow-md)]' : 'bg-[var(--input-bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]']"
+          @click="pdfTemplate = 'rutin'"
+        >
+          Rutin
+        </button>
       </div>
-      <button
-        type="button"
-        :disabled="isDownloading"
-        :aria-busy="isDownloading"
-        class="inline-flex items-center justify-center gap-2 py-2 px-5 min-w-[10.5rem] bg-[var(--primary)] text-white border-none rounded-lg text-sm font-medium cursor-pointer shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_rgba(1,167,62,0.35)] disabled:opacity-90 disabled:shadow-none disabled:cursor-wait"
-        @click="onDownloadClick"
-      >
-        <span
-          v-if="isDownloading"
-          class="size-4 shrink-0 rounded-full border-2 border-white/35 border-t-white animate-spin"
-          aria-hidden="true"
-        />
-        <span>{{ isDownloading ? 'Downloading…' : 'Download PDF' }}</span>
-      </button>
+      <div class="flex flex-col items-end gap-1">
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            :disabled="pdfTemplate !== 'rute-pelayaran' || isPlotLoading"
+            :aria-busy="isPlotLoading"
+            class="inline-flex items-center justify-center gap-2 py-2 px-4 min-w-[10rem] border rounded-lg text-sm font-medium cursor-pointer shadow-[var(--shadow-sm)] transition-[opacity,box-shadow] duration-200 disabled:opacity-60 disabled:shadow-none disabled:cursor-not-allowed bg-[var(--surface)] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            @click="onPlotClick"
+          >
+            <span
+              v-if="isPlotLoading"
+              class="size-4 shrink-0 rounded-full border-2 border-[var(--text-muted)]/35 border-t-[var(--text)] animate-spin"
+              aria-hidden="true"
+            />
+            <span>{{ isPlotLoading ? 'Plotting…' : 'Plot Images' }}</span>
+          </button>
+          <button
+            type="button"
+            :disabled="isDownloading"
+            :aria-busy="isDownloading"
+            class="inline-flex items-center justify-center gap-2 py-2 px-5 min-w-[10.5rem] bg-[var(--primary)] text-white border-none rounded-lg text-sm font-medium cursor-pointer shadow-[var(--shadow-md)] transition-[opacity,box-shadow] duration-200 hover:opacity-95 hover:shadow-[0_6px_20px_rgba(1,167,62,0.35)] disabled:opacity-90 disabled:shadow-none disabled:cursor-wait"
+            @click="onDownloadClick"
+          >
+            <span
+              v-if="isDownloading"
+              class="size-4 shrink-0 rounded-full border-2 border-white/35 border-t-white animate-spin"
+              aria-hidden="true"
+            />
+            <span>{{ isDownloading ? 'Downloading…' : 'Download PDF' }}</span>
+          </button>
+        </div>
+        <p
+          v-if="plotError && pdfTemplate === 'rute-pelayaran'"
+          class="m-0 text-xs text-red-600"
+        >
+          {{ plotError }}
+        </p>
+      </div>
     </div>
     <div class="max-h-[calc(100vh-12rem)] overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--surface-muted)]">
       <SectionsRutePelayaranPdfPreview
@@ -49,15 +80,20 @@
         v-else-if="pdfTemplate === 'wisata-bahari'"
         ref="wisataPreviewRef"
       />
+      <SectionsRutinPdfPreview
+        v-else-if="pdfTemplate === 'rutin'"
+        ref="rutinPreviewRef"
+      />
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-const { pdfTemplate } = useMaritimeData()
+const { pdfTemplate, isPlotLoading, plotError } = useMaritimeData()
 
 const rutePreviewRef = ref<any | null>(null)
 const wisataPreviewRef = ref<any | null>(null)
+const rutinPreviewRef = ref<any | null>(null)
 const isDownloading = ref(false)
 
 const onDownloadClick = async () => {
@@ -68,9 +104,16 @@ const onDownloadClick = async () => {
       await rutePreviewRef.value?.downloadPdf?.()
     } else if (pdfTemplate.value === 'wisata-bahari') {
       await wisataPreviewRef.value?.downloadPdf?.()
+    } else if (pdfTemplate.value === 'rutin') {
+      await rutinPreviewRef.value?.downloadPdf?.()
     }
   } finally {
     isDownloading.value = false
   }
+}
+
+const onPlotClick = async () => {
+  if (pdfTemplate.value !== 'rute-pelayaran' || isPlotLoading.value) return
+  await rutePreviewRef.value?.requestPlotImages?.()
 }
 </script>

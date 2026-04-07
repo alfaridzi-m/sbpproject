@@ -5,7 +5,10 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss'],
   runtimeConfig: {
     apiBaseUrl: process.env.API_BASE_URL || '',
-    apiKey: process.env.API_KEY || ''
+    apiKey: process.env.API_KEY || '',
+    public: {
+      apiBaseUrl: process.env.API_BASE_URL || ''
+    }
   },
   css: ['leaflet/dist/leaflet.css'],
   tailwindcss: {

@@ -3,7 +3,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
   try {
-    const response = await $fetch(config.apiBaseUrl + '/apispb/data', {
+    const response = await $fetch(config.apiBaseUrl + '/apispb/map', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -12,13 +12,10 @@ export default defineEventHandler(async (event) => {
       body
     })
 
-    // Upstream currently responds with wrapper: { status, data: FeatureCollection }.
-    // Unwrap so clients consistently receive the GeoJSON object directly.
     const maybeWrapped = response as { data?: unknown }
     if (maybeWrapped && typeof maybeWrapped === 'object' && maybeWrapped.data) {
       return maybeWrapped.data
     }
-
     return response
   } catch (err: unknown) {
     const status = (err as { statusCode?: number }).statusCode
@@ -28,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
     throw createError({
       statusCode: status,
-      statusMessage: `Forecast API error: ${message}`
+      statusMessage: `Map API error: ${message}`
     })
   }
 })

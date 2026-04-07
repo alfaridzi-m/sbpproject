@@ -414,72 +414,27 @@ async function downloadPdf() {
       // ignore
     }
 
-    const html2pdf = (await import('html2pdf.js')).default
     const origin = safeFilenamePart(routeInfo.value.portOrigin || 'asal')
     const dest = safeFilenamePart(routeInfo.value.portDestination || 'tujuan')
-
-    const MAX_PDF_BYTES = 6 * 1024 * 1024
     const filename = `wisata-bahari-${origin}-${dest}.pdf`
+    const MAX_PDF_BYTES = 6 * 1024 * 1024
 
-    // Generate with decreasing resolution until the file is <= 6MB.
-    const attempts: Array<{ scale: number; quality: number }> = [
-      { scale: 2, quality: 0.65 },
-      { scale: 1.5, quality: 0.55 },
-      { scale: 1, quality: 0.45 },
-      { scale: 0.85, quality: 0.35 },
-      { scale: 0.7, quality: 0.28 },
-    ]
-
-    const baseOpt = {
-      margin: 0,
-      filename,
-      html2canvas: {
-        useCORS: true,
-        onclone: (_clonedDoc: Document, clonedEl: HTMLElement) => {
-          if (logoDataUrl) {
-            clonedEl.querySelectorAll<HTMLImageElement>('.bmkg-logo').forEach(img => {
-              img.src = logoDataUrl!
-            })
-          }
-          clonedEl.querySelectorAll<HTMLElement>('.pdf-page').forEach(page => {
-            page.style.marginTop = '0'
-            page.style.borderTop = 'none'
-            page.style.boxShadow = 'none'
+    const blob = await exportDomElementToPdfBlob(el, {
+      maxBytes: MAX_PDF_BYTES,
+      patchClonedDocument: (doc) => {
+        if (logoDataUrl) {
+          doc.querySelectorAll<HTMLImageElement>('.bmkg-logo').forEach((img) => {
+            img.src = logoDataUrl!
           })
-        },
+        }
       },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const, compress: true },
-      pagebreak: {
-        mode: ['avoid-all', 'css', 'legacy'],
-        before: '.pdf-page-start',
-        avoid: '.pdf-avoid-split',
-      },
-    }
+    })
 
-    let blob: Blob | null = null
-    for (const attempt of attempts) {
-      const opt = {
-        ...baseOpt,
-        image: { type: 'jpeg' as const, quality: attempt.quality },
-        html2canvas: { ...baseOpt.html2canvas, scale: attempt.scale },
-      }
-
-      const worker = html2pdf().set(opt).from(el)
-      const nextBlob = await worker.outputPdf('blob')
-      blob = nextBlob
-      if (nextBlob.size <= MAX_PDF_BYTES) break
-    }
-
-    if (!blob) throw new Error('Failed to generate PDF blob')
+    if (!blob.size) throw new Error('Failed to generate PDF blob')
     if (blob.size > MAX_PDF_BYTES) {
       console.warn(`PDF still larger than 6MB: ${(blob.size / 1024 / 1024).toFixed(2)}MB`)
     }
-    const url = URL.createObjectURL(blob!)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    a.click()
-    URL.revokeObjectURL(url)
+    await triggerPdfDownload(blob, filename)
   } catch (err) {
     console.error('PDF generation failed:', err)
   } finally {

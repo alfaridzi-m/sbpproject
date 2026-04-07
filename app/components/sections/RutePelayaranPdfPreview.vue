@@ -115,14 +115,33 @@
               </defs>
               <!-- X-AXIS LABELS (top) -->
               <g class="meteogram-time-labels">
-                <text v-for="(row, i) in meteogramRows" :key="'t' + row.id" :x="marginLeft + (i + 0.5) * (chartAreaW / meteogramRows.length)" y="10" text-anchor="middle" font-size="6" fill="#64748b">
-                  <tspan :x="marginLeft + (i + 0.5) * (chartAreaW / meteogramRows.length)" dy="0">{{ formatMeteogramDate(row.date) }}</tspan>
-                  <tspan :x="marginLeft + (i + 0.5) * (chartAreaW / meteogramRows.length)" dy="8">{{ row.time }}</tspan>
-                </text>
+                <template v-for="(row, i) in meteogramRows" :key="'t-wrap-' + row.id">
+                  <text
+                    v-if="shouldRenderMeteogramTick(i)"
+                    :x="marginLeft + (i + 0.5) * (chartAreaW / meteogramRows.length)"
+                    y="10"
+                    text-anchor="middle"
+                    font-size="6"
+                    fill="#64748b"
+                  >
+                    <tspan :x="marginLeft + (i + 0.5) * (chartAreaW / meteogramRows.length)" dy="0">{{ formatMeteogramDate(row.date) }}</tspan>
+                    <tspan :x="marginLeft + (i + 0.5) * (chartAreaW / meteogramRows.length)" dy="8">{{ row.time }}</tspan>
+                  </text>
+                </template>
               </g>
               <!-- WEATHER ICONS -->
               <g class="meteogram-weather-icons">
-                <text v-for="(row, i) in meteogramRows" :key="'wi' + row.id" :x="marginLeft + (i + 0.5) * (chartAreaW / meteogramRows.length)" :y="weatherIconY" text-anchor="middle" font-size="10">{{ weatherIcon(row) }}</text>
+                <template v-for="(row, i) in meteogramRows" :key="'wi-wrap-' + row.id">
+                  <text
+                    v-if="shouldRenderMeteogramTick(i)"
+                    :x="marginLeft + (i + 0.5) * (chartAreaW / meteogramRows.length)"
+                    :y="weatherIconY"
+                    text-anchor="middle"
+                    font-size="10"
+                  >
+                    {{ weatherIcon(row) }}
+                  </text>
+                </template>
               </g>
               <!-- GRID -->
               <g class="meteogram-grid">
@@ -764,7 +783,21 @@
 import type L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-const { routeInfo, forecastData, synopticInfo, warnings, cycloneWarning, disclaimer, safetyAdvisory, manualRouteData, availableRoutes, selectedRouteId, splitPointCoordinates } = useMaritimeData()
+const {
+  routeInfo,
+  forecastData,
+  synopticInfo,
+  warnings,
+  cycloneWarning,
+  disclaimer,
+  safetyAdvisory,
+  manualRouteData,
+  availableRoutes,
+  selectedRouteId,
+  splitPointCoordinates,
+  plotImages,
+  requestPlotImages,
+} = useMaritimeData()
 const bmkgLogoUrl = useBmkgLogoUrl()
 
 /** Explicit computed so preview + img src always track `signatureImageDataUrl`. */
@@ -791,6 +824,27 @@ const windSpeedMaxKts = 25
 const windSpeedTicksKts = [25, 20, 15,12, 9, 6, 3, 0] as const
 
 const meteogramRows = computed(() => forecastData.value.filter(r => r.date || r.time))
+
+/**
+ * Reduce x-axis label/icon density when forecast timestep is very granular (e.g. 1-hour),
+ * so date/time text does not overlap in the PDF preview/export.
+ */
+const meteogramTickStep = computed(() => {
+  const count = meteogramRows.value.length
+  if (count <= 14) return 1
+  if (count <= 24) return 2
+  if (count <= 36) return 3
+  if (count <= 48) return 4
+  return 5
+})
+
+function shouldRenderMeteogramTick(index: number): boolean {
+  const step = meteogramTickStep.value
+  if (step <= 1) return true
+  const isFirst = index === 0
+  const isLast = index === meteogramRows.value.length - 1
+  return isFirst || isLast || index % step === 0
+}
 
 const visibilityMaxKm = 10
 const visibilityTicks = computed(() => {
@@ -1080,41 +1134,12 @@ function chunkPlotImages<T>(items: T[], chunkSize: number): T[][] {
   return pages
 }
 
-/** Paths under `public/` like `/swh_2026032600.png` — discovered at runtime. */
-const { data: plotImagePaths } = useFetch<{ swhPaths: string[]; wsPaths: string[] }>(
-  '/api/maritime/plot-images',
-  { default: () => ({ swhPaths: [], wsPaths: [] }) }
-)
-
-function pad2(n: number) {
-  return String(n).padStart(2, '0')
-}
-
-/** Matches map filenames: `swh_2026032600.png` → issued time as UTC (same as route forecast inputs). */
-function dateTimeToYyyyMmDdHhUtc(dateStr: string, timeStr: string): string | null {
-  if (!dateStr || !timeStr) return null
-  const dp = dateStr.split('-').map(Number)
-  const tp = timeStr.split(':').map(Number)
-  if (dp.length < 3 || tp.length < 2) return null
-  const [y, m, d] = dp as [number, number, number]
-  const [hh, mm] = tp as [number, number]
-  if ([y, m, d, hh, mm].some(n => !Number.isFinite(n))) return null
-  const dt = new Date(Date.UTC(y, m - 1, d, hh, mm, 0))
-  return `${dt.getUTCFullYear()}${pad2(dt.getUTCMonth() + 1)}${pad2(dt.getUTCDate())}${pad2(dt.getUTCHours())}`
-}
-
 const significantWavePlotImageUrls = computed(() => {
-  const paths = plotImagePaths.value?.swhPaths
-  if (paths?.length) return paths
-  const s = dateTimeToYyyyMmDdHhUtc(routeInfo.value.issuedDate, routeInfo.value.issuedTime)
-  return s ? [`/swh_${s}.png`] : []
+  return plotImages.value.swhPaths
 })
 
 const windPlotImageUrls = computed(() => {
-  const paths = plotImagePaths.value?.wsPaths
-  if (paths?.length) return paths
-  const s = dateTimeToYyyyMmDdHhUtc(routeInfo.value.issuedDate, routeInfo.value.issuedTime)
-  return s ? [`/ws_${s}.png`] : []
+  return plotImages.value.wsPaths
 })
 
 const wavePlotPages = computed(() => chunkPlotImages(significantWavePlotImageUrls.value, imagesPerPlotPage))
@@ -1337,27 +1362,104 @@ async function svgToPngDataUrl(svgUrl: string): Promise<string> {
   })
 }
 
-async function imgToDataUrl(src: string): Promise<string> {
-  const absUrl = src.startsWith('http') || src.startsWith('data:')
-    ? src
-    : new URL(src.startsWith('/') ? src : `/${src}`, window.location.origin).href
-  return new Promise<string>((resolve) => {
+function wait(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+async function rasterizeToJpegDataUrl(
+  src: string,
+  options: { maxWidth?: number; quality?: number } = {}
+): Promise<string | null> {
+  const maxWidth = options.maxWidth ?? 1400
+  const quality = options.quality ?? 0.72
+  return await new Promise<string | null>((resolve) => {
     const img = new Image()
-    img.crossOrigin = 'anonymous'
+    if (isCrossOriginUrl(src)) img.crossOrigin = 'anonymous'
     img.onload = () => {
       try {
+        const naturalW = img.naturalWidth || img.width || 1
+        const naturalH = img.naturalHeight || img.height || 1
+        const scale = naturalW > maxWidth ? maxWidth / naturalW : 1
+        const w = Math.max(1, Math.round(naturalW * scale))
+        const h = Math.max(1, Math.round(naturalH * scale))
         const c = document.createElement('canvas')
-        c.width = img.naturalWidth || img.width
-        c.height = img.naturalHeight || img.height
+        c.width = w
+        c.height = h
         const ctx = c.getContext('2d')
-        if (!ctx) { resolve(absUrl); return }
-        ctx.drawImage(img, 0, 0)
-        resolve(c.toDataURL('image/png'))
-      } catch { resolve(absUrl) }
+        if (!ctx) { resolve(null); return }
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, w, h)
+        ctx.drawImage(img, 0, 0, w, h)
+        resolve(c.toDataURL('image/jpeg', quality))
+      } catch {
+        resolve(null)
+      }
     }
-    img.onerror = () => resolve(absUrl)
-    img.src = absUrl
+    img.onerror = () => resolve(null)
+    img.src = src
   })
+}
+
+async function waitForImagesToRender(root: HTMLElement): Promise<void> {
+  await nextTick()
+  await wait(120)
+  const images = Array.from(root.querySelectorAll<HTMLImageElement>('img'))
+  if (!images.length) return
+
+  await Promise.all(
+    images.map(async (img) => {
+      if (img.complete && img.naturalWidth > 0) return
+      await new Promise<void>((resolve) => {
+        const done = () => {
+          img.removeEventListener('load', done)
+          img.removeEventListener('error', done)
+          resolve()
+        }
+        img.addEventListener('load', done, { once: true })
+        img.addEventListener('error', done, { once: true })
+        setTimeout(done, 3000)
+      })
+    })
+  )
+}
+
+async function fetchAsDataUrl(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url, { mode: 'cors' })
+    if (!res.ok) return null
+    const blob = await res.blob()
+    const objectUrl = URL.createObjectURL(blob)
+    try {
+      return await rasterizeToJpegDataUrl(objectUrl)
+    } finally {
+      URL.revokeObjectURL(objectUrl)
+    }
+  } catch {
+    return null
+  }
+}
+
+function isCrossOriginUrl(url: string): boolean {
+  try {
+    const u = new URL(url, window.location.origin)
+    return u.origin !== window.location.origin
+  } catch {
+    return false
+  }
+}
+
+function toPdfFetchableUrl(rawSrc: string): string {
+  const absUrl = rawSrc.startsWith('http') || rawSrc.startsWith('data:')
+    ? rawSrc
+    : new URL(rawSrc.startsWith('/') ? rawSrc : `/${rawSrc}`, window.location.origin).href
+  if (!/^https?:/i.test(absUrl)) return absUrl
+  if (!isCrossOriginUrl(absUrl)) return absUrl
+  return `/api/map-image?url=${encodeURIComponent(absUrl)}`
+}
+
+async function imgToDataUrl(src: string): Promise<string | null> {
+  const absUrl = toPdfFetchableUrl(src)
+  return await rasterizeToJpegDataUrl(absUrl)
 }
 
 async function downloadPdf() {
@@ -1366,6 +1468,8 @@ async function downloadPdf() {
 
   isDownloading.value = true
   try {
+    await waitForImagesToRender(el)
+
     const { jsPDF } = await import('jspdf')
     const { default: autoTable } = await import('jspdf-autotable')
 
@@ -1459,7 +1563,18 @@ async function downloadPdf() {
     const plotCache = new Map<string, string>()
     await Promise.all(
       [...significantWavePlotImageUrls.value, ...windPlotImageUrls.value].map(async src => {
-        try { plotCache.set(src, await imgToDataUrl(src)) } catch { /* ignore */ }
+        try {
+          const direct = await imgToDataUrl(src)
+          if (direct) {
+            plotCache.set(src, direct)
+            return
+          }
+          const absUrl = toPdfFetchableUrl(src)
+          const fetched = await fetchAsDataUrl(absUrl)
+          if (fetched) plotCache.set(src, fetched)
+        } catch {
+          /* ignore */
+        }
       })
     )
 
@@ -1602,7 +1717,8 @@ async function downloadPdf() {
         const cellX = M + col * (gridW + cellGap)
         const cellY = startY + row * (rowH + cellGap)
         const srcKey = imgs[i]!
-        const src = plotCache.get(srcKey) || srcKey
+        const src = plotCache.get(srcKey)
+        if (!src) continue
         const dim = plotDims.get(srcKey) || { w: 1200, h: 800 }
         const nw = dim.w
         const nh = dim.h
@@ -1612,9 +1728,9 @@ async function downloadPdf() {
         const ix = cellX + (gridW - dw) / 2
         const iy = cellY + (rowH - dh) / 2
         try {
-          pdf.addImage(src, 'PNG', ix, iy, dw, dh)
+          pdf.addImage(src, 'JPEG', ix, iy, dw, dh, undefined, 'FAST')
         } catch {
-          try { pdf.addImage(src, 'JPEG', ix, iy, dw, dh) } catch { /* ignore */ }
+          try { pdf.addImage(src, 'PNG', ix, iy, dw, dh, undefined, 'FAST') } catch { /* ignore */ }
         }
       }
     }
@@ -2038,7 +2154,7 @@ async function downloadPdf() {
   }
 }
 
-defineExpose({ downloadPdf })
+defineExpose({ downloadPdf, requestPlotImages })
 </script>
 
 <style scoped>

@@ -139,6 +139,18 @@ export interface ForecastReqFeature {
   }
 }
 
+interface PlotImageResult {
+  swhPaths: string[]
+  wsPaths: string[]
+}
+
+function toPlotProxyPath(url: string): string {
+  if (!url) return ''
+  if (/^data:/i.test(url)) return url
+  if (/^https?:\/\//i.test(url)) return `/api/map-image?url=${encodeURIComponent(url)}`
+  return url
+}
+
 /** Canonical ISO 8601 UTC string (`…Z`) for GeoJSON export. */
 function toUtcIsoString(instant: Date | number): string {
   return new Date(instant).toISOString()
@@ -331,7 +343,89 @@ function computeSplitPoints(
   return points
 }
 
+function normalizeImagePath(raw: string, apiBaseUrl?: string): string {
+  const trimmed = String(raw || '').trim()
+  if (!trimmed) return ''
+  if (/^https?:\/\//i.test(trimmed) || /^data:/i.test(trimmed)) return trimmed
+  const normalizedPath = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
+  const mappedPath = normalizedPath.startsWith('/images/')
+    ? `/apispb${normalizedPath}`
+    : normalizedPath
+  const base = String(apiBaseUrl || '').trim().replace(/\/+$/, '')
+  if (!base) return mappedPath
+  if (mappedPath.startsWith('/apispb/')) return `${base}${mappedPath}`
+  return `${base}${mappedPath}`
+}
+
+function toStringArray(value: unknown, apiBaseUrl?: string): string[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .map(v => normalizeImagePath(String(v), apiBaseUrl))
+    .filter(Boolean)
+}
+
+function parsePlotImageResult(payload: unknown, apiBaseUrl?: string): PlotImageResult {
+  // Supports direct array response:
+  // ["/images/...map_wave_YYYYMMDD.png", "/images/...map_wind_YYYYMMDD.png", ...]
+  if (Array.isArray(payload)) {
+    const all = toStringArray(payload, apiBaseUrl)
+    const swhPaths = all
+      .filter(p => /(?:^|[_/-])(?:map_)?wave(?:[_/-]|$)/i.test(p))
+      .map(toPlotProxyPath)
+    const wsPaths = all
+      .filter(p => /(?:^|[_/-])(?:map_)?wind(?:[_/-]|$)/i.test(p))
+      .map(toPlotProxyPath)
+    return { swhPaths, wsPaths }
+  }
+  if (!payload || typeof payload !== 'object') return { swhPaths: [], wsPaths: [] }
+
+  const rec = payload as Record<string, unknown>
+  const recData = (rec.data && typeof rec.data === 'object')
+    ? rec.data as Record<string, unknown>
+    : null
+  const mixedFromImages = toStringArray(
+    rec.imageUrls
+    ?? rec.images
+    ?? rec.paths
+    ?? rec.files
+    ?? recData?.imageUrls
+    ?? recData?.images
+    ?? recData?.paths
+    ?? recData?.files,
+    apiBaseUrl
+  )
+  if (mixedFromImages.length) {
+    return {
+      swhPaths: mixedFromImages
+        .filter(p => /(?:^|[_/-])(?:map_)?wave(?:[_/-]|$)/i.test(p))
+        .map(toPlotProxyPath),
+      wsPaths: mixedFromImages
+        .filter(p => /(?:^|[_/-])(?:map_)?wind(?:[_/-]|$)/i.test(p))
+        .map(toPlotProxyPath)
+    }
+  }
+  const swhPaths = toStringArray(
+    rec.swhPaths
+    ?? rec.wavePaths
+    ?? rec.swh
+    ?? rec.wave,
+    apiBaseUrl
+  )
+  const wsPaths = toStringArray(
+    rec.wsPaths
+    ?? rec.windPaths
+    ?? rec.ws
+    ?? rec.wind,
+    apiBaseUrl
+  )
+  return {
+    swhPaths: swhPaths.map(toPlotProxyPath),
+    wsPaths: wsPaths.map(toPlotProxyPath)
+  }
+}
+
 export function useMaritimeData() {
+  const runtimeConfig = useRuntimeConfig()
   const routeInfo = useState<RouteInfo>('maritime-routeInfo', () => ({
     shipName: '',
     portOrigin: '',
@@ -356,9 +450,12 @@ export function useMaritimeData() {
   const cycloneWarning = useState('maritime-cycloneWarning', () => 'Tidak terdeteksi aktivitas siklon tropis aktif di wilayah pemantauan.')
   const disclaimer = useState('maritime-disclaimer', () => 'BMKG weather information is provided as technical guidance and is not the sole basis for determining vessel departure, which remains under the authority of the relevant authorities')
   const safetyAdvisory = useState('maritime-safetyAdvisory', () => '')
-  const pdfTemplate = useState<'rute-pelayaran' | 'wisata-bahari'>('maritime-pdfTemplate', () => 'rute-pelayaran')
+  const pdfTemplate = useState<'rute-pelayaran' | 'wisata-bahari' | 'rutin'>('maritime-pdfTemplate', () => 'rute-pelayaran')
   const isLoading = useState('maritime-isLoading', () => false)
   const processError = useState<string | null>('maritime-processError', () => null)
+  const plotImages = useState<PlotImageResult>('maritime-plotImages', () => ({ swhPaths: [], wsPaths: [] }))
+  const isPlotLoading = useState('maritime-isPlotLoading', () => false)
+  const plotError = useState<string | null>('maritime-plotError', () => null)
   const manualRouteData = useState<{
     routeName: string
     coordinates: [number, number][]
@@ -453,6 +550,8 @@ export function useMaritimeData() {
   async function processRoute() {
     isLoading.value = true
     processError.value = null
+    plotError.value = null
+    plotImages.value = { swhPaths: [], wsPaths: [] }
     try {
       const coords = manualRouteData.value?.coordinates
       if (!coords || coords.length < 2) {
@@ -496,6 +595,37 @@ export function useMaritimeData() {
       processError.value = msg
     } finally {
       isLoading.value = false
+    }
+  }
+
+  async function requestPlotImages() {
+    if (!forecastReq.value.features.length) {
+      plotImages.value = { swhPaths: [], wsPaths: [] }
+      plotError.value = 'Data route belum siap. Jalankan proses forecast terlebih dahulu.'
+      return
+    }
+
+    isPlotLoading.value = true
+    plotError.value = null
+    try {
+      const response = await $fetch<unknown>('/api/map-proxy', {
+        method: 'POST',
+        body: forecastReq.value
+      })
+      const publicBase = (runtimeConfig.public as { apiBaseUrl?: string } | undefined)?.apiBaseUrl
+      const baseForClient = publicBase || runtimeConfig.apiBaseUrl
+      const parsed = parsePlotImageResult(response, baseForClient)
+      plotImages.value = parsed
+      if (!parsed.swhPaths.length && !parsed.wsPaths.length) {
+        plotError.value = 'API map tidak mengembalikan gambar plot.'
+      }
+    } catch (err: unknown) {
+      plotImages.value = { swhPaths: [], wsPaths: [] }
+      plotError.value = (err as { statusMessage?: string }).statusMessage
+        ?? (err as { message?: string }).message
+        ?? 'Gagal mengambil plot map'
+    } finally {
+      isPlotLoading.value = false
     }
   }
 
@@ -591,11 +721,15 @@ export function useMaritimeData() {
     pdfTemplate,
     isLoading,
     processError,
+    plotImages,
+    isPlotLoading,
+    plotError,
     forecastTimeStep,
     timeZone,
     splitPointCoordinates,
     forecastReq,
     processRoute,
+    requestPlotImages,
     saveRoute,
     fetchAvailableRoutes,
     selectRouteById
