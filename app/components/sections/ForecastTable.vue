@@ -7,13 +7,15 @@
         <h2 class="inline-flex items-center rounded-md bg-[color-mix(in_srgb,var(--accent)_18%,var(--surface)_82%)] px-2.5 py-1 text-base font-semibold m-0 mb-1 text-[var(--text)]">
           Forecast Table Data
         </h2>
-        <p class="text-xs text-[var(--text-muted)] m-0">Tanggal, waktu, dan koordinat hanya baca; kolom lain dapat diedit</p>
-        <p class="text-[11px] text-[var(--text-muted)] m-0 mt-1.5 leading-snug">
-          Satuan kolom: Visibility km · Wave / hsig m · ws kt · wd / arusd ° · aruss cm/s.
-        </p>
-        <p class="text-[11px] text-[var(--text-muted)] m-0 mt-1 leading-snug">
-          Setiap tanggal punya header tabel sendiri; baris biru hanya mengubah data untuk tanggal itu.
-        </p>
+        <div v-if="hasModelMetadata" class="mb-4 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-xs text-[var(--text)]">
+      <p class="m-0 font-semibold mb-1">Model Information</p>
+      <p class="m-0 leading-relaxed">
+        Wave: <span class="font-medium">{{ modelMetadata.wave_model || '-' }}</span>
+        · Flow: <span class="font-medium">{{ modelMetadata.flow_model || '-' }}</span>
+        · Atmos: <span class="font-medium">{{ modelMetadata.atmos_model || '-' }}</span>
+        · Baserun: <span class="font-medium border-b">{{ formatBaserun(modelMetadata.baserun) }}</span>
+      </p>
+    </div>
       </div>
       <button
         type="button"
@@ -24,6 +26,7 @@
         Adjust Data
       </button>
     </div>
+
     <div class="overflow-x-auto mb-4 rounded-lg shadow-[var(--shadow-sm)] border border-[var(--border)] bg-[var(--surface)]">
       <table class="w-full border-collapse text-[0.8125rem] [&_th]:py-2 [&_th]:px-3 [&_td]:py-2 [&_td]:px-3 [&_th]:text-left [&_td]:text-left [&_th]:border-b [&_td]:border-b [&_th]:border-[var(--border)] [&_td]:border-[var(--border)]">
         <tbody>
@@ -246,8 +249,23 @@
 import type { ForecastRow } from '~/composables/useMaritimeData'
 import ForecastAdjustModal from './ForecastAdjustModal.vue'
 
-const { forecastData } = useMaritimeData()
+const { forecastData, modelMetadata } = useMaritimeData()
 const showAdjustModal = ref(false)
+
+const hasModelMetadata = computed(() => (
+  Boolean(modelMetadata.value.wave_model)
+  || Boolean(modelMetadata.value.flow_model)
+  || Boolean(modelMetadata.value.atmos_model)
+  || Boolean(modelMetadata.value.baserun)
+))
+
+function formatBaserun(raw: string | undefined): string {
+  const val = String(raw ?? '').trim()
+  const m = /^(\d{4})(\d{2})(\d{2})(\d{2})\d{2}$/.exec(val)
+  if (!m) return val || '-'
+  const [, y, mo, d, h] = m
+  return `${y}/${mo}/${d} ${h}`
+}
 
 type BulkTextField = 'visibility' | 'wave' | 'ws' | 'wd' | 'aruss' | 'arusd' | 'hsig'
 

@@ -84,6 +84,12 @@ export interface ForecastOutputGeoJSON {
   forecastTimeStepHours?: number
   timeZone?: string
   dateTimeReference?: string
+  modelMetadata?: {
+    wave_model?: string
+    flow_model?: string
+    atmos_model?: string
+    baserun?: string
+  }
   features: Array<{
     type: 'Feature'
     geometry: { type: 'Point'; coordinates: [number, number] }
@@ -445,6 +451,17 @@ export function useMaritimeData() {
   }))
 
   const forecastData = useState<ForecastRow[]>('maritime-forecastData', () => [])
+  const modelMetadata = useState<{
+    wave_model: string
+    flow_model: string
+    atmos_model: string
+    baserun: string
+  }>('maritime-modelMetadata', () => ({
+    wave_model: '',
+    flow_model: '',
+    atmos_model: '',
+    baserun: ''
+  }))
   const synopticInfo = useState('maritime-synopticInfo', () => 'Angin dominan timur hingga tenggara bertiup di sepanjang rute pelayaran dengan kondisi atmosfer relatif labil pada sore hingga malam hari. Pertumbuhan awan konvektif berpotensi terjadi lokal dan dapat menurunkan jarak pandang sementara, terutama saat hujan ringan hingga sedang.')
   const warnings = useState('maritime-warnings', () => 'Waspada peningkatan angin > 15 knot dan tinggi gelombang > 1.25 m pada periode tertentu.')
   const cycloneWarning = useState('maritime-cycloneWarning', () => 'Tidak terdeteksi aktivitas siklon tropis aktif di wilayah pemantauan.')
@@ -553,6 +570,12 @@ export function useMaritimeData() {
     plotError.value = null
     plotImages.value = { swhPaths: [], wsPaths: [] }
     try {
+      modelMetadata.value = {
+        wave_model: '',
+        flow_model: '',
+        atmos_model: '',
+        baserun: ''
+      }
       const coords = manualRouteData.value?.coordinates
       if (!coords || coords.length < 2) {
         forecastData.value = []
@@ -574,6 +597,13 @@ export function useMaritimeData() {
         method: 'POST',
         body: geoJsonBody
       })
+      const metadata = response?.modelMetadata
+      modelMetadata.value = {
+        wave_model: String(metadata?.wave_model ?? ''),
+        flow_model: String(metadata?.flow_model ?? ''),
+        atmos_model: String(metadata?.atmos_model ?? ''),
+        baserun: String(metadata?.baserun ?? '')
+      }
 
       if (
         response?.type === 'FeatureCollection'
@@ -589,6 +619,12 @@ export function useMaritimeData() {
       }
     } catch (err: unknown) {
       forecastData.value = []
+      modelMetadata.value = {
+        wave_model: '',
+        flow_model: '',
+        atmos_model: '',
+        baserun: ''
+      }
       const msg = (err as { statusMessage?: string }).statusMessage
         ?? (err as { message?: string }).message
         ?? 'Gagal memproses forecast'
@@ -713,6 +749,7 @@ export function useMaritimeData() {
     availableRoutes,
     selectedRouteId,
     forecastData,
+    modelMetadata,
     synopticInfo,
     warnings,
     cycloneWarning,
